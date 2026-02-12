@@ -36,12 +36,14 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .[dev,ops]
+export SENTINEL_API_KEY='replace-with-strong-api-key'
 python -m uvicorn sentinel_api.main:app --reload
 ```
 
 ### Docker Compose
 
 ```bash
+export SENTINEL_API_KEY='replace-with-strong-api-key'
 docker compose up --build
 make apply-migrations
 make seed-lexicon
@@ -58,7 +60,7 @@ curl -sS http://localhost:8000/health; echo
 ```bash
 curl -sS -X POST http://localhost:8000/v1/moderate \
   -H 'Content-Type: application/json' \
-  -H 'X-API-Key: dev-key' \
+  -H "X-API-Key: ${SENTINEL_API_KEY}" \
   -d '{"text":"They should kill them now."}'
 ```
 

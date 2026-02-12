@@ -3,11 +3,18 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from sentinel_api.main import app
 
 client = TestClient(app)
+TEST_API_KEY = "test-api-key"
+
+
+@pytest.fixture(autouse=True)
+def set_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SENTINEL_API_KEY", TEST_API_KEY)
 
 
 def test_response_contains_all_required_schema_fields() -> None:
@@ -18,7 +25,7 @@ def test_response_contains_all_required_schema_fields() -> None:
     response = client.post(
         "/v1/moderate",
         json={"text": "msee this is a peaceful conversation"},
-        headers={"X-API-Key": "dev-key"},
+        headers={"X-API-Key": TEST_API_KEY},
     )
     assert response.status_code == 200
     payload = response.json()
@@ -26,7 +33,7 @@ def test_response_contains_all_required_schema_fields() -> None:
 
 
 def test_request_schema_text_required() -> None:
-    response = client.post("/v1/moderate", json={}, headers={"X-API-Key": "dev-key"})
+    response = client.post("/v1/moderate", json={}, headers={"X-API-Key": TEST_API_KEY})
     assert response.status_code == 400
     payload = response.json()
     assert payload["error_code"] == "HTTP_400"

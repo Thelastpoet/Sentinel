@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      SENTINEL_API_KEY: dev-key
+      SENTINEL_API_KEY: ${SENTINEL_API_KEY:?SENTINEL_API_KEY must be set}
       SENTINEL_RATE_LIMIT_PER_MINUTE: 120
       SENTINEL_DATABASE_URL: postgresql://sentinel:sentinel@postgres:5432/sentinel
       SENTINEL_REDIS_URL: redis://redis:6379/0

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import secrets
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -107,8 +108,13 @@ async def request_context_middleware(request: Request, call_next):  # type: igno
 
 
 def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
-    expected = os.getenv("SENTINEL_API_KEY", "dev-key")
-    if x_api_key != expected:
+    expected = os.getenv("SENTINEL_API_KEY")
+    if not expected:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="API authentication is not configured",
+        )
+    if not x_api_key or not secrets.compare_digest(x_api_key, expected):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing or invalid API key",

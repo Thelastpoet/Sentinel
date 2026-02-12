@@ -13,23 +13,6 @@ OAUTH_JWT_SECRET_ENV = "SENTINEL_OAUTH_JWT_SECRET"
 OAUTH_JWT_ALGORITHM_ENV = "SENTINEL_OAUTH_JWT_ALGORITHM"
 OAUTH_JWT_AUDIENCE_ENV = "SENTINEL_OAUTH_JWT_AUDIENCE"
 OAUTH_JWT_ISSUER_ENV = "SENTINEL_OAUTH_JWT_ISSUER"
-OAUTH_ALLOW_STATIC_TOKENS_ENV = "SENTINEL_OAUTH_ALLOW_STATIC_TOKENS"
-
-DEFAULT_TOKEN_REGISTRY: dict[str, dict[str, object]] = {
-    "internal-dev-token": {
-        "client_id": "internal-dev-client",
-        "scopes": [
-            "internal:queue:read",
-            "admin:proposal:read",
-            "admin:proposal:review",
-            "admin:appeal:read",
-            "admin:appeal:write",
-            "admin:transparency:read",
-            "admin:transparency:export",
-            "admin:transparency:identifiers",
-        ],
-    }
-}
 
 
 @dataclass(frozen=True)
@@ -56,7 +39,7 @@ def _normalize_scopes(value: object) -> frozenset[str]:
 def _load_registry_payload() -> dict[str, object]:
     raw = os.getenv(OAUTH_TOKEN_REGISTRY_ENV)
     if not raw:
-        return dict(DEFAULT_TOKEN_REGISTRY)
+        return {}
     payload = json.loads(raw)
     if not isinstance(payload, dict):
         raise ValueError(f"{OAUTH_TOKEN_REGISTRY_ENV} must be a JSON object")
@@ -79,12 +62,6 @@ def load_token_registry() -> dict[str, OAuthPrincipal]:
             scopes=scopes,
         )
     return registry
-
-
-def _as_bool(value: str | None, *, default: bool = False) -> bool:
-    if value is None:
-        return default
-    return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _decode_jwt_principal(token: str) -> OAuthPrincipal:
@@ -157,17 +134,6 @@ def authenticate_bearer_token(authorization: str | None) -> OAuthPrincipal:
     jwt_secret = os.getenv(OAUTH_JWT_SECRET_ENV, "").strip()
     if jwt_secret:
         return _decode_jwt_principal(normalized_token)
-
-    allow_static_tokens = _as_bool(
-        os.getenv(OAUTH_ALLOW_STATIC_TOKENS_ENV),
-        default=True,
-    )
-    if not allow_static_tokens:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid bearer token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
 
     try:
         registry = load_token_registry()

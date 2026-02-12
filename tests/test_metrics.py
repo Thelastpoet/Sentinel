@@ -7,10 +7,12 @@ from sentinel_api.main import app, rate_limiter
 from sentinel_api.metrics import metrics
 
 client = TestClient(app)
+TEST_API_KEY = "test-api-key"
 
 
 @pytest.fixture(autouse=True)
-def reset_runtime_state() -> None:
+def reset_runtime_state(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SENTINEL_API_KEY", TEST_API_KEY)
     rate_limiter.reset()
     metrics.reset()
 
@@ -22,7 +24,7 @@ def test_metrics_endpoint_exposes_counters() -> None:
     moderate = client.post(
         "/v1/moderate",
         json={"text": "We should discuss policy peacefully."},
-        headers={"X-API-Key": "dev-key"},
+        headers={"X-API-Key": TEST_API_KEY},
     )
     assert moderate.status_code == 200
 
@@ -36,7 +38,7 @@ def test_metrics_endpoint_exposes_counters() -> None:
 
 
 def test_metrics_tracks_validation_errors() -> None:
-    invalid = client.post("/v1/moderate", json={}, headers={"X-API-Key": "dev-key"})
+    invalid = client.post("/v1/moderate", json={}, headers={"X-API-Key": TEST_API_KEY})
     assert invalid.status_code == 400
 
     metrics_response = client.get("/metrics")
@@ -57,7 +59,7 @@ def test_metrics_latency_bucket_counter_increments_only_for_moderation() -> None
     moderate = client.post(
         "/v1/moderate",
         json={"text": "We should discuss policy peacefully."},
-        headers={"X-API-Key": "dev-key"},
+        headers={"X-API-Key": TEST_API_KEY},
     )
     assert moderate.status_code == 200
 
@@ -70,7 +72,7 @@ def test_prometheus_metrics_endpoint_exposes_counters() -> None:
     moderate = client.post(
         "/v1/moderate",
         json={"text": "We should discuss policy peacefully."},
-        headers={"X-API-Key": "dev-key"},
+        headers={"X-API-Key": TEST_API_KEY},
     )
     assert moderate.status_code == 200
 

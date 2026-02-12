@@ -25,7 +25,10 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .[dev,ops]
+export SENTINEL_API_KEY='replace-with-strong-api-key'
 ```
+
+`SENTINEL_API_KEY` is required. There is no built-in fallback key.
 
 ## Manual migration and seed sync
 
@@ -119,6 +122,11 @@ python scripts/run_partner_connector_ingest.py \
   if unset, falls back to in-memory limiter.
 
 ## OAuth scope setup (internal/admin)
+
+OAuth bearer auth has no built-in default tokens. Configure one of:
+
+- `SENTINEL_OAUTH_TOKENS_JSON` for static token registry in controlled environments.
+- `SENTINEL_OAUTH_JWT_SECRET` (+ optional audience/issuer) for JWT validation.
 
 Example token registry payload:
 
