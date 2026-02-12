@@ -3,5 +3,12 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.pyright/
+.pre-commit-cache/
+.coverage
+htmlcov/
+*.egg-info/
+pip-wheel-metadata/
 dist/
 build/
