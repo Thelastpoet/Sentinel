@@ -1,0 +1,37 @@
+{
+  "wave": "wave1",
+  "packs": [
+    {
+      "language": "luo",
+      "pack_version": "pack-luo-0.1",
+      "priority": 1,
+      "directory": "pack-luo-0.1",
+      "artifacts": {
+        "normalization": "normalization.json",
+        "lexicon": "lexicon.json",
+        "calibration": "calibration.json"
+      },
+      "eval_dataset": "../eval/tier2/pack-luo-0.1.eval.jsonl",
+      "annotation_metadata": {
+        "annotators_per_sample": 3,
+        "krippendorff_alpha": 0.72
+      }
+    },
+    {
+      "language": "kalenjin",
+      "pack_version": "pack-kalenjin-0.1",
+      "priority": 2,
+      "directory": "pack-kalenjin-0.1",
+      "artifacts": {
+        "normalization": "normalization.json",
+        "lexicon": "lexicon.json",
+        "calibration": "calibration.json"
+      },
+      "eval_dataset": "../eval/tier2/pack-kalenjin-0.1.eval.jsonl",
+      "annotation_metadata": {
+        "annotators_per_sample": 3,
+        "krippendorff_alpha": 0.7
+      }
+    }
+  ]
+}

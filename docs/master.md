@@ -372,14 +372,18 @@ Privacy baseline:
 7. Unit and integration test suites pass.
 8. Per-language benchmark reports generate successfully.
 9. Latency remains below P95 <150ms on hot path under expected load.
+10. Formal go-live gate package is approved per `docs/specs/phase4/i408-go-live-readiness-gate.md`.
 
 ## 20. Key Decisions Pending
 
 1. Initial embedding model choice and memory budget.
 2. Primary governance body for lexicon and policy updates.
 3. Cloud region strategy for East Africa latency and legal requirements.
-4. Tier 2 language priority order based on risk and available resources.
-5. Sustainability model across grants, institutional partners, and service tiers.
+4. Sustainability model across grants, institutional partners, and service tiers.
+
+Resolved decision:
+
+- Tier 2 language priority order is ratified in `docs/specs/phase4/i401-tier2-language-priority-and-gates.md`.
 
 ## 21. Stakeholder Engagement and Risk Register
 

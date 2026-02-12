@@ -99,4 +99,3 @@ def test_postgres_repository_raises_when_active_release_has_no_entries(monkeypat
     repo = PostgresLexiconRepository("postgresql://example")
     with pytest.raises(ValueError, match="no active lexicon entries for active release"):
         repo.fetch_active()
-

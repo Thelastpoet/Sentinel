@@ -18,8 +18,8 @@ Status legend:
 |---|---|---|---|
 | Phase 1: Foundation | Months 1-6 | Stable hot-path API and deterministic governance baseline | All Phase 1 tasks `done` |
 | Phase 2: Intelligence Integration | Months 7-12 | Define async intelligence/update pipeline and control plane specs | T-017, T-020, T-021 `done` |
-| Phase 3: Election Readiness | Months 13-18 | Codify election-time controls, appeals, and transparency workflows | T-018, T-019 `done` + I-301..I-306 `done` |
-| Phase 4: Scale and Sustainability | Months 19-24 | Community governance and long-term operating safeguards | T-022 `done` |
+| Phase 3: Election Readiness | Months 13-18 | Codify election-time controls, appeals, and transparency workflows | T-018, T-019 `done` + I-301..I-307 `done` |
+| Phase 4: Scale and Sustainability | Months 19-24 | Tier-2 language expansion, partner integrations, and evaluation/transparency operations | Gate target: T-022 `done` + I-401..I-412 `done` |
 
 ## Phase 1: Foundation (Months 1-6)
 
@@ -82,19 +82,42 @@ Status legend:
 | ID | Task | Spec links | Status | Exit criteria |
 |---|---|---|---|---|
 | I-301 | Real LID + span-level language routing | `docs/master.md` (Sec. 5.1, Sec. 7.3), `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `done` | Span-level language routing implemented for Tier-1 languages with deterministic fallback and contract-safe response behavior |
-| I-302 | Lexicon matcher v2 (boundary/phrase aware + normalization) | `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md`, `docs/specs/rfcs/0001-v1-moderation-api.md` | `in_progress` | Substring false positives eliminated; phrase-aware matching and evasion-resistance tests passing |
-| I-303 | Redis hot triggers integration | `docs/master.md` (Sec. 5.2, Sec. 8.2), `docs/specs/adr/0001-lexicon-repository-fallback.md`, `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `todo` | O(1) hot-trigger lookup path active with graceful fallback when Redis unavailable |
-| I-304 | pgvector semantic matching on hot path | `docs/master.md` (Sec. 5.2, Sec. 8.2, Sec. 9.1), `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `todo` | Runtime emits real `vector_match` evidence with bounded latency and deterministic policy integration |
-| I-305 | Electoral phase modes runtime enforcement | `docs/specs/adr/0005-electoral-phase-policy-modes.md`, `docs/master.md` (Sec. 10.3), `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `todo` | Effective phase-mode overrides enforced at runtime with validation and audit visibility |
-| I-306 | Async monitoring pipeline worker activation | `docs/specs/rfcs/0002-async-monitoring-update-system.md`, `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `todo` | Worker consumes queue and drives auditable state transitions through proposal generation handoff |
-| I-307 | Staged package split to `core/router/lexicon/langpack/api` | `docs/master.md` (Sec. 17.1), `docs/specs/adr/0008-staged-package-boundary-migration.md` | `todo` | Package boundaries established with compatibility shims, dependency-direction statements per extraction PR, explicit rollback path per extraction PR, and no public contract break |
+| I-302 | Lexicon matcher v2 (boundary/phrase aware + normalization) | `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md`, `docs/specs/rfcs/0001-v1-moderation-api.md` | `done` | Substring false positives eliminated; phrase-aware matching and evasion-resistance tests passing |
+| I-303 | Redis hot triggers integration | `docs/master.md` (Sec. 5.2, Sec. 8.2), `docs/specs/adr/0001-lexicon-repository-fallback.md`, `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `done` | O(1) hot-trigger lookup path active with graceful fallback when Redis unavailable |
+| I-304 | pgvector semantic matching on hot path | `docs/master.md` (Sec. 5.2, Sec. 8.2, Sec. 9.1), `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `done` | Runtime emits real `vector_match` evidence with bounded latency and deterministic policy integration |
+| I-305 | Electoral phase modes runtime enforcement | `docs/specs/adr/0005-electoral-phase-policy-modes.md`, `docs/master.md` (Sec. 10.3), `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `done` | Effective phase-mode overrides enforced at runtime with validation and audit visibility |
+| I-306 | Async monitoring pipeline worker activation | `docs/specs/rfcs/0002-async-monitoring-update-system.md`, `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md` | `done` | Worker consumes queue and drives auditable state transitions through proposal generation handoff |
+| I-307 | Staged package split to `core/router/lexicon/langpack/api` | `docs/master.md` (Sec. 17.1), `docs/specs/adr/0008-staged-package-boundary-migration.md` | `done` | Package boundaries established with compatibility shims, dependency-direction statements per extraction PR, explicit rollback path per extraction PR, and no public contract break |
+
+### Phase 4 Implementation (Scale and Sustainability)
+
+| ID | Task | Spec links | Status | Exit criteria |
+|---|---|---|---|---|
+| I-401 | Tier-2 language priority order + acceptance gates | `docs/master.md` (Sec. 7.2, Sec. 13.2, Sec. 20), `docs/specs/phase4/i401-tier2-language-priority-and-gates.md` | `done` | Priority order for next Tier-2 packs is ratified and acceptance/rollback thresholds are documented |
+| I-402 | Appeals workflow runtime implementation | `docs/master.md` (Sec. 10.1, Sec. 21.2), `docs/specs/rfcs/0003-appeals-transparency-workflow.md`, `docs/specs/phase4/i402-appeals-workflow-runtime.md` | `done` | Appeal state machine, case reconstruction, and adjudication actions are implemented with immutable audit trail |
+| I-403 | Transparency reporting and export surfaces | `docs/master.md` (Sec. 10.1, Sec. 17.2), `docs/specs/rfcs/0003-appeals-transparency-workflow.md`, `docs/specs/phase4/i403-transparency-reporting-export.md` | `done` | Deterministic transparency export endpoints/reports ship with role-scoped access and redaction controls |
+| I-404 | Partner fact-check connector framework | `docs/master.md` (Sec. 9.2, Sec. 14, Sec. 21.1), `docs/specs/phase4/i404-partner-factcheck-connector-framework.md` | `done` | Connector abstraction + retry/backoff/circuit-breaker behavior implemented with at least one reference connector |
+| I-405 | Deployment-stage controls (shadow -> advisory -> supervised) | `docs/master.md` (Sec. 13.1, Sec. 16), `docs/specs/phase4/i405-deployment-stage-controls.md` | `done` | Runtime stage controls enforce mode-specific decision behavior with audit visibility and safe rollback toggles |
+| I-406 | Per-language evaluation and bias-audit harness | `docs/master.md` (Sec. 13.2, Sec. 19), `docs/specs/phase4/i406-evaluation-bias-harness-baseline.md` | `done` | Eval pipeline reports precision/recall/F1 by language and harm class, plus false-positive and subgroup disparity metrics |
+| I-407 | Tier-2 language-pack Wave 1 delivery | `docs/master.md` (Sec. 7.1, Sec. 7.2, Sec. 16), `docs/specs/phase4/i407-tier2-language-pack-wave1-delivery.md` | `done` | First Tier-2 language packs ship with versioned normalization/lexicon/calibration artifacts and pass defined eval gates |
+| I-408 | Go-live readiness gate and release sign-off package | `docs/master.md` (Sec. 11, Sec. 13, Sec. 19, Sec. 20), `docs/specs/phase4/i408-go-live-readiness-gate.md` | `todo` | Deterministic go/no-go gate, evidence bundle format, and role-based sign-off workflow are implemented and exercised with prerequisite quality/latency artifacts |
+| I-409 | Tooling quality gates (`ruff` + `pyright`) | `docs/master.md` (Sec. 15), `docs/specs/phase4/i409-tooling-quality-gates.md` | `todo` | Ruff/pyright configs exist, local commands are documented, and CI enforces both gates |
+| I-410 | Latency SLO CI gate (`P95 < 150ms`) | `docs/master.md` (Sec. 3.1, Sec. 19), `docs/specs/phase4/i410-latency-slo-ci-gate.md` | `todo` | Hot-path benchmark runs in CI with failing gate on p95 budget breach and artifact retention |
+| I-411 | Hate-Lex metadata completeness + taxonomy coverage hardening | `docs/master.md` (Sec. 6.1, Sec. 8.1), `docs/specs/phase4/i411-lexicon-metadata-and-taxonomy-coverage.md` | `todo` | Lexicon schema/seed include lifecycle metadata fields and baseline includes reachable `HARASSMENT_THREAT` coverage |
+| I-412 | Disinformation claim-likeness baseline integration | `docs/master.md` (Sec. 9.1), `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md` | `todo` | Deterministic claim-likeness signal is integrated into hot path with tests and no public contract break |
 
 ## Immediate Next (Execution Order)
 
-1. I-301: real LID + span-level language routing.
-2. I-302: lexicon matcher v2 (boundary/phrase aware + normalization).
-3. I-303: Redis hot triggers integration.
-4. I-304: pgvector semantic matching on hot path.
+1. I-409 - add repo and CI quality gates for `ruff` and `pyright`.
+2. I-410 - enforce latency P95 budget in CI.
+3. I-411 - harden lexicon metadata schema/seed and baseline taxonomy coverage.
+4. I-412 - add claim-likeness baseline signal for disinfo hot path.
+5. I-408 - implement go-live readiness gate using outputs from I-409 and I-410.
+
+## Execution Dependencies
+
+1. `I-409` and `I-410` are hard prerequisites for `I-408`.
+2. `I-408` cannot reach `done` while unresolved Section 20 decisions lack explicit launch disposition records.
 
 ## Update Rule
 

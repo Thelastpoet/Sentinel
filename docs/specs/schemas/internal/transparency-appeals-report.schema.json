@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/transparency-appeals-report.schema.json",
+  "title": "TransparencyAppealsReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "generated_at",
+    "total_appeals",
+    "open_appeals",
+    "resolved_appeals",
+    "backlog_over_72h",
+    "reversal_rate",
+    "mean_resolution_hours",
+    "status_counts",
+    "resolution_counts"
+  ],
+  "properties": {
+    "generated_at": {"type": "string", "format": "date-time"},
+    "total_appeals": {"type": "integer", "minimum": 0},
+    "open_appeals": {"type": "integer", "minimum": 0},
+    "resolved_appeals": {"type": "integer", "minimum": 0},
+    "backlog_over_72h": {"type": "integer", "minimum": 0},
+    "reversal_rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "mean_resolution_hours": {"type": ["number", "null"], "minimum": 0},
+    "status_counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "resolution_counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    }
+  }
+}

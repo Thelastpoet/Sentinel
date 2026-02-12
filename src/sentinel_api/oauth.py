@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 from fastapi import Header, HTTPException, status
 
-
 OAUTH_TOKEN_REGISTRY_ENV = "SENTINEL_OAUTH_TOKENS_JSON"
 
 DEFAULT_TOKEN_REGISTRY: dict[str, dict[str, object]] = {
@@ -16,6 +15,11 @@ DEFAULT_TOKEN_REGISTRY: dict[str, dict[str, object]] = {
             "internal:queue:read",
             "admin:proposal:read",
             "admin:proposal:review",
+            "admin:appeal:read",
+            "admin:appeal:write",
+            "admin:transparency:read",
+            "admin:transparency:export",
+            "admin:transparency:identifiers",
         ],
     }
 }

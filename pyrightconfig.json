@@ -1,0 +1,12 @@
+{
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "standard",
+  "include": [
+    "src",
+    "scripts"
+  ],
+  "exclude": [
+    ".venv",
+    "**/__pycache__"
+  ]
+}

@@ -21,6 +21,7 @@ def test_moderation_uses_external_policy_config(tmp_path, monkeypatch) -> None:
     path.write_text(json.dumps(cfg), encoding="utf-8")
 
     monkeypatch.setenv("SENTINEL_POLICY_CONFIG_PATH", str(path))
+    monkeypatch.delenv("SENTINEL_ELECTORAL_PHASE", raising=False)
     reset_policy_config_cache()
     result = moderate("peaceful discussion")
     assert result.policy_version == "policy-2099.01"
@@ -28,4 +29,3 @@ def test_moderation_uses_external_policy_config(tmp_path, monkeypatch) -> None:
     assert result.toxicity == 0.01
     assert result.pack_versions["en"] == "pack-en-9.9"
     reset_policy_config_cache()
-

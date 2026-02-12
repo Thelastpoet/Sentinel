@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from sentinel_api.main import app, rate_limiter
 from sentinel_api.metrics import metrics
@@ -72,6 +72,20 @@ def test_moderate_block_path() -> None:
     assert "R_INCITE_CALL_TO_HARM" in payload["reason_codes"]
 
 
+def test_moderate_advisory_stage_downgrades_block(monkeypatch) -> None:
+    monkeypatch.setenv("SENTINEL_DEPLOYMENT_STAGE", "advisory")
+    response = client.post(
+        "/v1/moderate",
+        json={"text": "They should kill them now."},
+        headers={"X-API-Key": "dev-key"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["action"] == "REVIEW"
+    assert payload["policy_version"].endswith("#advisory")
+    assert "R_STAGE_ADVISORY_BLOCK_DOWNGRADED" in payload["reason_codes"]
+
+
 def test_moderate_review_path() -> None:
     response = client.post(
         "/v1/moderate",
@@ -127,7 +141,8 @@ def test_rate_limit_exceeded() -> None:
 
 
 def test_moderate_internal_error_returns_structured_500(monkeypatch) -> None:
-    def broken(_text: str):
+    def broken(_text: str, *, runtime=None):
+        del runtime
         raise RuntimeError("boom")
 
     monkeypatch.setattr("sentinel_api.main.moderate", broken)

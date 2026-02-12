@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from scripts import manage_lexicon_release as mlr
 
 

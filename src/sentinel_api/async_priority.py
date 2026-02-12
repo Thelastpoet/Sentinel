@@ -97,9 +97,7 @@ class AsyncQueueMetrics:
         with self.lock:
             self.sla_breach_count_by_priority[priority] += count
 
-    def evaluate_sla_alerts(
-        self, thresholds: dict[Priority, int] | None = None
-    ) -> dict[str, bool]:
+    def evaluate_sla_alerts(self, thresholds: dict[Priority, int] | None = None) -> dict[str, bool]:
         threshold_map = thresholds or {
             "critical": 1,
             "urgent": 5,
@@ -108,8 +106,7 @@ class AsyncQueueMetrics:
         }
         with self.lock:
             return {
-                priority: self.sla_breach_count_by_priority[priority]
-                >= threshold_map[priority]
+                priority: self.sla_breach_count_by_priority[priority] >= threshold_map[priority]
                 for priority in SLA_WINDOWS
             }
 

@@ -63,9 +63,7 @@ def test_fallback_repository_uses_primary_when_healthy() -> None:
         ],
     )
     primary = _StaticRepo(primary_snapshot)
-    fallback = _StaticRepo(
-        LexiconSnapshot(version="hatelex-v1.0", entries=[])
-    )
+    fallback = _StaticRepo(LexiconSnapshot(version="hatelex-v1.0", entries=[]))
 
     class _NoOpLogger:
         def warning(self, *_args, **_kwargs) -> None:
@@ -101,4 +99,3 @@ def test_fallback_repository_uses_fallback_on_primary_failure() -> None:
     snapshot = repo.fetch_active()
     assert snapshot.version == "hatelex-v1.0"
     assert snapshot.entries[0].term == "y"
-

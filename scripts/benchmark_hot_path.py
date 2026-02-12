@@ -10,9 +10,7 @@ from sentinel_api.policy import moderate
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Benchmark Sentinel moderation hot-path latency"
-    )
+    parser = argparse.ArgumentParser(description="Benchmark Sentinel moderation hot-path latency")
     parser.add_argument(
         "--text",
         default="We should discuss policy peacefully.",

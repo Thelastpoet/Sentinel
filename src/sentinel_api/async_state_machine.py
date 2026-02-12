@@ -1,81 +1,19 @@
-from __future__ import annotations
+"""Compatibility shim for async state-machine primitives.
 
-from dataclasses import dataclass
+This module preserves existing imports during staged package extraction.
+Prefer importing from `sentinel_core.async_state_machine` for new code.
+"""
 
-
-QUEUE_STATES: set[str] = {
-    "queued",
-    "processing",
-    "clustered",
-    "proposed",
-    "dropped",
-    "error",
-}
-
-PROPOSAL_STATES: set[str] = {
-    "draft",
-    "in_review",
-    "needs_revision",
-    "approved",
-    "promoted",
-    "rejected",
-}
-
-QUEUE_ALLOWED_TRANSITIONS: dict[str, set[str]] = {
-    "queued": {"processing", "dropped"},
-    "processing": {"clustered", "error"},
-    "clustered": {"proposed", "dropped"},
-    "proposed": set(),
-    "dropped": set(),
-    "error": {"queued", "dropped"},
-}
-
-PROPOSAL_ALLOWED_TRANSITIONS: dict[str, set[str]] = {
-    "draft": {"in_review", "rejected"},
-    "in_review": {"approved", "rejected", "needs_revision"},
-    "needs_revision": {"in_review", "rejected"},
-    "approved": {"promoted", "rejected"},
-    "promoted": set(),
-    "rejected": set(),
-}
-
-
-@dataclass(frozen=True)
-class TransitionResult:
-    entity: str
-    from_state: str
-    to_state: str
-
-
-class InvalidStateTransition(ValueError):
-    pass
-
-
-def _normalize(state: str) -> str:
-    return state.strip().lower()
-
-
-def validate_queue_transition(from_state: str, to_state: str) -> TransitionResult:
-    source = _normalize(from_state)
-    target = _normalize(to_state)
-    if source not in QUEUE_STATES:
-        raise InvalidStateTransition(f"unknown queue state: {from_state}")
-    if target not in QUEUE_STATES:
-        raise InvalidStateTransition(f"unknown queue state: {to_state}")
-    if target not in QUEUE_ALLOWED_TRANSITIONS[source]:
-        raise InvalidStateTransition(f"queue transition not allowed: {source} -> {target}")
-    return TransitionResult(entity="queue", from_state=source, to_state=target)
-
-
-def validate_proposal_transition(from_state: str, to_state: str) -> TransitionResult:
-    source = _normalize(from_state)
-    target = _normalize(to_state)
-    if source not in PROPOSAL_STATES:
-        raise InvalidStateTransition(f"unknown proposal state: {from_state}")
-    if target not in PROPOSAL_STATES:
-        raise InvalidStateTransition(f"unknown proposal state: {to_state}")
-    if target not in PROPOSAL_ALLOWED_TRANSITIONS[source]:
-        raise InvalidStateTransition(
-            f"proposal transition not allowed: {source} -> {target}"
-        )
-    return TransitionResult(entity="proposal", from_state=source, to_state=target)
+from sentinel_core.async_state_machine import (  # noqa: F401
+    APPEAL_ALLOWED_TRANSITIONS,
+    APPEAL_STATES,
+    PROPOSAL_ALLOWED_TRANSITIONS,
+    PROPOSAL_STATES,
+    QUEUE_ALLOWED_TRANSITIONS,
+    QUEUE_STATES,
+    InvalidStateTransition,
+    TransitionResult,
+    validate_appeal_transition,
+    validate_proposal_transition,
+    validate_queue_transition,
+)

@@ -75,9 +75,7 @@ def main() -> None:
                 )
 
             if args.activate_if_none:
-                cur.execute(
-                    "SELECT 1 FROM lexicon_releases WHERE status = 'active' LIMIT 1"
-                )
+                cur.execute("SELECT 1 FROM lexicon_releases WHERE status = 'active' LIMIT 1")
                 if cur.fetchone() is None:
                     cur.execute(
                         """

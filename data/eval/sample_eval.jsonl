@@ -1,0 +1,4 @@
+{"id":"sample-1","text":"We should discuss policy peacefully.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true,"subgroup":"group-a"}
+{"id":"sample-2","text":"They should kill them now.","language":"en","labels":["INCITEMENT_VIOLENCE"],"is_benign_political":false}
+{"id":"sample-3","text":"Wanapaswa kuungana kwa amani.","language":"sw","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true,"subgroup":"group-b"}
+{"id":"sample-4","text":"Burn them all tonight.","language":"en","labels":["INCITEMENT_VIOLENCE"],"is_benign_political":false}

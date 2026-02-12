@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 
 import pytest
-
 from scripts import manage_lexicon_release as mlr
 
 
@@ -80,9 +79,7 @@ def test_ingest_entries_inserts_normalized_entries(monkeypatch) -> None:
 def test_ingest_entries_replace_existing_runs_deprecation_step(monkeypatch) -> None:
     cursor = _RecordingCursor()
     monkeypatch.setattr(mlr, "get_release_status", lambda _cur, _version: "draft")
-    monkeypatch.setattr(
-        mlr, "count_held_active_entries_for_version", lambda _cur, _version: 0
-    )
+    monkeypatch.setattr(mlr, "count_held_active_entries_for_version", lambda _cur, _version: 0)
     count = mlr.ingest_entries(
         cursor,
         "hatelex-v2.2",
@@ -97,9 +94,7 @@ def test_ingest_entries_replace_existing_runs_deprecation_step(monkeypatch) -> N
 def test_ingest_entries_replace_existing_rejects_held_entries(monkeypatch) -> None:
     cursor = _RecordingCursor()
     monkeypatch.setattr(mlr, "get_release_status", lambda _cur, _version: "draft")
-    monkeypatch.setattr(
-        mlr, "count_held_active_entries_for_version", lambda _cur, _version: 2
-    )
+    monkeypatch.setattr(mlr, "count_held_active_entries_for_version", lambda _cur, _version: 2)
     with pytest.raises(ValueError, match="legal-hold active entries"):
         mlr.ingest_entries(
             cursor,

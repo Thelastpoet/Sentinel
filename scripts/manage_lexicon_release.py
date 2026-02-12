@@ -38,14 +38,10 @@ def parse_args() -> argparse.Namespace:
     activate = subparsers.add_parser("activate", help="Activate an existing release.")
     activate.add_argument("--version", required=True)
 
-    deprecate = subparsers.add_parser(
-        "deprecate", help="Deprecate an existing release."
-    )
+    deprecate = subparsers.add_parser("deprecate", help="Deprecate an existing release.")
     deprecate.add_argument("--version", required=True)
 
-    ingest = subparsers.add_parser(
-        "ingest", help="Ingest lexicon entries into a draft release."
-    )
+    ingest = subparsers.add_parser("ingest", help="Ingest lexicon entries into a draft release.")
     ingest.add_argument("--version", required=True)
     ingest.add_argument("--input-path", required=True, help="JSON file path.")
     ingest.add_argument(
@@ -70,10 +66,7 @@ def parse_args() -> argparse.Namespace:
 
     promote_proposal = subparsers.add_parser(
         "promote-proposal",
-        help=(
-            "Promote an approved lexicon proposal into a governed draft release "
-            "artifact."
-        ),
+        help=("Promote an approved lexicon proposal into a governed draft release " "artifact."),
     )
     promote_proposal.add_argument("--proposal-id", required=True, type=int)
     promote_proposal.add_argument("--target-version", required=True)
@@ -239,9 +232,7 @@ def count_held_active_entries_for_version(cur, version: str) -> int:
     return int(row[0])
 
 
-def apply_release_legal_hold(
-    cur, *, version: str, actor: str, reason: str
-) -> None:
+def apply_release_legal_hold(cur, *, version: str, actor: str, reason: str) -> None:
     cur.execute(
         """
         UPDATE lexicon_releases
@@ -274,9 +265,7 @@ def apply_release_legal_hold(
     )
 
 
-def release_release_legal_hold(
-    cur, *, version: str, actor: str, reason: str | None = None
-) -> None:
+def release_release_legal_hold(cur, *, version: str, actor: str, reason: str | None = None) -> None:
     cur.execute(
         """
         UPDATE lexicon_releases
@@ -383,12 +372,15 @@ def get_release_proposal(cur, proposal_id: int) -> tuple[int, str, str, str]:
 
 def validate_proposal_transition_for_promotion(current_status: str) -> None:
     try:
-        state_machine = importlib.import_module("sentinel_api.async_state_machine")
+        state_machine = importlib.import_module("sentinel_core.async_state_machine")
     except ModuleNotFoundError:
-        status = current_status.strip().lower()
-        if status != "approved":
-            raise ValueError(f"proposal transition not allowed: {status} -> promoted")
-        return
+        try:
+            state_machine = importlib.import_module("sentinel_api.async_state_machine")
+        except ModuleNotFoundError as err:
+            status = current_status.strip().lower()
+            if status != "approved":
+                raise ValueError(f"proposal transition not allowed: {status} -> promoted") from err
+            return
 
     try:
         state_machine.validate_proposal_transition(current_status, "promoted")
@@ -424,10 +416,7 @@ def promote_proposal_to_release(
     validate_proposal_transition_for_promotion(proposal_status)
 
     existing_release_status = get_release_status(cur, candidate_version)
-    if (
-        existing_release_status is not None
-        and existing_release_status != "draft"
-    ):
+    if existing_release_status is not None and existing_release_status != "draft":
         raise ValueError(
             "target release version already exists with non-draft status: "
             f"{existing_release_status}"
@@ -513,8 +502,16 @@ def normalize_ingest_entries(raw_entries: list[dict[str, object]]) -> list[dict[
         reason_code = str(item["reason_code"]).strip().upper()
         lang = str(item["lang"]).strip().lower()
 
+        raw_severity = item["severity"]
+        if isinstance(raw_severity, bool):
+            raise ValueError(f"entry {index} has invalid severity")
         try:
-            severity = int(item["severity"])
+            if isinstance(raw_severity, int):
+                severity = raw_severity
+            elif isinstance(raw_severity, str):
+                severity = int(raw_severity.strip())
+            else:
+                raise ValueError("severity must be int or numeric string")
         except (TypeError, ValueError) as exc:
             raise ValueError(f"entry {index} has invalid severity") from exc
 
@@ -604,9 +601,7 @@ def activate_release(cur, version: str) -> None:
         raise ValueError(f"release {version} is on legal hold and cannot be activated")
     entry_count = count_active_entries_for_version(cur, version)
     if entry_count == 0:
-        raise ValueError(
-            f"release {version} has no active lexicon entries; cannot activate"
-        )
+        raise ValueError(f"release {version} has no active lexicon entries; cannot activate")
     held_active_release = find_active_held_release_to_deprecate(cur, version)
     if held_active_release is not None:
         raise ValueError(
@@ -711,7 +706,9 @@ def ingest_entries(
         raise ValueError(f"release {version} does not exist")
     if status != "draft":
         raise ValueError(
-            f"release {version} is not draft (status={status}); ingest allowed only for draft releases"
+            "release "
+            f"{version} is not draft (status={status}); "
+            "ingest allowed only for draft releases"
         )
 
     entries = normalize_ingest_entries(raw_entries)
@@ -798,11 +795,7 @@ def validate_release(cur, requested_version: str | None) -> dict[str, object]:
 
     entry_count = count_active_entries_for_version(cur, version)
     ok = entry_count > 0
-    message = (
-        "release is valid for activation"
-        if ok
-        else "release has zero active entries"
-    )
+    message = "release is valid for activation" if ok else "release has zero active entries"
     return {
         "ok": ok,
         "version": version,
@@ -889,7 +882,9 @@ def main() -> None:
                 rows = list_releases(cur)
                 for row in rows:
                     print(
-                        f"version={row[0]} status={row[1]} activated_at={row[2]} deprecated_at={row[3]}"
+                        "version="
+                        f"{row[0]} status={row[1]} activated_at={row[2]} "
+                        f"deprecated_at={row[3]}"
                     )
             elif args.command == "audit":
                 rows = list_audit_events(cur, version=args.version, limit=args.limit)

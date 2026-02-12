@@ -21,8 +21,21 @@ def main() -> None:
         "queue": Path("docs/specs/schemas/internal/monitoring-queue-item.schema.json"),
         "cluster": Path("docs/specs/schemas/internal/monitoring-cluster.schema.json"),
         "proposal": Path("docs/specs/schemas/internal/release-proposal.schema.json"),
-        "proposal_review": Path(
-            "docs/specs/schemas/internal/proposal-review-event.schema.json"
+        "proposal_review": Path("docs/specs/schemas/internal/proposal-review-event.schema.json"),
+        "appeal_request": Path("docs/specs/schemas/internal/appeal-request.schema.json"),
+        "appeal_transition": Path(
+            "docs/specs/schemas/internal/appeal-state-transition.schema.json"
+        ),
+        "appeal_resolution": Path("docs/specs/schemas/internal/appeal-resolution.schema.json"),
+        "transparency_export_record": Path(
+            "docs/specs/schemas/internal/transparency-export-record.schema.json"
+        ),
+        "transparency_report": Path(
+            "docs/specs/schemas/internal/transparency-appeals-report.schema.json"
+        ),
+        "partner_signal": Path("docs/specs/schemas/internal/partner-connector-signal.schema.json"),
+        "partner_ingest_report": Path(
+            "docs/specs/schemas/internal/partner-connector-ingest-report.schema.json"
         ),
     }
 
@@ -74,9 +87,7 @@ def main() -> None:
     if required_response != set(response_schema.get("required", [])):
         fail("response required fields mismatch between openapi and JSON schema")
 
-    required_metrics = set(
-        openapi["components"]["schemas"]["MetricsResponse"].get("required", [])
-    )
+    required_metrics = set(openapi["components"]["schemas"]["MetricsResponse"].get("required", []))
     if required_metrics != set(metrics_schema.get("required", [])):
         fail("metrics required fields mismatch between openapi and JSON schema")
 
@@ -90,15 +101,11 @@ def main() -> None:
         if not schema.get("required"):
             fail(f"internal schema {name} missing required fields")
 
-    queue_priority = set(
-        internal_schemas["queue"]["properties"]["priority"].get("enum", [])
-    )
+    queue_priority = set(internal_schemas["queue"]["properties"]["priority"].get("enum", []))
     if queue_priority != {"critical", "urgent", "standard", "batch"}:
         fail("internal queue priority enum mismatch")
 
-    queue_state = set(
-        internal_schemas["queue"]["properties"]["state"].get("enum", [])
-    )
+    queue_state = set(internal_schemas["queue"]["properties"]["state"].get("enum", []))
     if queue_state != {
         "queued",
         "processing",
@@ -109,15 +116,11 @@ def main() -> None:
     }:
         fail("internal queue state enum mismatch")
 
-    proposal_type = set(
-        internal_schemas["proposal"]["properties"]["proposal_type"].get("enum", [])
-    )
+    proposal_type = set(internal_schemas["proposal"]["properties"]["proposal_type"].get("enum", []))
     if proposal_type != {"lexicon", "narrative", "policy"}:
         fail("internal proposal_type enum mismatch")
 
-    proposal_status = set(
-        internal_schemas["proposal"]["properties"]["status"].get("enum", [])
-    )
+    proposal_status = set(internal_schemas["proposal"]["properties"]["status"].get("enum", []))
     if proposal_status != {
         "draft",
         "in_review",
@@ -128,9 +131,7 @@ def main() -> None:
     }:
         fail("internal proposal status enum mismatch")
 
-    review_action = set(
-        internal_schemas["proposal_review"]["properties"]["action"].get("enum", [])
-    )
+    review_action = set(internal_schemas["proposal_review"]["properties"]["action"].get("enum", []))
     if review_action != {
         "submit_review",
         "approve",
@@ -139,6 +140,83 @@ def main() -> None:
         "promote",
     }:
         fail("internal proposal review action enum mismatch")
+
+    appeal_action = set(
+        internal_schemas["appeal_request"]["properties"]["original_action"].get("enum", [])
+    )
+    if appeal_action != {"ALLOW", "REVIEW", "BLOCK"}:
+        fail("internal appeal request original_action enum mismatch")
+
+    appeal_transition_status = set(
+        internal_schemas["appeal_transition"]["properties"]["to_status"].get("enum", [])
+    )
+    if appeal_transition_status != {
+        "submitted",
+        "triaged",
+        "in_review",
+        "rejected_invalid",
+        "resolved_upheld",
+        "resolved_reversed",
+        "resolved_modified",
+    }:
+        fail("internal appeal transition status enum mismatch")
+
+    appeal_resolution_status = set(
+        internal_schemas["appeal_resolution"]["properties"]["status"].get("enum", [])
+    )
+    if appeal_resolution_status != {
+        "resolved_upheld",
+        "resolved_reversed",
+        "resolved_modified",
+    }:
+        fail("internal appeal resolution status enum mismatch")
+
+    transparency_record_status = set(
+        internal_schemas["transparency_export_record"]["properties"]["status"].get("enum", [])
+    )
+    if transparency_record_status != {
+        "submitted",
+        "triaged",
+        "in_review",
+        "rejected_invalid",
+        "resolved_upheld",
+        "resolved_reversed",
+        "resolved_modified",
+    }:
+        fail("internal transparency export record status enum mismatch")
+
+    transparency_record_action = set(
+        internal_schemas["transparency_export_record"]["properties"]["original_action"].get(
+            "enum", []
+        )
+    )
+    if transparency_record_action != {"ALLOW", "REVIEW", "BLOCK"}:
+        fail("internal transparency export record original_action enum mismatch")
+
+    transparency_resolution_status = set(
+        internal_schemas["transparency_export_record"]["properties"]["resolution_status"].get(
+            "enum", []
+        )
+    )
+    if transparency_resolution_status != {
+        "resolved_upheld",
+        "resolved_reversed",
+        "resolved_modified",
+        None,
+    }:
+        fail("internal transparency export record resolution_status enum mismatch")
+
+    partner_manual_priority = set(
+        internal_schemas["partner_signal"]["properties"]["manual_priority"].get("enum", [])
+    )
+    if partner_manual_priority != {"critical", "urgent", "standard", "batch"}:
+        fail("internal partner signal manual_priority enum mismatch")
+
+    partner_ingest_status = set(
+        internal_schemas["partner_ingest_report"]["properties"]["status"].get("enum", [])
+    )
+    if partner_ingest_status != {"ok", "error", "circuit_open"}:
+        fail("internal partner ingest report status enum mismatch")
 
     expected_retention_classes = {
         "operational_runtime",

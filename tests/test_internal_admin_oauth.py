@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from sentinel_api.main import app
 from sentinel_api.metrics import metrics
@@ -12,7 +12,8 @@ client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
-def reset_metrics() -> None:
+def reset_metrics(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("SENTINEL_DATABASE_URL", raising=False)
     metrics.reset()
 
 
@@ -114,3 +115,82 @@ def test_admin_review_accepts_review_scope(monkeypatch: pytest.MonkeyPatch) -> N
     assert payload["action"] == "approve"
     assert payload["actor"] == "proposal-reviewer"
     assert payload["status"] == "accepted"
+
+
+def test_admin_appeals_requires_read_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-proposal-only": {
+                "client_id": "proposal-reviewer",
+                "scopes": ["admin:proposal:read", "admin:proposal:review"],
+            }
+        },
+    )
+    response = client.get(
+        "/admin/appeals",
+        headers={"Authorization": "Bearer token-proposal-only"},
+    )
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_403"
+    assert "admin:appeal:read" in payload["message"]
+
+
+def test_admin_appeals_allows_read_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-appeal-read": {
+                "client_id": "appeal-reader",
+                "scopes": ["admin:appeal:read"],
+            }
+        },
+    )
+    response = client.get(
+        "/admin/appeals",
+        headers={"Authorization": "Bearer token-appeal-read"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total_count"] >= 0
+    assert "items" in payload
+
+
+def test_transparency_report_requires_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-appeal-read-only": {
+                "client_id": "appeal-reader",
+                "scopes": ["admin:appeal:read"],
+            }
+        },
+    )
+    response = client.get(
+        "/admin/transparency/reports/appeals",
+        headers={"Authorization": "Bearer token-appeal-read-only"},
+    )
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_403"
+    assert "admin:transparency:read" in payload["message"]
+
+
+def test_transparency_export_allows_export_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-transparency-export": {
+                "client_id": "transparency-exporter",
+                "scopes": ["admin:transparency:export"],
+            }
+        },
+    )
+    response = client.get(
+        "/admin/transparency/exports/appeals",
+        headers={"Authorization": "Bearer token-transparency-export"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert "records" in payload

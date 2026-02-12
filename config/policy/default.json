@@ -14,6 +14,27 @@
   "allow_label": "BENIGN_POLITICAL_SPEECH",
   "allow_reason_code": "R_ALLOW_NO_POLICY_MATCH",
   "allow_confidence": 0.65,
+  "electoral_phase": null,
+  "phase_overrides": {
+    "pre_campaign": {
+      "vector_match_threshold": 0.82
+    },
+    "campaign": {
+      "vector_match_threshold": 0.85
+    },
+    "silence_period": {
+      "vector_match_threshold": 0.88,
+      "no_match_action": "REVIEW"
+    },
+    "voting_day": {
+      "vector_match_threshold": 0.9,
+      "no_match_action": "REVIEW"
+    },
+    "results_period": {
+      "vector_match_threshold": 0.88,
+      "no_match_action": "REVIEW"
+    }
+  },
   "language_hints": {
     "sw": ["na", "ya", "kwa", "sasa", "hii", "wataona"],
     "sh": ["manze", "msee", "noma", "buda"]

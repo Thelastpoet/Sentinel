@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from sentinel_api.main import app, rate_limiter
 from sentinel_api.metrics import metrics

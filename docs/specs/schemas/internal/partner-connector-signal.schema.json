@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/partner-connector-signal.schema.json",
+  "title": "PartnerConnectorSignal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_event_id",
+    "text",
+    "observed_at",
+    "imminent_violence",
+    "campaign_disinfo_spike",
+    "is_backfill"
+  ],
+  "properties": {
+    "source_event_id": {"type": "string", "minLength": 1, "maxLength": 255},
+    "text": {"type": "string", "minLength": 1, "maxLength": 5000},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "request_id": {"type": "string", "maxLength": 128},
+    "lang": {"type": "string", "maxLength": 16},
+    "reliability_score": {"type": "integer", "minimum": 1, "maximum": 5},
+    "imminent_violence": {"type": "boolean"},
+    "campaign_disinfo_spike": {"type": "boolean"},
+    "is_backfill": {"type": "boolean"},
+    "manual_priority": {
+      "type": "string",
+      "enum": ["critical", "urgent", "standard", "batch"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

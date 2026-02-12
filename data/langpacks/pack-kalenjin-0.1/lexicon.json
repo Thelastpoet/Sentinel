@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "term": "metincite",
+      "label": "INCITEMENT_VIOLENCE",
+      "action": "BLOCK",
+      "reason_code": "R_KLN_INCITE_LEXICON",
+      "severity": 3
+    },
+    {
+      "term": "orkoiyotslur",
+      "label": "ETHNIC_CONTEMPT",
+      "action": "BLOCK",
+      "reason_code": "R_KLN_ETHNIC_LEXICON",
+      "severity": 3
+    },
+    {
+      "term": "kimotthreat",
+      "label": "HARASSMENT_THREAT",
+      "action": "BLOCK",
+      "reason_code": "R_KLN_HARASS_THREAT_LEXICON",
+      "severity": 3
+    }
+  ]
+}

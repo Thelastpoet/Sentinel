@@ -2,20 +2,72 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from typing import cast, get_args
 
-from sentinel_api.language_router import detect_language_spans
-from sentinel_api.lexicon import get_lexicon_matcher
-from sentinel_api.models import EvidenceItem, LanguageSpan, ModerationResponse
-from sentinel_api.policy_config import get_policy_config
+from sentinel_core.models import Action, EvidenceItem, Label, LanguageSpan, ModerationResponse
+from sentinel_core.policy_config import (
+    DeploymentStage,
+    EffectivePolicyRuntime,
+    get_policy_config,
+    resolve_policy_runtime,
+)
+from sentinel_langpack.registry import resolve_pack_versions
+from sentinel_lexicon.hot_triggers import find_hot_trigger_matches
+from sentinel_lexicon.lexicon import get_lexicon_matcher
+from sentinel_lexicon.lexicon_repository import LexiconEntry
+from sentinel_lexicon.vector_matcher import find_vector_match
+from sentinel_router.language_router import detect_language_spans
 
 
 @dataclass
 class Decision:
-    action: str
-    labels: list[str]
+    action: Action
+    labels: list[Label]
     reason_codes: list[str]
     evidence: list[EvidenceItem]
     toxicity: float
+
+
+KNOWN_LABELS = set(get_args(Label))
+
+
+def _as_label(value: str) -> Label:
+    if value not in KNOWN_LABELS:
+        raise ValueError(f"unknown moderation label: {value}")
+    return cast(Label, value)
+
+
+def _apply_deployment_stage(
+    decision: Decision,
+    *,
+    runtime: EffectivePolicyRuntime,
+) -> Decision:
+    stage = runtime.effective_deployment_stage
+    if stage == DeploymentStage.SUPERVISED:
+        return decision
+    if stage == DeploymentStage.ADVISORY:
+        if decision.action != "BLOCK":
+            return decision
+        reason_codes = sorted(set(decision.reason_codes + ["R_STAGE_ADVISORY_BLOCK_DOWNGRADED"]))
+        return Decision(
+            action="REVIEW",
+            labels=decision.labels,
+            reason_codes=reason_codes,
+            evidence=decision.evidence,
+            toxicity=runtime.toxicity_by_action.REVIEW,
+        )
+    if stage == DeploymentStage.SHADOW:
+        if decision.action == "ALLOW":
+            return decision
+        reason_codes = sorted(set(decision.reason_codes + ["R_STAGE_SHADOW_NO_ENFORCE"]))
+        return Decision(
+            action="ALLOW",
+            labels=decision.labels,
+            reason_codes=reason_codes,
+            evidence=decision.evidence,
+            toxicity=runtime.toxicity_by_action.ALLOW,
+        )
+    return decision
 
 
 def detect_language_span(text: str, config=None) -> list[LanguageSpan]:
@@ -28,19 +80,49 @@ def detect_language_span(text: str, config=None) -> list[LanguageSpan]:
     )
 
 
-def evaluate_text(text: str, matcher=None, config=None) -> Decision:
-    config = config or get_policy_config()
+def _deduplicate_entries(entries: list[LexiconEntry]) -> list[LexiconEntry]:
+    seen: set[tuple[str, str, str, str, int, str]] = set()
+    deduped: list[LexiconEntry] = []
+    for entry in entries:
+        key = (
+            entry.term,
+            entry.action,
+            entry.label,
+            entry.reason_code,
+            entry.severity,
+            entry.lang,
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(entry)
+    return deduped
+
+
+def evaluate_text(text: str, matcher=None, config=None, runtime=None) -> Decision:
+    runtime = runtime or resolve_policy_runtime(config=config)
+    config = runtime.config
     matcher = matcher or get_lexicon_matcher()
     evidence: list[EvidenceItem] = []
-    labels: list[str] = []
+    labels: list[Label] = []
     reason_codes: list[str] = []
 
-    matches = matcher.match(text)
-    block_matches = [entry for entry in matches if entry.action == "BLOCK"]
-    review_matches = [entry for entry in matches if entry.action == "REVIEW"]
+    hot_matches = find_hot_trigger_matches(
+        text,
+        lexicon_version=matcher.version,
+        entries=matcher.entries,
+    )
+    hot_block_matches = [entry for entry in hot_matches if entry.action == "BLOCK"]
+    if hot_block_matches:
+        block_matches = _deduplicate_entries(hot_block_matches)
+        matches = block_matches
+    else:
+        matcher_matches = matcher.match(text)
+        matches = _deduplicate_entries(hot_matches + matcher_matches)
+        block_matches = [entry for entry in matches if entry.action == "BLOCK"]
 
     for entry in block_matches:
-        labels.append(entry.label)
+        labels.append(_as_label(entry.label))
         reason_codes.append(entry.reason_code)
         evidence.append(
             EvidenceItem(
@@ -52,16 +134,19 @@ def evaluate_text(text: str, matcher=None, config=None) -> Decision:
         )
 
     if block_matches:
-        return Decision(
+        decision = Decision(
             action="BLOCK",
             labels=sorted(set(labels)),
             reason_codes=sorted(set(reason_codes)),
             evidence=evidence,
-            toxicity=config.toxicity_by_action.BLOCK,
+            toxicity=runtime.toxicity_by_action.BLOCK,
         )
+        return _apply_deployment_stage(decision, runtime=runtime)
+
+    review_matches = [entry for entry in matches if entry.action == "REVIEW"]
 
     for entry in review_matches:
-        labels.append(entry.label)
+        labels.append(_as_label(entry.label))
         reason_codes.append(entry.reason_code)
         evidence.append(
             EvidenceItem(
@@ -73,35 +158,84 @@ def evaluate_text(text: str, matcher=None, config=None) -> Decision:
         )
 
     if review_matches:
-        return Decision(
+        decision = Decision(
             action="REVIEW",
             labels=sorted(set(labels)),
             reason_codes=sorted(set(reason_codes)),
             evidence=evidence,
-            toxicity=config.toxicity_by_action.REVIEW,
+            toxicity=runtime.toxicity_by_action.REVIEW,
         )
+        return _apply_deployment_stage(decision, runtime=runtime)
 
-    return Decision(
+    vector_match = find_vector_match(
+        text,
+        lexicon_version=matcher.version,
+        min_similarity=runtime.vector_match_threshold,
+    )
+    if vector_match is not None:
+        entry = vector_match.entry
+        # Safety posture: semantic/vector evidence is advisory and cannot directly
+        # escalate to BLOCK without a deterministic lexical hit.
+        action = "REVIEW"
+        toxicity = runtime.toxicity_by_action.REVIEW
+        decision = Decision(
+            action=action,
+            labels=[_as_label(entry.label)],
+            reason_codes=[entry.reason_code],
+            evidence=[
+                EvidenceItem(
+                    type="vector_match",
+                    match=entry.term,
+                    severity=entry.severity,
+                    lang=entry.lang,
+                    match_id=vector_match.match_id,
+                    similarity=vector_match.similarity,
+                )
+            ],
+            toxicity=toxicity,
+        )
+        return _apply_deployment_stage(decision, runtime=runtime)
+
+    if runtime.no_match_action == "REVIEW":
+        decision = Decision(
+            action="REVIEW",
+            labels=["DOGWHISTLE_WATCH"],
+            reason_codes=["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            evidence=[
+                EvidenceItem(
+                    type="model_span",
+                    span=text[:80],
+                    confidence=runtime.allow_confidence,
+                )
+            ],
+            toxicity=runtime.toxicity_by_action.REVIEW,
+        )
+        return _apply_deployment_stage(decision, runtime=runtime)
+
+    decision = Decision(
         action="ALLOW",
-        labels=[config.allow_label],
+        labels=[_as_label(config.allow_label)],
         reason_codes=[config.allow_reason_code],
         evidence=[
             EvidenceItem(
                 type="model_span",
                 span=text[:80],
-                confidence=config.allow_confidence,
+                confidence=runtime.allow_confidence,
             )
         ],
-        toxicity=config.toxicity_by_action.ALLOW,
+        toxicity=runtime.toxicity_by_action.ALLOW,
     )
+    return _apply_deployment_stage(decision, runtime=runtime)
 
 
-def moderate(text: str) -> ModerationResponse:
+def moderate(text: str, *, runtime: EffectivePolicyRuntime | None = None) -> ModerationResponse:
     start = time.perf_counter()
-    config = get_policy_config()
+    runtime = runtime or resolve_policy_runtime()
+    config = runtime.config
     matcher = get_lexicon_matcher()
-    decision = evaluate_text(text, matcher=matcher, config=config)
+    decision = evaluate_text(text, matcher=matcher, config=config, runtime=runtime)
     latency_ms = int((time.perf_counter() - start) * 1000)
+    pack_versions = resolve_pack_versions(config.pack_versions)
     return ModerationResponse(
         toxicity=decision.toxicity,
         labels=decision.labels,
@@ -111,7 +245,7 @@ def moderate(text: str) -> ModerationResponse:
         language_spans=detect_language_span(text, config=config),
         model_version=config.model_version,
         lexicon_version=matcher.version,
-        pack_versions=config.pack_versions,
-        policy_version=config.version,
+        pack_versions=pack_versions,
+        policy_version=runtime.effective_policy_version,
         latency_ms=latency_ms,
     )

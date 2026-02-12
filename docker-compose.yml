@@ -7,6 +7,8 @@ services:
       SENTINEL_API_KEY: dev-key
       SENTINEL_RATE_LIMIT_PER_MINUTE: 120
       SENTINEL_DATABASE_URL: postgresql://sentinel:sentinel@postgres:5432/sentinel
+      SENTINEL_REDIS_URL: redis://redis:6379/0
+      SENTINEL_ELECTORAL_PHASE: ${SENTINEL_ELECTORAL_PHASE:-}
       SENTINEL_LEXICON_PATH: /app/data/lexicon_seed.json
       SENTINEL_POLICY_CONFIG_PATH: /app/config/policy/default.json
     ports:

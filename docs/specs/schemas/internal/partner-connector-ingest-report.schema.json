@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/partner-connector-ingest-report.schema.json",
+  "title": "PartnerConnectorIngestReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "connector_name",
+    "status",
+    "fetched_count",
+    "queued_count",
+    "deduplicated_count",
+    "invalid_count",
+    "attempts",
+    "retry_delays_seconds",
+    "error"
+  ],
+  "properties": {
+    "connector_name": {"type": "string", "minLength": 1},
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error", "circuit_open"]
+    },
+    "fetched_count": {"type": "integer", "minimum": 0},
+    "queued_count": {"type": "integer", "minimum": 0},
+    "deduplicated_count": {"type": "integer", "minimum": 0},
+    "invalid_count": {"type": "integer", "minimum": 0},
+    "attempts": {"type": "integer", "minimum": 0},
+    "retry_delays_seconds": {
+      "type": "array",
+      "items": {"type": "integer", "minimum": 1}
+    },
+    "error": {"type": ["string", "null"]}
+  }
+}

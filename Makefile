@@ -1,4 +1,4 @@
-.PHONY: run test contract up down seed-lexicon apply-migrations test-db release-list release-create release-ingest release-activate release-deprecate release-validate release-audit benchmark-hot-path
+.PHONY: run test contract lint format typecheck precommit-install precommit-run up down seed-lexicon apply-migrations test-db release-list release-create release-ingest release-activate release-deprecate release-validate release-audit benchmark-hot-path worker-once eval-language connector-ingest verify-tier2-wave1
 
 LIMIT ?= 20
 ITERATIONS ?= 300
@@ -13,6 +13,21 @@ test:
 
 contract:
 	uv run python scripts/check_contract.py
+
+lint:
+	uv run ruff check src scripts tests
+
+format:
+	uv run ruff format src scripts tests
+
+typecheck:
+	uv run pyright
+
+precommit-install:
+	uv run pre-commit install
+
+precommit-run:
+	uv run pre-commit run --all-files
 
 up:
 	docker compose up --build
@@ -52,3 +67,15 @@ release-audit:
 
 benchmark-hot-path:
 	uv run python scripts/benchmark_hot_path.py --iterations "$(ITERATIONS)" --warmup "$(WARMUP)" --p95-budget-ms "$(P95_BUDGET_MS)"
+
+worker-once:
+	uv run python scripts/run_async_worker.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --max-items 20
+
+eval-language:
+	uv run python scripts/evaluate_language_packs.py --input-path "$(INPUT)" --pretty
+
+connector-ingest:
+	uv run python scripts/run_partner_connector_ingest.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --connector-name "$(CONNECTOR)" --input-path "$(INPUT)"
+
+verify-tier2-wave1:
+	uv run python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty

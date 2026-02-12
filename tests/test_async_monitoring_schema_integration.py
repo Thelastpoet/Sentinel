@@ -36,3 +36,12 @@ def test_async_monitoring_tables_exist() -> None:
                 assert found is not None
                 relation_name = str(found[0])
                 assert relation_name in (table, f"public.{table}")
+
+            cur.execute("SELECT to_regclass(%s)", ("public.ux_monitoring_queue_event",))
+            queue_event_index = cur.fetchone()
+            assert queue_event_index is not None
+            index_name = str(queue_event_index[0])
+            assert index_name in (
+                "ux_monitoring_queue_event",
+                "public.ux_monitoring_queue_event",
+            )

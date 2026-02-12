@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from scripts import manage_lexicon_release as mlr
 
 
@@ -28,9 +27,7 @@ def test_activate_release_updates_statuses_when_valid(monkeypatch) -> None:
     monkeypatch.setattr(mlr, "get_release_status", lambda _cur, _version: "draft")
     monkeypatch.setattr(mlr, "get_release_legal_hold", lambda _cur, _version: False)
     monkeypatch.setattr(mlr, "count_active_entries_for_version", lambda _cur, _version: 5)
-    monkeypatch.setattr(
-        mlr, "find_active_held_release_to_deprecate", lambda _cur, _version: None
-    )
+    monkeypatch.setattr(mlr, "find_active_held_release_to_deprecate", lambda _cur, _version: None)
 
     mlr.activate_release(cursor, "hatelex-v2.2")
 

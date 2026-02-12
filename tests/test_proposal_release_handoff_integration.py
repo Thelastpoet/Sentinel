@@ -5,7 +5,6 @@ import os
 from uuid import uuid4
 
 import pytest
-
 from scripts import manage_lexicon_release as mlr
 
 
@@ -28,7 +27,10 @@ def test_approved_proposal_promotes_to_governed_draft_release() -> None:
             cur.execute(
                 """
                 INSERT INTO release_proposals
-                  (proposal_type, status, title, description, evidence, policy_impact_summary, proposed_by)
+                  (
+                    proposal_type, status, title, description, evidence,
+                    policy_impact_summary, proposed_by
+                  )
                 VALUES
                   ('lexicon', 'approved', %s, %s, '[]'::jsonb, %s, %s)
                 RETURNING id
@@ -58,7 +60,10 @@ def test_approved_proposal_promotes_to_governed_draft_release() -> None:
             assert report["target_release_version"] == target_version
 
             cur.execute(
-                "SELECT status, reviewed_by, promoted_at IS NOT NULL FROM release_proposals WHERE id = %s",
+                (
+                    "SELECT status, reviewed_by, promoted_at IS NOT NULL "
+                    "FROM release_proposals WHERE id = %s"
+                ),
                 (proposal_id,),
             )
             proposal_row = cur.fetchone()

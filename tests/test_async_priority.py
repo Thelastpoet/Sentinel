@@ -58,9 +58,7 @@ def test_classify_priority_rejects_bad_reliability() -> None:
         ("batch", timedelta(hours=24)),
     ],
 )
-def test_sla_due_at_uses_expected_windows(
-    priority: Priority, expected_delta: timedelta
-) -> None:
+def test_sla_due_at_uses_expected_windows(priority: Priority, expected_delta: timedelta) -> None:
     queued_at = datetime(2026, 2, 12, 12, 0, tzinfo=UTC)
     due = sla_due_at(priority, queued_at)
     assert due == queued_at + expected_delta

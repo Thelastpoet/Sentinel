@@ -3,9 +3,16 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass, field
 from threading import Lock
-
+from typing import TypedDict
 
 LATENCY_BUCKET_THRESHOLDS_MS = (50, 100, 150, 300, 1000)
+
+
+class MetricsSnapshot(TypedDict):
+    action_counts: dict[str, int]
+    http_status_counts: dict[str, int]
+    latency_ms_buckets: dict[str, int]
+    validation_error_count: int
 
 
 def _latency_bucket(latency_ms: int) -> str:
@@ -42,13 +49,12 @@ class InMemoryMetrics:
         with self.lock:
             self.validation_error_count += 1
 
-    def snapshot(self) -> dict[str, object]:
+    def snapshot(self) -> MetricsSnapshot:
         with self.lock:
             return {
                 "action_counts": dict(self.action_counts),
                 "http_status_counts": {
-                    str(status): count
-                    for status, count in self.http_status_counts.items()
+                    str(status): count for status, count in self.http_status_counts.items()
                 },
                 "latency_ms_buckets": dict(self.latency_ms_buckets),
                 "validation_error_count": self.validation_error_count,

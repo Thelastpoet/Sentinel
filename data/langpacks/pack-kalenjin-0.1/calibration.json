@@ -1,0 +1,17 @@
+{
+  "target_stage": "advisory",
+  "f1_threshold_advisory": 0.8,
+  "f1_threshold_supervised": 0.86,
+  "benign_block_fp_rate_max": 0.005,
+  "benign_block_or_review_fp_rate_max": 0.03,
+  "max_disparity_ratio": 1.5,
+  "min_eval_samples": 1000,
+  "min_code_switched_ratio": 0.2,
+  "min_annotators_per_sample": 3,
+  "min_krippendorff_alpha": 0.67,
+  "required_high_severity_labels": [
+    "ETHNIC_CONTEMPT",
+    "INCITEMENT_VIOLENCE",
+    "HARASSMENT_THREAT"
+  ]
+}

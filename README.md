@@ -1,148 +1,115 @@
-# Project Sentinel
+# Sentinel
 
-Spec-driven implementation scaffold for the Sentinel Moderation API.
+Kenya-native multilingual political-safety infrastructure designed to help protect the 2027 General Election from ethnic incitement and election-related disinformation.
 
-## Run
+Sentinel provides:
+
+- a real-time Moderation API (`/v1/moderate`) for low-latency publishing workflows;
+- an async monitoring/update pipeline for partner signals, queueing, and governed lexicon updates;
+- deterministic governance primitives: versioned policies, release lifecycle, appeals, transparency exports, and audit trails.
+
+## Project status
+
+Current status: **active development, not yet broad customer production launch**.
+
+Core implementation phases are complete through `I-407`. Final go-live hardening is tracked in:
+
+- `docs/specs/tasks.md` (`I-408` through `I-412`)
+- `docs/specs/phase4/i408-go-live-readiness-gate.md`
+
+## Core capabilities
+
+- Deterministic moderation response contract with evidence and reason codes.
+- Span-level language routing for code-switched text.
+- Redis hot-trigger matching and Postgres/pgvector semantic retrieval.
+- Electoral phase modes and deployment-stage controls (`shadow`, `advisory`, `supervised`).
+- Appeals workflow, case reconstruction, transparency reporting/export.
+- Partner connector ingestion with retry, exponential backoff, and circuit breaker.
+- Tier-2 Wave 1 language-pack gate verification (Luo, Kalenjin).
+
+## Quickstart
+
+### Local (uv)
 
 ```bash
 uv sync
 uv run uvicorn sentinel_api.main:app --reload
 ```
 
-Or with Docker:
+### Docker Compose
 
 ```bash
 docker compose up --build
-make seed-lexicon
-```
-
-Shortcuts:
-
-```bash
-make run
-make up
-make seed-lexicon
-```
-
-## Test
-
-```bash
-uv run pytest
-```
-
-Contract check:
-
-```bash
-python scripts/check_contract.py
-```
-
-`POST /v1/moderate` error responses are standardized as `ErrorResponse` for
-`400`, `401`, `429`, and `500` statuses.
-Successful moderation responses include rate-limit headers:
-`X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset`.
-Throttled responses (`429`) also include `Retry-After`.
-
-Shortcuts:
-
-```bash
-make test
-make contract
-```
-
-## Spec references
-
-- `docs/specs/api/openapi.yaml`
-- `docs/specs/schemas/moderation-request.schema.json`
-- `docs/specs/schemas/moderation-response.schema.json`
-- `docs/specs/rfcs/0001-v1-moderation-api.md`
-
-## Lexicon backends
-
-- The API prefers Postgres when `SENTINEL_DATABASE_URL` is set.
-- If Postgres is unavailable or empty, it falls back to `data/lexicon_seed.json`.
-
-For manual database setup (outside Docker init), apply:
-
-```bash
-uv run python scripts/apply_migrations.py --database-url "$SENTINEL_DATABASE_URL"
-uv run python scripts/sync_lexicon_seed.py --database-url "$SENTINEL_DATABASE_URL" --activate-if-none
-```
-
-Or with project shortcuts:
-
-```bash
 make apply-migrations
 make seed-lexicon
-make test-db
 ```
 
-## Lexicon release governance
-
-Manage release states with:
+Health check:
 
 ```bash
-make release-list
-make release-create VERSION=hatelex-v2.2
-make release-ingest VERSION=hatelex-v2.2 INPUT=data/lexicon_seed.json
-make release-validate VERSION=hatelex-v2.2
-make release-activate VERSION=hatelex-v2.2
-make release-deprecate VERSION=hatelex-v2.1
-make release-audit LIMIT=20
-python scripts/manage_lexicon_release.py --database-url "$SENTINEL_DATABASE_URL" --actor ops hold --version hatelex-v2.2 --reason "legal request"
-python scripts/manage_lexicon_release.py --database-url "$SENTINEL_DATABASE_URL" --actor ops holds --limit 20
-python scripts/manage_lexicon_release.py --database-url "$SENTINEL_DATABASE_URL" --actor ops unhold --version hatelex-v2.2 --reason "case closed"
+curl -sS http://localhost:8000/health; echo
 ```
 
-Ingest input accepts either:
-
-- a JSON list of entries, or
-- an object with an `entries` list (same shape as `data/lexicon_seed.json`).
-
-## Runtime metrics
-
-Read in-memory counters:
+## API example
 
 ```bash
-curl -sS http://localhost:8000/metrics; echo
+curl -sS -X POST http://localhost:8000/v1/moderate \
+  -H 'Content-Type: application/json' \
+  -H 'X-API-Key: dev-key' \
+  -d '{"text":"They should kill them now."}'
 ```
 
-Response includes action/status counters, `validation_error_count`, and
-`latency_ms_buckets` for moderation request latency distribution.
-
-## Latency benchmark
-
-Run reproducible hot-path latency benchmark (local process):
+## Quality checks
 
 ```bash
+python -m pytest -q
+python scripts/check_contract.py
 python scripts/benchmark_hot_path.py --iterations 300 --warmup 30 --p95-budget-ms 150
+python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
 ```
 
-Make shortcut:
+Pre-commit hooks:
 
 ```bash
-make benchmark-hot-path ITERATIONS=300 WARMUP=30 P95_BUDGET_MS=150
+uv run pre-commit install
+uv run pre-commit run --all-files
 ```
 
-## Policy config
+## Specs and architecture
 
-- Default policy config path: `config/policy/default.json`
-- Override path with environment variable: `SENTINEL_POLICY_CONFIG_PATH`
+- Master plan: `docs/master.md`
+- Task board: `docs/specs/tasks.md`
+- OpenAPI: `docs/specs/api/openapi.yaml`
+- Public schemas: `docs/specs/schemas/`
+- RFCs/ADRs: `docs/specs/rfcs/`, `docs/specs/adr/`
 
-## OAuth scopes for internal/admin APIs (S1)
+## Repository layout
 
-Internal/admin endpoints use Bearer tokens with scope checks:
-
-- `GET /internal/monitoring/queue/metrics` -> `internal:queue:read`
-- `GET /admin/release-proposals/permissions` -> `admin:proposal:read`
-- `POST /admin/release-proposals/{proposal_id}/review` -> `admin:proposal:review`
-
-Configure token registry with `SENTINEL_OAUTH_TOKENS_JSON`:
-
-```bash
-export SENTINEL_OAUTH_TOKENS_JSON='{
-  "ops-token": {
-    "client_id": "ops-service",
-    "scopes": ["internal:queue:read", "admin:proposal:read", "admin:proposal:review"]
-  }
-}'
+```text
+src/          runtime packages (core, router, lexicon, langpack, api)
+scripts/      operational and verification tooling
+migrations/   postgres schema migrations
+data/         lexicon seeds, eval sets, language-pack artifacts
+docs/         master plan, specs, governance, operational references
+tests/        unit and integration tests
 ```
+
+## Operations guide
+
+Detailed runbook commands (release governance, async worker, connector ingest, OAuth scope setup, policy envs) are in:
+
+- `docs/operations.md`
+
+## Contributing and governance
+
+- Contributor guide: `CONTRIBUTING.md`
+- Code of conduct: `CODE_OF_CONDUCT.md`
+- Community and governance specs: `docs/specs/governance.md`
+
+## Security note
+
+This repository handles election-safety workflows. Treat deployments, credentials, and incident procedures as high-risk operational assets. Follow staged rollout and go/no-go controls in `docs/specs/phase4/i408-go-live-readiness-gate.md`.
+
+## License
+
+Project license target is Apache-2.0 per the master plan. Add a root `LICENSE` file before public production rollout.

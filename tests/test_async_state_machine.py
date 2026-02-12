@@ -4,6 +4,7 @@ import pytest
 
 from sentinel_api.async_state_machine import (
     InvalidStateTransition,
+    validate_appeal_transition,
     validate_proposal_transition,
     validate_queue_transition,
 )
@@ -22,9 +23,7 @@ from sentinel_api.async_state_machine import (
         ("error", "dropped"),
     ],
 )
-def test_validate_queue_transition_allows_expected_paths(
-    source: str, target: str
-) -> None:
+def test_validate_queue_transition_allows_expected_paths(source: str, target: str) -> None:
     result = validate_queue_transition(source, target)
     assert result.entity == "queue"
     assert result.from_state == source
@@ -40,9 +39,7 @@ def test_validate_queue_transition_allows_expected_paths(
         ("processing", "proposed"),
     ],
 )
-def test_validate_queue_transition_rejects_invalid_paths(
-    source: str, target: str
-) -> None:
+def test_validate_queue_transition_rejects_invalid_paths(source: str, target: str) -> None:
     with pytest.raises(InvalidStateTransition):
         validate_queue_transition(source, target)
 
@@ -61,9 +58,7 @@ def test_validate_queue_transition_rejects_invalid_paths(
         ("approved", "rejected"),
     ],
 )
-def test_validate_proposal_transition_allows_expected_paths(
-    source: str, target: str
-) -> None:
+def test_validate_proposal_transition_allows_expected_paths(source: str, target: str) -> None:
     result = validate_proposal_transition(source, target)
     assert result.entity == "proposal"
     assert result.from_state == source
@@ -79,11 +74,42 @@ def test_validate_proposal_transition_allows_expected_paths(
         ("approved", "draft"),
     ],
 )
-def test_validate_proposal_transition_rejects_invalid_paths(
-    source: str, target: str
-) -> None:
+def test_validate_proposal_transition_rejects_invalid_paths(source: str, target: str) -> None:
     with pytest.raises(InvalidStateTransition):
         validate_proposal_transition(source, target)
+
+
+@pytest.mark.parametrize(
+    ("source", "target"),
+    [
+        ("submitted", "triaged"),
+        ("submitted", "rejected_invalid"),
+        ("triaged", "in_review"),
+        ("triaged", "rejected_invalid"),
+        ("in_review", "resolved_upheld"),
+        ("in_review", "resolved_reversed"),
+        ("in_review", "resolved_modified"),
+    ],
+)
+def test_validate_appeal_transition_allows_expected_paths(source: str, target: str) -> None:
+    result = validate_appeal_transition(source, target)
+    assert result.entity == "appeal"
+    assert result.from_state == source
+    assert result.to_state == target
+
+
+@pytest.mark.parametrize(
+    ("source", "target"),
+    [
+        ("submitted", "in_review"),
+        ("triaged", "resolved_reversed"),
+        ("resolved_upheld", "resolved_modified"),
+        ("rejected_invalid", "triaged"),
+    ],
+)
+def test_validate_appeal_transition_rejects_invalid_paths(source: str, target: str) -> None:
+    with pytest.raises(InvalidStateTransition):
+        validate_appeal_transition(source, target)
 
 
 @pytest.mark.parametrize(
@@ -93,10 +119,10 @@ def test_validate_proposal_transition_rejects_invalid_paths(
         (validate_queue_transition, "queued", "unknown"),
         (validate_proposal_transition, "unknown", "draft"),
         (validate_proposal_transition, "draft", "unknown"),
+        (validate_appeal_transition, "unknown", "submitted"),
+        (validate_appeal_transition, "submitted", "unknown"),
     ],
 )
-def test_unknown_states_raise(
-    validator, source: str, target: str
-) -> None:  # type: ignore[no-untyped-def]
+def test_unknown_states_raise(validator, source: str, target: str) -> None:  # type: ignore[no-untyped-def]
     with pytest.raises(InvalidStateTransition):
         validator(source, target)

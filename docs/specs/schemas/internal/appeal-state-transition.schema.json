@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/appeal-state-transition.schema.json",
+  "title": "AppealStateTransition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["to_status"],
+  "properties": {
+    "to_status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "triaged",
+        "in_review",
+        "rejected_invalid",
+        "resolved_upheld",
+        "resolved_reversed",
+        "resolved_modified"
+      ]
+    },
+    "rationale": {"type": "string", "maxLength": 2000},
+    "resolution_code": {"type": "string", "maxLength": 128},
+    "resolution_reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^R_[A-Z0-9_]+$"
+      }
+    }
+  }
+}

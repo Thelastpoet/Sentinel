@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "term": "chokruok",
+      "label": "INCITEMENT_VIOLENCE",
+      "action": "BLOCK",
+      "reason_code": "R_LUO_INCITE_LEXICON",
+      "severity": 3
+    },
+    {
+      "term": "jodakslur",
+      "label": "ETHNIC_CONTEMPT",
+      "action": "BLOCK",
+      "reason_code": "R_LUO_ETHNIC_LEXICON",
+      "severity": 3
+    },
+    {
+      "term": "otichthreat",
+      "label": "HARASSMENT_THREAT",
+      "action": "BLOCK",
+      "reason_code": "R_LUO_HARASS_THREAT_LEXICON",
+      "severity": 3
+    }
+  ]
+}
