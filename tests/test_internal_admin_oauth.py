@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime, timedelta
 
+import jwt
 import pytest
 from fastapi.testclient import TestClient
 
@@ -194,3 +196,44 @@ def test_transparency_export_allows_export_scope(monkeypatch: pytest.MonkeyPatch
     assert response.status_code == 200
     payload = response.json()
     assert "records" in payload
+
+
+def test_internal_queue_metrics_accepts_valid_jwt(monkeypatch: pytest.MonkeyPatch) -> None:
+    secret = "test-secret-which-is-long-enough-32+"
+    monkeypatch.setenv("SENTINEL_OAUTH_JWT_SECRET", secret)
+    monkeypatch.delenv("SENTINEL_OAUTH_TOKENS_JSON", raising=False)
+    token = jwt.encode(
+        {
+            "sub": "jwt-queue-reader",
+            "scope": "internal:queue:read",
+            "exp": datetime.now(tz=UTC) + timedelta(minutes=5),
+        },
+        secret,
+        algorithm="HS256",
+    )
+    response = client.get(
+        "/internal/monitoring/queue/metrics",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["actor_client_id"] == "jwt-queue-reader"
+
+
+def test_internal_queue_metrics_rejects_expired_jwt(monkeypatch: pytest.MonkeyPatch) -> None:
+    secret = "test-secret-which-is-long-enough-32+"
+    monkeypatch.setenv("SENTINEL_OAUTH_JWT_SECRET", secret)
+    token = jwt.encode(
+        {
+            "sub": "expired-reader",
+            "scope": "internal:queue:read",
+            "exp": datetime.now(tz=UTC) - timedelta(minutes=1),
+        },
+        secret,
+        algorithm="HS256",
+    )
+    response = client.get(
+        "/internal/monitoring/queue/metrics",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 401

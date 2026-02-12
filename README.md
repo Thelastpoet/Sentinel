@@ -29,11 +29,14 @@ Core implementation phases are complete through `I-407`. Final go-live hardening
 
 ## Quickstart
 
-### Local (uv)
+### Local (pip)
 
 ```bash
-uv sync
-uv run uvicorn sentinel_api.main:app --reload
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .[dev,ops]
+python -m uvicorn sentinel_api.main:app --reload
 ```
 
 ### Docker Compose
@@ -68,11 +71,17 @@ python scripts/benchmark_hot_path.py --iterations 300 --warmup 30 --p95-budget-m
 python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
 ```
 
+Prometheus/OpenMetrics scrape endpoint:
+
+```bash
+curl -sS http://localhost:8000/metrics/prometheus
+```
+
 Pre-commit hooks:
 
 ```bash
-uv run pre-commit install
-uv run pre-commit run --all-files
+python -m pre_commit install
+python -m pre_commit run --all-files
 ```
 
 ## Specs and architecture

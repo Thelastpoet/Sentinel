@@ -6,8 +6,8 @@ import logging
 import os
 import re
 import unicodedata
+from collections.abc import Iterable
 from functools import lru_cache
-from typing import Iterable
 
 from sentinel_lexicon.lexicon_repository import LexiconEntry
 
@@ -184,4 +184,3 @@ def find_hot_trigger_matches(
         if entry is not None:
             matches.append(entry)
     return matches
-

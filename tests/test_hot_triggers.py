@@ -24,18 +24,18 @@ def _entry(
 
 
 class _FakePipeline:
-    def __init__(self, client: "_FakeRedisClient") -> None:
+    def __init__(self, client: _FakeRedisClient) -> None:
         self.client = client
         self.key: str | None = None
         self.mapping: dict[str, str] = {}
         self.ttl: int | None = None
 
-    def hset(self, key: str, mapping: dict[str, str]) -> "_FakePipeline":
+    def hset(self, key: str, mapping: dict[str, str]) -> _FakePipeline:
         self.key = key
         self.mapping = mapping
         return self
 
-    def expire(self, key: str, ttl_seconds: int) -> "_FakePipeline":
+    def expire(self, key: str, ttl_seconds: int) -> _FakePipeline:
         self.key = key
         self.ttl = ttl_seconds
         return self

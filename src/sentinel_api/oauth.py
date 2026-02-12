@@ -3,10 +3,17 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import dataclass
+from typing import Any, cast
 
 from fastapi import Header, HTTPException, status
+from jwt import InvalidTokenError, decode
 
 OAUTH_TOKEN_REGISTRY_ENV = "SENTINEL_OAUTH_TOKENS_JSON"
+OAUTH_JWT_SECRET_ENV = "SENTINEL_OAUTH_JWT_SECRET"
+OAUTH_JWT_ALGORITHM_ENV = "SENTINEL_OAUTH_JWT_ALGORITHM"
+OAUTH_JWT_AUDIENCE_ENV = "SENTINEL_OAUTH_JWT_AUDIENCE"
+OAUTH_JWT_ISSUER_ENV = "SENTINEL_OAUTH_JWT_ISSUER"
+OAUTH_ALLOW_STATIC_TOKENS_ENV = "SENTINEL_OAUTH_ALLOW_STATIC_TOKENS"
 
 DEFAULT_TOKEN_REGISTRY: dict[str, dict[str, object]] = {
     "internal-dev-token": {
@@ -74,6 +81,62 @@ def load_token_registry() -> dict[str, OAuthPrincipal]:
     return registry
 
 
+def _as_bool(value: str | None, *, default: bool = False) -> bool:
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _decode_jwt_principal(token: str) -> OAuthPrincipal:
+    secret = os.getenv(OAUTH_JWT_SECRET_ENV, "").strip()
+    if not secret:
+        raise ValueError(f"{OAUTH_JWT_SECRET_ENV} is required for JWT mode")
+
+    algorithm = os.getenv(OAUTH_JWT_ALGORITHM_ENV, "HS256").strip() or "HS256"
+    audience = os.getenv(OAUTH_JWT_AUDIENCE_ENV, "").strip() or None
+    issuer = os.getenv(OAUTH_JWT_ISSUER_ENV, "").strip() or None
+    options = cast(Any, {"verify_aud": audience is not None})
+    try:
+        claims = decode(
+            token,
+            key=secret,
+            algorithms=[algorithm],
+            audience=audience,
+            issuer=issuer,
+            options=options,
+        )
+    except InvalidTokenError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
+
+    if not isinstance(claims, dict):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    client_id = str(claims.get("client_id") or claims.get("sub") or "oauth-client").strip()
+    scopes_claim = claims.get("scopes", claims.get("scope"))
+    try:
+        scopes = _normalize_scopes(scopes_claim)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid bearer token: {exc}",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
+
+    return OAuthPrincipal(
+        token=token,
+        client_id=client_id or "oauth-client",
+        scopes=scopes,
+    )
+
+
 def authenticate_bearer_token(authorization: str | None) -> OAuthPrincipal:
     if not authorization:
         raise HTTPException(
@@ -90,6 +153,22 @@ def authenticate_bearer_token(authorization: str | None) -> OAuthPrincipal:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    normalized_token = token.strip()
+    jwt_secret = os.getenv(OAUTH_JWT_SECRET_ENV, "").strip()
+    if jwt_secret:
+        return _decode_jwt_principal(normalized_token)
+
+    allow_static_tokens = _as_bool(
+        os.getenv(OAUTH_ALLOW_STATIC_TOKENS_ENV),
+        default=True,
+    )
+    if not allow_static_tokens:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     try:
         registry = load_token_registry()
     except ValueError as exc:
@@ -98,7 +177,7 @@ def authenticate_bearer_token(authorization: str | None) -> OAuthPrincipal:
             detail=f"OAuth token registry misconfigured: {exc}",
         ) from exc
 
-    principal = registry.get(token.strip())
+    principal = registry.get(normalized_token)
     if principal is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

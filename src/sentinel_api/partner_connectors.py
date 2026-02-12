@@ -13,7 +13,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from sentinel_api.async_priority import Priority, PrioritySignals, classify_priority, sla_due_at
 
-
 ConnectorStatus = Literal["ok", "error", "circuit_open"]
 
 
@@ -37,8 +36,7 @@ class PartnerConnector(Protocol):
 
     def fetch_signals(
         self, *, since: datetime | None = None, limit: int = 100
-    ) -> list[PartnerSignal]:
-        ...
+    ) -> list[PartnerSignal]: ...
 
 
 class _JsonFileSignalRecord(BaseModel):
@@ -81,9 +79,7 @@ class JsonFileFactCheckConnector:
                 continue
             payload = json.loads(stripped)
             if not isinstance(payload, dict):
-                raise ValueError(
-                    f"JSONL connector input line {index} must be an object"
-                )
+                raise ValueError(f"JSONL connector input line {index} must be an object")
             records.append(payload)
         return records
 
@@ -188,8 +184,7 @@ class ResilientPartnerConnector:
                 status="circuit_open",
                 connector_name=self.connector.name,
                 error=(
-                    "circuit open until "
-                    f"{self._circuit_open_until.isoformat()}"
+                    f"circuit open until {self._circuit_open_until.isoformat()}"
                     if self._circuit_open_until is not None
                     else "circuit open"
                 ),
@@ -344,12 +339,18 @@ class PartnerConnectorIngestionService:
                             ON CONFLICT (source, source_event_id)
                             WHERE source_event_id IS NOT NULL
                             DO UPDATE SET
-                              request_id = COALESCE(EXCLUDED.request_id, monitoring_events.request_id),
+                              request_id = COALESCE(
+                                EXCLUDED.request_id,
+                                monitoring_events.request_id
+                              ),
                               lang = COALESCE(EXCLUDED.lang, monitoring_events.lang),
                               content_hash = EXCLUDED.content_hash,
                               reliability_score = EXCLUDED.reliability_score,
                               payload = EXCLUDED.payload,
-                              observed_at = GREATEST(monitoring_events.observed_at, EXCLUDED.observed_at),
+                              observed_at = GREATEST(
+                                monitoring_events.observed_at,
+                                EXCLUDED.observed_at
+                              ),
                               updated_at = NOW()
                             RETURNING id
                             """,

@@ -4,7 +4,6 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-
 Label = Literal[
     "ETHNIC_CONTEMPT",
     "INCITEMENT_VIOLENCE",
@@ -87,4 +86,3 @@ class MetricsResponse(BaseModel):
     http_status_counts: dict[str, int]
     latency_ms_buckets: dict[str, int]
     validation_error_count: int = Field(ge=0)
-

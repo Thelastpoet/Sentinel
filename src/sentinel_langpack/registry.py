@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Mapping
+from collections.abc import Mapping
 
 
 def resolve_pack_versions(pack_versions: Mapping[str, str]) -> dict[str, str]:
@@ -17,4 +17,3 @@ def resolve_pack_versions(pack_versions: Mapping[str, str]) -> dict[str, str]:
             continue
         normalized[lang] = version
     return normalized
-

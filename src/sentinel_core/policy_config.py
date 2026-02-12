@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-from enum import Enum
+from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated
@@ -27,7 +27,7 @@ class LanguageHints(BaseModel):
     sh: list[str]
 
 
-class ElectoralPhase(str, Enum):
+class ElectoralPhase(StrEnum):
     PRE_CAMPAIGN = "pre_campaign"
     CAMPAIGN = "campaign"
     SILENCE_PERIOD = "silence_period"
@@ -35,7 +35,7 @@ class ElectoralPhase(str, Enum):
     RESULTS_PERIOD = "results_period"
 
 
-class DeploymentStage(str, Enum):
+class DeploymentStage(StrEnum):
     SHADOW = "shadow"
     ADVISORY = "advisory"
     SUPERVISED = "supervised"
@@ -63,9 +63,7 @@ class PolicyConfig(BaseModel):
     language_hints: LanguageHints
     electoral_phase: ElectoralPhase | None = None
     deployment_stage: DeploymentStage | None = None
-    phase_overrides: dict[ElectoralPhase, PhasePolicyOverride] = Field(
-        default_factory=dict
-    )
+    phase_overrides: dict[ElectoralPhase, PhasePolicyOverride] = Field(default_factory=dict)
 
 
 class EffectivePolicyRuntime(BaseModel):
@@ -100,9 +98,7 @@ def reset_policy_config_cache() -> None:
 
 @lru_cache(maxsize=1)
 def get_policy_config() -> PolicyConfig:
-    path = Path(
-        os.getenv("SENTINEL_POLICY_CONFIG_PATH", str(_default_config_path()))
-    )
+    path = Path(os.getenv("SENTINEL_POLICY_CONFIG_PATH", str(_default_config_path())))
     payload = json.loads(path.read_text(encoding="utf-8"))
     config = PolicyConfig.model_validate(payload)
     return config
@@ -115,9 +111,7 @@ def _resolve_effective_phase(config: PolicyConfig) -> ElectoralPhase | None:
     try:
         return ElectoralPhase(env_phase.strip())
     except ValueError as exc:
-        raise ValueError(
-            f"invalid SENTINEL_ELECTORAL_PHASE value: {env_phase}"
-        ) from exc
+        raise ValueError(f"invalid SENTINEL_ELECTORAL_PHASE value: {env_phase}") from exc
 
 
 def _resolve_effective_deployment_stage(config: PolicyConfig) -> DeploymentStage:
@@ -126,9 +120,7 @@ def _resolve_effective_deployment_stage(config: PolicyConfig) -> DeploymentStage
         try:
             return DeploymentStage(env_stage.strip().lower())
         except ValueError as exc:
-            raise ValueError(
-                f"invalid SENTINEL_DEPLOYMENT_STAGE value: {env_stage}"
-            ) from exc
+            raise ValueError(f"invalid SENTINEL_DEPLOYMENT_STAGE value: {env_stage}") from exc
     if config.deployment_stage is not None:
         return config.deployment_stage
     return DeploymentStage.SUPERVISED
@@ -138,11 +130,7 @@ def resolve_policy_runtime(config: PolicyConfig | None = None) -> EffectivePolic
     config = config or get_policy_config()
     effective_phase = _resolve_effective_phase(config)
     effective_deployment_stage = _resolve_effective_deployment_stage(config)
-    override = (
-        config.phase_overrides.get(effective_phase)
-        if effective_phase is not None
-        else None
-    )
+    override = config.phase_overrides.get(effective_phase) if effective_phase is not None else None
     if override is None:
         toxicity_by_action = config.toxicity_by_action
         allow_confidence = config.allow_confidence
@@ -151,9 +139,7 @@ def resolve_policy_runtime(config: PolicyConfig | None = None) -> EffectivePolic
     else:
         toxicity_by_action = override.toxicity_by_action or config.toxicity_by_action
         if toxicity_by_action.BLOCK < config.toxicity_by_action.BLOCK:
-            raise ValueError(
-                "phase override cannot lower BLOCK toxicity threshold below baseline"
-            )
+            raise ValueError("phase override cannot lower BLOCK toxicity threshold below baseline")
         allow_confidence = (
             config.allow_confidence
             if override.allow_confidence is None
@@ -163,14 +149,10 @@ def resolve_policy_runtime(config: PolicyConfig | None = None) -> EffectivePolic
         no_match_action = override.no_match_action or "ALLOW"
 
     effective_policy_version = (
-        config.version
-        if effective_phase is None
-        else f"{config.version}@{effective_phase.value}"
+        config.version if effective_phase is None else f"{config.version}@{effective_phase.value}"
     )
     if effective_deployment_stage != DeploymentStage.SUPERVISED:
-        effective_policy_version = (
-            f"{effective_policy_version}#{effective_deployment_stage.value}"
-        )
+        effective_policy_version = f"{effective_policy_version}#{effective_deployment_stage.value}"
 
     return EffectivePolicyRuntime(
         config=config,

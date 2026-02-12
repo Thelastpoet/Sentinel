@@ -18,11 +18,20 @@ make apply-migrations
 make seed-lexicon
 ```
 
+## Environment setup (pip)
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .[dev,ops]
+```
+
 ## Manual migration and seed sync
 
 ```bash
-uv run python scripts/apply_migrations.py --database-url "$SENTINEL_DATABASE_URL"
-uv run python scripts/sync_lexicon_seed.py --database-url "$SENTINEL_DATABASE_URL" --activate-if-none
+python scripts/apply_migrations.py --database-url "$SENTINEL_DATABASE_URL"
+python scripts/sync_lexicon_seed.py --database-url "$SENTINEL_DATABASE_URL" --activate-if-none
 ```
 
 ## Lexicon backend behavior
@@ -57,6 +66,7 @@ python scripts/manage_lexicon_release.py --database-url "$SENTINEL_DATABASE_URL"
 
 ```bash
 curl -sS http://localhost:8000/metrics; echo
+curl -sS http://localhost:8000/metrics/prometheus
 ```
 
 Returns action/status counts, validation errors, and latency buckets.
@@ -102,6 +112,12 @@ python scripts/run_partner_connector_ingest.py \
 - `SENTINEL_DEPLOYMENT_STAGE`: `shadow|advisory|supervised`.
 - `SENTINEL_ELECTORAL_PHASE`: `pre_campaign|campaign|silence_period|voting_day|results_period`.
 
+## Rate limiting environment
+
+- `SENTINEL_RATE_LIMIT_PER_MINUTE`: default `120`.
+- `SENTINEL_RATE_LIMIT_STORAGE_URI`: distributed backend URI for `limits` (for example `redis://redis:6379/0`).
+  if unset, falls back to in-memory limiter.
+
 ## OAuth scope setup (internal/admin)
 
 Example token registry payload:
@@ -125,3 +141,13 @@ export SENTINEL_OAUTH_TOKENS_JSON='{
 ```
 
 Internal/admin endpoint scope map is implemented in `src/sentinel_api/main.py` and `src/sentinel_api/oauth.py`.
+
+JWT mode (production-oriented) can be enabled instead of static token registry:
+
+```bash
+export SENTINEL_OAUTH_JWT_SECRET='replace-with-strong-secret'
+export SENTINEL_OAUTH_JWT_ALGORITHM='HS256'
+# optional
+export SENTINEL_OAUTH_JWT_AUDIENCE='sentinel-internal'
+export SENTINEL_OAUTH_JWT_ISSUER='sentinel-auth'
+```

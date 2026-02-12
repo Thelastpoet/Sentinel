@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from sentinel_api.appeals import reset_appeals_runtime_state
 from sentinel_api.main import app
@@ -177,10 +177,7 @@ def test_transparency_export_include_identifiers_requires_extra_scope(
     assert allowed_payload["include_identifiers"] is True
     assert allowed_payload["total_count"] == 1
     assert allowed_payload["records"][0]["request_id"] == "req-with-identifiers"
-    assert (
-        allowed_payload["records"][0]["original_decision_id"]
-        == "dec-with-identifiers"
-    )
+    assert allowed_payload["records"][0]["original_decision_id"] == "dec-with-identifiers"
 
 
 def test_transparency_datetime_query_validation(monkeypatch: pytest.MonkeyPatch) -> None:

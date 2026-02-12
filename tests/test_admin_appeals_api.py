@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from sentinel_api.appeals import reset_appeals_runtime_state
 from sentinel_api.main import app

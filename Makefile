@@ -6,28 +6,28 @@ WARMUP ?= 30
 P95_BUDGET_MS ?= 150
 
 run:
-	uv run uvicorn sentinel_api.main:app --reload
+	python -m uvicorn sentinel_api.main:app --reload
 
 test:
-	uv run pytest -q
+	python -m pytest -q
 
 contract:
-	uv run python scripts/check_contract.py
+	python scripts/check_contract.py
 
 lint:
-	uv run ruff check src scripts tests
+	python -m ruff check src scripts tests
 
 format:
-	uv run ruff format src scripts tests
+	python -m ruff format src scripts tests
 
 typecheck:
-	uv run pyright
+	python -m pyright
 
 precommit-install:
-	uv run pre-commit install
+	python -m pre_commit install
 
 precommit-run:
-	uv run pre-commit run --all-files
+	python -m pre_commit run --all-files
 
 up:
 	docker compose up --build
@@ -36,46 +36,46 @@ down:
 	docker compose down -v
 
 seed-lexicon:
-	uv run python scripts/sync_lexicon_seed.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --activate-if-none
+	python scripts/sync_lexicon_seed.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --activate-if-none
 
 apply-migrations:
-	uv run python scripts/apply_migrations.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel
+	python scripts/apply_migrations.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel
 
 test-db:
-	SENTINEL_INTEGRATION_DB_URL=postgresql://sentinel:sentinel@localhost:5432/sentinel uv run pytest -q tests/test_lexicon_postgres_integration.py
+	SENTINEL_INTEGRATION_DB_URL=postgresql://sentinel:sentinel@localhost:5432/sentinel python -m pytest -q tests/test_lexicon_postgres_integration.py
 
 release-list:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel list
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel list
 
 release-create:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel create --version "$(VERSION)"
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel create --version "$(VERSION)"
 
 release-ingest:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel ingest --version "$(VERSION)" --input-path "$(INPUT)"
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel ingest --version "$(VERSION)" --input-path "$(INPUT)"
 
 release-activate:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel activate --version "$(VERSION)"
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel activate --version "$(VERSION)"
 
 release-deprecate:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel deprecate --version "$(VERSION)"
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel deprecate --version "$(VERSION)"
 
 release-validate:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel validate --version "$(VERSION)"
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel validate --version "$(VERSION)"
 
 release-audit:
-	uv run python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel audit --limit "$(LIMIT)"
+	python scripts/manage_lexicon_release.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel audit --limit "$(LIMIT)"
 
 benchmark-hot-path:
-	uv run python scripts/benchmark_hot_path.py --iterations "$(ITERATIONS)" --warmup "$(WARMUP)" --p95-budget-ms "$(P95_BUDGET_MS)"
+	python scripts/benchmark_hot_path.py --iterations "$(ITERATIONS)" --warmup "$(WARMUP)" --p95-budget-ms "$(P95_BUDGET_MS)"
 
 worker-once:
-	uv run python scripts/run_async_worker.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --max-items 20
+	python scripts/run_async_worker.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --max-items 20
 
 eval-language:
-	uv run python scripts/evaluate_language_packs.py --input-path "$(INPUT)" --pretty
+	python scripts/evaluate_language_packs.py --input-path "$(INPUT)" --pretty
 
 connector-ingest:
-	uv run python scripts/run_partner_connector_ingest.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --connector-name "$(CONNECTOR)" --input-path "$(INPUT)"
+	python scripts/run_partner_connector_ingest.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --connector-name "$(CONNECTOR)" --input-path "$(INPUT)"
 
 verify-tier2-wave1:
-	uv run python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
+	python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty

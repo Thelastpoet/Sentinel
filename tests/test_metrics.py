@@ -64,3 +64,17 @@ def test_metrics_latency_bucket_counter_increments_only_for_moderation() -> None
     after = client.get("/metrics")
     assert after.status_code == 200
     assert sum(after.json()["latency_ms_buckets"].values()) == 1
+
+
+def test_prometheus_metrics_endpoint_exposes_counters() -> None:
+    moderate = client.post(
+        "/v1/moderate",
+        json={"text": "We should discuss policy peacefully."},
+        headers={"X-API-Key": "dev-key"},
+    )
+    assert moderate.status_code == 200
+
+    response = client.get("/metrics/prometheus")
+    assert response.status_code == 200
+    assert "sentinel_action_total" in response.text
+    assert "sentinel_http_status_total" in response.text

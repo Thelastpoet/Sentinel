@@ -190,9 +190,7 @@ def load_wave1_registry(
         if normalized_lang in seen_languages:
             raise ValueError(f"duplicate language in wave1 registry: {normalized_lang}")
         if manifest.pack_version in seen_versions:
-            raise ValueError(
-                f"duplicate pack_version in wave1 registry: {manifest.pack_version}"
-            )
+            raise ValueError(f"duplicate pack_version in wave1 registry: {manifest.pack_version}")
         seen_languages.add(normalized_lang)
         seen_versions.add(manifest.pack_version)
     return registry
@@ -217,9 +215,7 @@ def build_pack_moderate_fn(
     normalization, lexicon, _calibration, _pack_dir = _load_pack_artifacts(
         manifest, registry_path=registry_file
     )
-    compiled_entries = [
-        (entry, _compile_term_pattern(entry.term)) for entry in lexicon.entries
-    ]
+    compiled_entries = [(entry, _compile_term_pattern(entry.term)) for entry in lexicon.entries]
 
     def _moderate(text: str) -> _PackDecision:
         normalized = _normalize_text(text, normalization.replacements)
@@ -257,9 +253,7 @@ def evaluate_pack_gates(
 
     sample_count = len(samples)
     code_switched_count = sum(1 for sample in samples if sample.is_code_switched)
-    code_switched_ratio = (
-        float(code_switched_count) / float(sample_count) if sample_count else 0.0
-    )
+    code_switched_ratio = float(code_switched_count) / float(sample_count) if sample_count else 0.0
     failures: list[str] = []
 
     if sample_count < calibration.min_eval_samples:
@@ -267,21 +261,24 @@ def evaluate_pack_gates(
             f"sample_count={sample_count} < min_eval_samples={calibration.min_eval_samples}"
         )
     if code_switched_ratio < calibration.min_code_switched_ratio:
+        min_code_switched = calibration.min_code_switched_ratio
         failures.append(
             "code_switched_ratio="
-            f"{code_switched_ratio:.4f} < min_code_switched_ratio={calibration.min_code_switched_ratio:.4f}"
+            f"{code_switched_ratio:.4f} < min_code_switched_ratio={min_code_switched:.4f}"
         )
 
     annotation = manifest.annotation_metadata
     if annotation.annotators_per_sample < calibration.min_annotators_per_sample:
+        min_annotators = calibration.min_annotators_per_sample
         failures.append(
             "annotators_per_sample="
-            f"{annotation.annotators_per_sample} < min_annotators_per_sample={calibration.min_annotators_per_sample}"
+            f"{annotation.annotators_per_sample} < min_annotators_per_sample={min_annotators}"
         )
     if annotation.krippendorff_alpha < calibration.min_krippendorff_alpha:
+        min_alpha = calibration.min_krippendorff_alpha
         failures.append(
             "krippendorff_alpha="
-            f"{annotation.krippendorff_alpha:.4f} < min_krippendorff_alpha={calibration.min_krippendorff_alpha:.4f}"
+            f"{annotation.krippendorff_alpha:.4f} < min_krippendorff_alpha={min_alpha:.4f}"
         )
 
     required_f1 = calibration.required_f1_threshold()
@@ -304,14 +301,16 @@ def evaluate_pack_gates(
     block_fp_rate = float(benign_metrics["block_fp_rate"])
     block_or_review_fp_rate = float(benign_metrics["block_or_review_fp_rate"])
     if block_fp_rate > calibration.benign_block_fp_rate_max:
+        max_block_fp = calibration.benign_block_fp_rate_max
         failures.append(
-            "block_fp_rate="
-            f"{block_fp_rate:.4f} > benign_block_fp_rate_max={calibration.benign_block_fp_rate_max:.4f}"
+            f"block_fp_rate={block_fp_rate:.4f} > benign_block_fp_rate_max={max_block_fp:.4f}"
         )
     if block_or_review_fp_rate > calibration.benign_block_or_review_fp_rate_max:
+        max_block_review_fp = calibration.benign_block_or_review_fp_rate_max
         failures.append(
             "block_or_review_fp_rate="
-            f"{block_or_review_fp_rate:.4f} > benign_block_or_review_fp_rate_max={calibration.benign_block_or_review_fp_rate_max:.4f}"
+            f"{block_or_review_fp_rate:.4f} > benign_block_or_review_fp_rate_max="
+            f"{max_block_review_fp:.4f}"
         )
 
     disparity_ratio = float(report["subgroup_disparity_metrics"]["max_disparity_ratio"])
@@ -330,4 +329,3 @@ def evaluate_pack_gates(
         code_switched_ratio=round(code_switched_ratio, 6),
         report=report,
     )
-

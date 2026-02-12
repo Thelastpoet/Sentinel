@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-
 QUEUE_STATES: set[str] = {
     "queued",
     "processing",
@@ -95,9 +94,7 @@ def validate_proposal_transition(from_state: str, to_state: str) -> TransitionRe
     if target not in PROPOSAL_STATES:
         raise InvalidStateTransition(f"unknown proposal state: {to_state}")
     if target not in PROPOSAL_ALLOWED_TRANSITIONS[source]:
-        raise InvalidStateTransition(
-            f"proposal transition not allowed: {source} -> {target}"
-        )
+        raise InvalidStateTransition(f"proposal transition not allowed: {source} -> {target}")
     return TransitionResult(entity="proposal", from_state=source, to_state=target)
 
 

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-import logging
 import os
 import time
 from collections.abc import AsyncIterator
@@ -22,6 +20,7 @@ from fastapi import (
     status,
 )
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from sentinel_api.appeals import (
@@ -35,6 +34,7 @@ from sentinel_api.appeals import (
     get_appeals_runtime,
 )
 from sentinel_api.async_priority import async_queue_metrics
+from sentinel_api.logging import get_logger
 from sentinel_api.metrics import metrics
 from sentinel_api.oauth import OAuthPrincipal, require_oauth_scope
 from sentinel_api.policy import moderate
@@ -52,7 +52,7 @@ from sentinel_core.models import (
 )
 from sentinel_core.policy_config import resolve_policy_runtime
 
-logger = logging.getLogger("sentinel.api")
+logger = get_logger("sentinel.api")
 
 
 @asynccontextmanager
@@ -96,16 +96,12 @@ async def request_context_middleware(request: Request, call_next):  # type: igno
     response.headers["X-Request-ID"] = resolved_request_id
     metrics.record_http_status(response.status_code)
     logger.info(
-        json.dumps(
-            {
-                "event": "http_request",
-                "request_id": resolved_request_id,
-                "method": request.method,
-                "path": request.url.path,
-                "status_code": response.status_code,
-                "duration_ms": duration_ms,
-            }
-        )
+        "http_request",
+        request_id=resolved_request_id,
+        method=request.method,
+        path=request.url.path,
+        status_code=response.status_code,
+        duration_ms=duration_ms,
     )
     return response
 
@@ -168,6 +164,11 @@ def get_metrics() -> MetricsResponse:
     )
 
 
+@app.get("/metrics/prometheus")
+def get_metrics_prometheus() -> PlainTextResponse:
+    return PlainTextResponse(content=metrics.prometheus_text())
+
+
 @app.get("/internal/monitoring/queue/metrics")
 def get_internal_queue_metrics(
     principal: OAuthPrincipal = Depends(require_oauth_scope("internal:queue:read")),
@@ -219,15 +220,11 @@ def post_admin_appeal(
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     logger.info(
-        json.dumps(
-            {
-                "event": "appeal_created",
-                "appeal_id": record.id,
-                "status": record.status,
-                "request_id": record.request_id,
-                "actor_client_id": principal.client_id,
-            }
-        )
+        "appeal_created",
+        appeal_id=record.id,
+        status=record.status,
+        request_id=record.request_id,
+        actor_client_id=principal.client_id,
     )
     return record
 
@@ -245,15 +242,11 @@ def list_admin_appeals(
         limit=limit,
     )
     logger.info(
-        json.dumps(
-            {
-                "event": "appeal_list",
-                "actor_client_id": principal.client_id,
-                "status_filter": status_filter,
-                "request_id_filter": request_id,
-                "count": len(response.items),
-            }
-        )
+        "appeal_list",
+        actor_client_id=principal.client_id,
+        status_filter=status_filter,
+        request_id_filter=request_id,
+        count=len(response.items),
     )
     return response
 
@@ -275,14 +268,10 @@ def post_admin_appeal_transition(
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     logger.info(
-        json.dumps(
-            {
-                "event": "appeal_transition",
-                "appeal_id": appeal_id,
-                "to_status": request.to_status,
-                "actor_client_id": principal.client_id,
-            }
-        )
+        "appeal_transition",
+        appeal_id=appeal_id,
+        to_status=request.to_status,
+        actor_client_id=principal.client_id,
     )
     return record
 
@@ -300,13 +289,9 @@ def get_admin_appeal_reconstruction(
     except AppealNotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     logger.info(
-        json.dumps(
-            {
-                "event": "appeal_reconstruct",
-                "appeal_id": appeal_id,
-                "actor_client_id": principal.client_id,
-            }
-        )
+        "appeal_reconstruct",
+        appeal_id=appeal_id,
+        actor_client_id=principal.client_id,
     )
     return reconstruction
 
@@ -331,15 +316,11 @@ def get_transparency_appeals_report(
         created_to=created_to_dt,
     )
     logger.info(
-        json.dumps(
-            {
-                "event": "transparency_report_generated",
-                "actor_client_id": principal.client_id,
-                "created_from": created_from,
-                "created_to": created_to,
-                "total_appeals": report.total_appeals,
-            }
-        )
+        "transparency_report_generated",
+        actor_client_id=principal.client_id,
+        created_from=created_from,
+        created_to=created_to,
+        total_appeals=report.total_appeals,
     )
     return report
 
@@ -374,15 +355,11 @@ def get_transparency_appeals_export(
         include_identifiers=include_identifiers,
     )
     logger.info(
-        json.dumps(
-            {
-                "event": "transparency_export_generated",
-                "actor_client_id": principal.client_id,
-                "include_identifiers": include_identifiers,
-                "limit": limit,
-                "record_count": export_payload.total_count,
-            }
-        )
+        "transparency_export_generated",
+        actor_client_id=principal.client_id,
+        include_identifiers=include_identifiers,
+        limit=limit,
+        record_count=export_payload.total_count,
     )
     return export_payload
 
@@ -413,21 +390,17 @@ def moderate_text(
     metrics.record_action(result.action)
     metrics.record_moderation_latency(result.latency_ms)
     logger.info(
-        json.dumps(
-            {
-                "event": "moderation_decision",
-                "request_id": effective_request_id,
-                "action": result.action,
-                "labels": result.labels,
-                "reason_codes": result.reason_codes,
-                "latency_ms": result.latency_ms,
-                "model_version": result.model_version,
-                "lexicon_version": result.lexicon_version,
-                "policy_version": result.policy_version,
-                "effective_phase": effective_phase,
-                "effective_deployment_stage": effective_deployment_stage,
-            }
-        )
+        "moderation_decision",
+        request_id=effective_request_id,
+        action=result.action,
+        labels=result.labels,
+        reason_codes=result.reason_codes,
+        latency_ms=result.latency_ms,
+        model_version=result.model_version,
+        lexicon_version=result.lexicon_version,
+        policy_version=result.policy_version,
+        effective_phase=effective_phase,
+        effective_deployment_stage=effective_deployment_stage,
     )
     return result
 
@@ -440,8 +413,6 @@ async def http_exception_handler(request: Request, exc: HTTPException):  # type:
         message=str(exc.detail),
         request_id=request_id,
     )
-    from fastapi.responses import JSONResponse
-
     headers: dict[str, str] = {"X-Request-ID": request_id}
     if exc.headers:
         for key, value in exc.headers.items():
@@ -464,8 +435,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         message=f"Invalid request payload ({error_count} validation error(s))",
         request_id=request_id,
     )
-    from fastapi.responses import JSONResponse
-
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         headers={"X-Request-ID": request_id},
@@ -478,15 +447,15 @@ async def unhandled_exception_handler(request: Request, exc: Exception):  # type
     request_id = getattr(request.state, "request_id", str(uuid4()))
     logger.exception(
         "unhandled_exception",
-        extra={"request_id": request_id, "path": request.url.path},
+        request_id=request_id,
+        path=request.url.path,
+        error=str(exc),
     )
     payload = ErrorResponse(
         error_code="HTTP_500",
         message="Internal server error",
         request_id=request_id,
     )
-    from fastapi.responses import JSONResponse
-
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         headers={"X-Request-ID": request_id},
