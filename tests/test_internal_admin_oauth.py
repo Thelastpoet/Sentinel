@@ -1,0 +1,116 @@
+from __future__ import annotations
+
+import json
+
+from fastapi.testclient import TestClient
+import pytest
+
+from sentinel_api.main import app
+from sentinel_api.metrics import metrics
+
+client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def reset_metrics() -> None:
+    metrics.reset()
+
+
+def _set_registry(monkeypatch: pytest.MonkeyPatch, payload: dict[str, object]) -> None:
+    monkeypatch.setenv("SENTINEL_OAUTH_TOKENS_JSON", json.dumps(payload))
+
+
+def test_internal_queue_metrics_requires_bearer_token() -> None:
+    response = client.get("/internal/monitoring/queue/metrics")
+    assert response.status_code == 401
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_401"
+    assert response.headers["WWW-Authenticate"] == "Bearer"
+
+
+def test_internal_queue_metrics_rejects_missing_scope(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-read-admin-only": {
+                "client_id": "admin-reader",
+                "scopes": ["admin:proposal:read"],
+            }
+        },
+    )
+    response = client.get(
+        "/internal/monitoring/queue/metrics",
+        headers={"Authorization": "Bearer token-read-admin-only"},
+    )
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_403"
+    assert "internal:queue:read" in payload["message"]
+
+
+def test_internal_queue_metrics_allows_required_scope(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-queue-read": {
+                "client_id": "queue-reader",
+                "scopes": ["internal:queue:read"],
+            }
+        },
+    )
+    response = client.get(
+        "/internal/monitoring/queue/metrics",
+        headers={"Authorization": "Bearer token-queue-read"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["actor_client_id"] == "queue-reader"
+    assert "queue_depth_by_priority" in payload
+    assert "sla_breach_count_by_priority" in payload
+
+
+def test_admin_permissions_requires_read_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-review-only": {
+                "client_id": "proposal-reviewer",
+                "scopes": ["admin:proposal:review"],
+            }
+        },
+    )
+    response = client.get(
+        "/admin/release-proposals/permissions",
+        headers={"Authorization": "Bearer token-review-only"},
+    )
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_403"
+    assert "admin:proposal:read" in payload["message"]
+
+
+def test_admin_review_accepts_review_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-review": {
+                "client_id": "proposal-reviewer",
+                "scopes": ["admin:proposal:review", "admin:proposal:read"],
+            }
+        },
+    )
+    response = client.post(
+        "/admin/release-proposals/42/review",
+        headers={"Authorization": "Bearer token-review"},
+        json={"action": "approve", "rationale": "meets policy"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["proposal_id"] == 42
+    assert payload["action"] == "approve"
+    assert payload["actor"] == "proposal-reviewer"
+    assert payload["status"] == "accepted"

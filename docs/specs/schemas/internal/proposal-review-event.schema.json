@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/proposal-review-event.schema.json",
+  "title": "ProposalReviewEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "proposal_id",
+    "action",
+    "retention_class",
+    "legal_hold",
+    "actor",
+    "metadata",
+    "created_at"
+  ],
+  "properties": {
+    "id": {"type": "integer", "minimum": 1},
+    "proposal_id": {"type": "integer", "minimum": 1},
+    "action": {
+      "type": "string",
+      "enum": ["submit_review", "approve", "reject", "request_changes", "promote"]
+    },
+    "retention_class": {
+      "type": "string",
+      "enum": [
+        "operational_runtime",
+        "async_monitoring_raw",
+        "decision_record",
+        "governance_audit",
+        "analytics_aggregate",
+        "legal_hold"
+      ]
+    },
+    "legal_hold": {"type": "boolean"},
+    "actor": {"type": "string", "minLength": 1},
+    "rationale": {"type": "string"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

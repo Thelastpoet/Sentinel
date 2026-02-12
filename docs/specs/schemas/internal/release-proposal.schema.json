@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/release-proposal.schema.json",
+  "title": "ReleaseProposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "proposal_type",
+    "status",
+    "retention_class",
+    "legal_hold",
+    "title",
+    "evidence",
+    "proposed_by",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {"type": "integer", "minimum": 1},
+    "proposal_type": {
+      "type": "string",
+      "enum": ["lexicon", "narrative", "policy"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in_review", "needs_revision", "approved", "promoted", "rejected"]
+    },
+    "retention_class": {
+      "type": "string",
+      "enum": [
+        "operational_runtime",
+        "async_monitoring_raw",
+        "decision_record",
+        "governance_audit",
+        "analytics_aggregate",
+        "legal_hold"
+      ]
+    },
+    "legal_hold": {"type": "boolean"},
+    "queue_id": {"type": "integer", "minimum": 1},
+    "cluster_id": {"type": "integer", "minimum": 1},
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "policy_impact_summary": {"type": "string"},
+    "proposed_by": {"type": "string", "minLength": 1},
+    "reviewed_by": {"type": "string"},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "promoted_at": {"type": "string", "format": "date-time"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

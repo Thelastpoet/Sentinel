@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+
+      - name: Contract check
+        run: python scripts/check_contract.py
+
+      - name: Unit and integration tests
+        run: pytest -q
+
+  postgres-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: sentinel
+          POSTGRES_USER: sentinel
+          POSTGRES_PASSWORD: sentinel
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sentinel -d sentinel"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      SENTINEL_INTEGRATION_DB_URL: postgresql://sentinel:sentinel@localhost:5432/sentinel
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+
+      - name: Apply migrations
+        run: |
+          python scripts/apply_migrations.py \
+            --database-url "$SENTINEL_INTEGRATION_DB_URL"
+
+      - name: Seed lexicon
+        run: |
+          python scripts/sync_lexicon_seed.py \
+            --database-url "$SENTINEL_INTEGRATION_DB_URL" \
+            --activate-if-none
+
+      - name: Run postgres integration tests
+        run: pytest -q tests/test_lexicon_postgres_integration.py

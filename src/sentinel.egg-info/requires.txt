@@ -1,0 +1,9 @@
+fastapi<1.0.0,>=0.115.0
+pydantic<3.0.0,>=2.8.0
+psycopg[binary]<4.0.0,>=3.2.0
+uvicorn<1.0.0,>=0.30.0
+
+[dev]
+httpx<1.0.0,>=0.27.0
+pyyaml<7.0.0,>=6.0.0
+pytest<9.0.0,>=8.0.0

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/moderation-request.schema.json",
+  "title": "ModerationRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["text"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 5000
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {"type": "string", "maxLength": 100},
+        "locale": {"type": "string", "maxLength": 20},
+        "channel": {"type": "string", "maxLength": 50}
+      }
+    },
+    "request_id": {
+      "type": "string",
+      "maxLength": 128
+    }
+  }
+}

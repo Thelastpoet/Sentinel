@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/metrics-response.schema.json",
+  "title": "MetricsResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action_counts",
+    "http_status_counts",
+    "latency_ms_buckets",
+    "validation_error_count"
+  ],
+  "properties": {
+    "action_counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "http_status_counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "latency_ms_buckets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "validation_error_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

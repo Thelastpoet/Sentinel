@@ -1,0 +1,279 @@
+openapi: 3.1.0
+info:
+  title: Sentinel Moderation API
+  version: 0.1.0
+  description: |
+    Spec-first public API contract for Project Sentinel.
+servers:
+  - url: https://api.sentinel.example
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+  /metrics:
+    get:
+      summary: Runtime metrics snapshot
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Metrics counters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+  /v1/moderate:
+    post:
+      summary: Moderate input text
+      operationId: moderateText
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationRequest'
+      responses:
+        '200':
+          description: Moderation result
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests allowed in the current window.
+              schema:
+                type: string
+            X-RateLimit-Remaining:
+              description: Requests remaining in the current window.
+              schema:
+                type: string
+            X-RateLimit-Reset:
+              description: Seconds until the current rate-limit window resets.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModerationResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests allowed in the current window.
+              schema:
+                type: string
+            X-RateLimit-Remaining:
+              description: Always `0` when the request is throttled.
+              schema:
+                type: string
+            X-RateLimit-Reset:
+              description: Seconds until the current rate-limit window resets.
+              schema:
+                type: string
+            Retry-After:
+              description: Seconds the client should wait before retrying.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    ModerationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        context:
+          type: object
+          additionalProperties: false
+          properties:
+            source:
+              type: string
+              maxLength: 100
+            locale:
+              type: string
+              maxLength: 20
+            channel:
+              type: string
+              maxLength: 50
+        request_id:
+          type: string
+          maxLength: 128
+    ModerationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - toxicity
+        - labels
+        - action
+        - reason_codes
+        - evidence
+        - language_spans
+        - model_version
+        - lexicon_version
+        - pack_versions
+        - policy_version
+        - latency_ms
+      properties:
+        toxicity:
+          type: number
+          minimum: 0
+          maximum: 1
+        labels:
+          type: array
+          items:
+            type: string
+            enum:
+              - ETHNIC_CONTEMPT
+              - INCITEMENT_VIOLENCE
+              - HARASSMENT_THREAT
+              - DOGWHISTLE_WATCH
+              - DISINFO_RISK
+              - BENIGN_POLITICAL_SPEECH
+        action:
+          type: string
+          enum: [ALLOW, REVIEW, BLOCK]
+        reason_codes:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            pattern: '^R_[A-Z0-9_]+$'
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceItem'
+        language_spans:
+          type: array
+          items:
+            $ref: '#/components/schemas/LanguageSpan'
+        model_version:
+          type: string
+        lexicon_version:
+          type: string
+        pack_versions:
+          type: object
+          additionalProperties:
+            type: string
+        policy_version:
+          type: string
+        latency_ms:
+          type: integer
+          minimum: 0
+    EvidenceItem:
+      type: object
+      additionalProperties: false
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [lexicon, vector_match, model_span]
+        match:
+          type: string
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 3
+        lang:
+          type: string
+        match_id:
+          type: string
+        similarity:
+          type: number
+          minimum: 0
+          maximum: 1
+        span:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+    LanguageSpan:
+      type: object
+      additionalProperties: false
+      required: [start, end, lang]
+      properties:
+        start:
+          type: integer
+          minimum: 0
+        end:
+          type: integer
+          minimum: 0
+        lang:
+          type: string
+          maxLength: 16
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error_code, message]
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        request_id:
+          type: string
+    MetricsResponse:
+      type: object
+      additionalProperties: false
+      required: [action_counts, http_status_counts, latency_ms_buckets, validation_error_count]
+      properties:
+        action_counts:
+          type: object
+          additionalProperties:
+            type: integer
+            minimum: 0
+        http_status_counts:
+          type: object
+          additionalProperties:
+            type: integer
+            minimum: 0
+        latency_ms_buckets:
+          type: object
+          additionalProperties:
+            type: integer
+            minimum: 0
+        validation_error_count:
+          type: integer
+          minimum: 0

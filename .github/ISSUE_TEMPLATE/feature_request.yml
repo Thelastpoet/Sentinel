@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a new capability or enhancement
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are we solving?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable criteria for done
+    validations:
+      required: true
+  - type: textarea
+    id: specs
+    attributes:
+      label: Spec updates needed
+      description: RFC/ADR/OpenAPI/schema/task updates

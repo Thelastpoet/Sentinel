@@ -1,0 +1,78 @@
+Metadata-Version: 2.4
+Name: sentinel
+Version: 0.1.0
+Summary: Project Sentinel moderation API vertical slice
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0.0,>=0.115.0
+Requires-Dist: pydantic<3.0.0,>=2.8.0
+Requires-Dist: psycopg[binary]<4.0.0,>=3.2.0
+Requires-Dist: uvicorn<1.0.0,>=0.30.0
+Provides-Extra: dev
+Requires-Dist: httpx<1.0.0,>=0.27.0; extra == "dev"
+Requires-Dist: pyyaml<7.0.0,>=6.0.0; extra == "dev"
+Requires-Dist: pytest<9.0.0,>=8.0.0; extra == "dev"
+
+# Project Sentinel
+
+Spec-driven implementation scaffold for the Sentinel Moderation API.
+
+## Run
+
+```bash
+uv sync
+uv run uvicorn sentinel_api.main:app --reload
+```
+
+Or with Docker:
+
+```bash
+docker compose up --build
+make seed-lexicon
+```
+
+Shortcuts:
+
+```bash
+make run
+make up
+make seed-lexicon
+```
+
+## Test
+
+```bash
+uv run pytest
+```
+
+Contract check:
+
+```bash
+python scripts/check_contract.py
+```
+
+Shortcuts:
+
+```bash
+make test
+make contract
+```
+
+## Spec references
+
+- `docs/specs/api/openapi.yaml`
+- `docs/specs/schemas/moderation-request.schema.json`
+- `docs/specs/schemas/moderation-response.schema.json`
+- `docs/specs/rfcs/0001-v1-moderation-api.md`
+
+## Lexicon backends
+
+- The API prefers Postgres when `SENTINEL_DATABASE_URL` is set.
+- If Postgres is unavailable or empty, it falls back to `data/lexicon_seed.json`.
+
+For manual database setup (outside Docker init), apply:
+
+```bash
+psql "$SENTINEL_DATABASE_URL" -f migrations/0001_lexicon_entries.sql
+uv run python scripts/sync_lexicon_seed.py
+```

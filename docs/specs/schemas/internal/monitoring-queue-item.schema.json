@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/monitoring-queue-item.schema.json",
+  "title": "MonitoringQueueItem",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "event_id",
+    "priority",
+    "state",
+    "retention_class",
+    "legal_hold",
+    "attempt_count",
+    "sla_due_at",
+    "last_actor",
+    "state_updated_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {"type": "integer", "minimum": 1},
+    "event_id": {"type": "integer", "minimum": 1},
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "urgent", "standard", "batch"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["queued", "processing", "clustered", "proposed", "dropped", "error"]
+    },
+    "retention_class": {
+      "type": "string",
+      "enum": [
+        "operational_runtime",
+        "async_monitoring_raw",
+        "decision_record",
+        "governance_audit",
+        "analytics_aggregate",
+        "legal_hold"
+      ]
+    },
+    "legal_hold": {"type": "boolean"},
+    "attempt_count": {"type": "integer", "minimum": 0},
+    "next_attempt_at": {"type": "string", "format": "date-time"},
+    "sla_due_at": {"type": "string", "format": "date-time"},
+    "policy_impact_summary": {"type": "string"},
+    "assigned_worker": {"type": "string"},
+    "last_error": {"type": "string"},
+    "last_actor": {"type": "string", "minLength": 1},
+    "state_updated_at": {"type": "string", "format": "date-time"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

@@ -1,0 +1,32 @@
+name: Language pack proposal
+description: Propose a new or updated language pack
+title: "langpack: "
+labels: ["language-pack"]
+body:
+  - type: input
+    id: language
+    attributes:
+      label: Language / dialect
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: New pack or update? Which components?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Example signals
+      description: Slurs/dog whistles/idioms and contexts
+    validations:
+      required: true
+  - type: textarea
+    id: evaluation
+    attributes:
+      label: Evaluation plan
+      description: Proposed test set and quality gates
+    validations:
+      required: true

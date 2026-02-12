@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/internal/monitoring-cluster.schema.json",
+  "title": "MonitoringCluster",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "cluster_key",
+    "state",
+    "retention_class",
+    "legal_hold",
+    "signal_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {"type": "integer", "minimum": 1},
+    "cluster_key": {"type": "string", "minLength": 1},
+    "lang": {"type": "string", "maxLength": 16},
+    "state": {
+      "type": "string",
+      "enum": ["draft", "proposed", "merged", "rejected"]
+    },
+    "retention_class": {
+      "type": "string",
+      "enum": [
+        "operational_runtime",
+        "async_monitoring_raw",
+        "decision_record",
+        "governance_audit",
+        "analytics_aggregate",
+        "legal_hold"
+      ]
+    },
+    "legal_hold": {"type": "boolean"},
+    "signal_count": {"type": "integer", "minimum": 0},
+    "summary": {"type": "string"},
+    "first_seen_at": {"type": "string", "format": "date-time"},
+    "last_seen_at": {"type": "string", "format": "date-time"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

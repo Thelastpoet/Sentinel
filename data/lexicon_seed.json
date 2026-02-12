@@ -1,0 +1,53 @@
+{
+  "version": "hatelex-v2.1",
+  "entries": [
+    {
+      "term": "kill",
+      "action": "BLOCK",
+      "label": "INCITEMENT_VIOLENCE",
+      "reason_code": "R_INCITE_CALL_TO_HARM",
+      "severity": 3,
+      "lang": "en"
+    },
+    {
+      "term": "burn them",
+      "action": "BLOCK",
+      "label": "INCITEMENT_VIOLENCE",
+      "reason_code": "R_INCITE_CALL_TO_HARM",
+      "severity": 3,
+      "lang": "en"
+    },
+    {
+      "term": "mchome",
+      "action": "BLOCK",
+      "label": "ETHNIC_CONTEMPT",
+      "reason_code": "R_ETHNIC_SLUR_MATCH",
+      "severity": 3,
+      "lang": "sw"
+    },
+    {
+      "term": "deal with them",
+      "action": "REVIEW",
+      "label": "DOGWHISTLE_WATCH",
+      "reason_code": "R_DOGWHISTLE_CONTEXT_REQUIRED",
+      "severity": 2,
+      "lang": "en"
+    },
+    {
+      "term": "wataona",
+      "action": "REVIEW",
+      "label": "DOGWHISTLE_WATCH",
+      "reason_code": "R_DOGWHISTLE_CONTEXT_REQUIRED",
+      "severity": 2,
+      "lang": "sw"
+    },
+    {
+      "term": "rigged",
+      "action": "REVIEW",
+      "label": "DISINFO_RISK",
+      "reason_code": "R_DISINFO_NARRATIVE_SIMILARITY",
+      "severity": 1,
+      "lang": "en"
+    }
+  ]
+}
