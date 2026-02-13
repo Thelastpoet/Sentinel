@@ -37,7 +37,7 @@ def test_transparency_export_and_report_with_postgres(
             original_reason_codes=["R_DISINFO_NARRATIVE_SIMILARITY"],
             original_model_version="sentinel-multi-v2",
             original_lexicon_version="hatelex-v2.1",
-            original_policy_version="policy-2026.10",
+            original_policy_version="policy-2026.11",
             original_pack_versions={"en": "pack-en-0.1"},
             rationale="transparency postgres integration artifact",
         ),

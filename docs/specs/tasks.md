@@ -109,7 +109,7 @@ Status legend:
 | I-414 | `model_version` contract clarity and provenance docs | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i414-model-version-contract-clarity.md`, `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md` | `done` | OpenAPI/RFC/ops docs explicitly define `model_version` semantics with no response-shape break |
 | I-415 | Semantic embedding model selection gate | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | `done` | Candidate embeddings are benchmarked vs baseline, one strategy is selected, and rollback is documented |
 | I-416 | Multi-label inference integration (shadow-first) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | `done` | Classifier path runs in shadow/advisory mode with guardrails, latency budget compliance, and divergence observability |
-| I-417 | Claim-likeness calibration and governance thresholds | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i417-claim-likeness-calibration-governance.md` | `todo` | Threshold updates are evidence-backed, audited, and governance-approved with per-language/subgroup reporting |
+| I-417 | Claim-likeness calibration and governance thresholds | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i417-claim-likeness-calibration-governance.md` | `done` | Threshold updates are evidence-backed, audited, and governance-approved with per-language/subgroup reporting |
 | I-418 | ML dataset and annotation pipeline | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | `done` | Initial labeled corpus, annotation guide, and agreement metrics are produced and versioned |
 | I-419 | Model artifact lifecycle and deployment governance | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md`, `docs/specs/adr/0010-model-artifact-lifecycle-and-deployment.md` | `todo` | Artifact lifecycle states, activation controls, and rollback workflow are implemented and audited |
 | I-420 | Optional ML dependency packaging (`sentinel[ml]`) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | `todo` | Optional ML extras are packaged, documented, and validated without breaking base install |
@@ -117,10 +117,9 @@ Status legend:
 
 ## Immediate Next (Execution Order)
 
-1. `I-417`: calibrate claim-likeness thresholds with governance sign-off.
-2. `I-419`: implement model artifact lifecycle governance.
-3. `I-420`: package optional ML dependencies.
-4. `I-421`: extend go-live gate for ML launch profile enforcement.
+1. `I-419`: implement model artifact lifecycle governance.
+2. `I-420`: package optional ML dependencies.
+3. `I-421`: extend go-live gate for ML launch profile enforcement.
 
 ## Execution Dependencies
 

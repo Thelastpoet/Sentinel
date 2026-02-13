@@ -87,6 +87,9 @@ python scripts/evaluate_language_packs.py --input-path data/eval/sample_eval.jso
 python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
 python scripts/build_ml_calibration_dataset.py --pretty
 python scripts/validate_ml_dataset_release.py --pretty
+python scripts/calibrate_claim_likeness.py --pretty
+# one-time promotion report against previous baseline thresholds
+python scripts/calibrate_claim_likeness.py --baseline-medium-threshold 0.4 --baseline-high-threshold 0.7 --pretty
 ```
 
 ## Go-live readiness gate

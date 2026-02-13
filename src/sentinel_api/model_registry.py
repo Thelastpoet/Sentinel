@@ -116,8 +116,8 @@ class HeuristicClaimScorer:
         try:
             assessment = assess_claim_likeness(
                 text,
-                medium_threshold=0.40,
-                high_threshold=0.70,
+                medium_threshold=0.45,
+                high_threshold=0.75,
             )
         except Exception as exc:
             logger.warning("claim scorer failed; falling back: %s", exc)

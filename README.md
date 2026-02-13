@@ -46,7 +46,7 @@ Every response follows a strict contract:
   ],
   "model_version": "sentinel-multi-v2",
   "lexicon_version": "hatelex-v2.1",
-  "policy_version": "policy-2026.10",
+  "policy_version": "policy-2026.11",
   "latency_ms": 94
 }
 ```

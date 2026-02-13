@@ -24,7 +24,7 @@ def test_default_policy_config_loads(monkeypatch) -> None:
     monkeypatch.delenv("SENTINEL_POLICY_CONFIG_PATH", raising=False)
     monkeypatch.delenv("SENTINEL_ELECTORAL_PHASE", raising=False)
     config = get_policy_config()
-    assert config.version == "policy-2026.10"
+    assert config.version == "policy-2026.11"
     assert config.model_version == "sentinel-multi-v2"
     assert config.toxicity_by_action.BLOCK == 0.9
     assert config.deployment_stage is None

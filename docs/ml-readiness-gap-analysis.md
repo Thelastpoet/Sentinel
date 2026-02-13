@@ -73,6 +73,7 @@ This is the only trained model in the system. It is not bundled and must be prov
 | Embedding model selection | `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | I-415 | `done` (baseline retained; optional-model rerun pending `I-420`) |
 | Multi-label inference rollout (shadow-first) | `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | I-416 | `done` |
 | Labeled corpus and annotation workflow | `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | I-418 | `done` (v1 corpus + guide + agreement artifacts added and verified) |
+| Claim-likeness calibration and governance thresholds | `docs/specs/phase4/i417-claim-likeness-calibration-governance.md` | I-417 | `done` (calibration engine + report artifacts + policy threshold promotion verified) |
 | Model artifact lifecycle governance | `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md` | I-419 | `todo` |
 | Optional ML dependency packaging | `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | I-420 | `todo` |
 | Go-live gate extension for ML mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md` | I-421 | `todo` |

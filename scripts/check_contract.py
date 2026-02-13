@@ -37,6 +37,12 @@ def main() -> None:
         "partner_ingest_report": Path(
             "docs/specs/schemas/internal/partner-connector-ingest-report.schema.json"
         ),
+        "ml_calibration_sample": Path(
+            "docs/specs/schemas/internal/ml-calibration-sample.schema.json"
+        ),
+        "ml_double_annotation_sample": Path(
+            "docs/specs/schemas/internal/ml-double-annotation-sample.schema.json"
+        ),
     }
 
     if not openapi_path.exists():
@@ -217,6 +223,18 @@ def main() -> None:
     )
     if partner_ingest_status != {"ok", "error", "circuit_open"}:
         fail("internal partner ingest report status enum mismatch")
+
+    ml_language_enum = set(
+        internal_schemas["ml_calibration_sample"]["properties"]["language"].get("enum", [])
+    )
+    if ml_language_enum != {"en", "sw", "sh"}:
+        fail("internal ml calibration language enum mismatch")
+
+    ml_double_language_enum = set(
+        internal_schemas["ml_double_annotation_sample"]["properties"]["language"].get("enum", [])
+    )
+    if ml_double_language_enum != {"en", "sw", "sh"}:
+        fail("internal ml double-annotation language enum mismatch")
 
     expected_retention_classes = {
         "operational_runtime",

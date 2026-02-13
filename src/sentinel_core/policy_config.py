@@ -53,8 +53,8 @@ class PhasePolicyOverride(BaseModel):
 class ClaimLikenessConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    medium_threshold: float = Field(ge=0, le=1, default=0.40)
-    high_threshold: float = Field(ge=0, le=1, default=0.70)
+    medium_threshold: float = Field(ge=0, le=1, default=0.45)
+    high_threshold: float = Field(ge=0, le=1, default=0.75)
     require_election_anchor: bool = True
 
     @model_validator(mode="after")

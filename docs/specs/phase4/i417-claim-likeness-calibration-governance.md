@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-13
 - Scope: Calibrate claim-likeness thresholds with labeled data and governance sign-off
 - Task linkage: `I-417` in `docs/specs/tasks.md`
@@ -40,3 +40,29 @@ Current corpus reference (from `I-418`):
 3. Regression tests verify deterministic score-to-band mapping after updates.
 4. No public API contract changes are introduced.
 5. Calibration evidence references dataset artifact and annotation provenance.
+
+## 4. Implementation Notes
+
+1. Calibration engine:
+   - `src/sentinel_core/claim_calibration.py`
+2. Calibration report generator:
+   - `scripts/calibrate_claim_likeness.py`
+3. Calibration evidence artifacts:
+   - `docs/specs/benchmarks/i417-claim-likeness-calibration-2026-02-13.json`
+   - `docs/specs/benchmarks/i417-claim-likeness-calibration-2026-02-13.md`
+   - `docs/specs/benchmarks/i417-threshold-promotion-decision-2026-02-13.md`
+4. Policy thresholds and versioning:
+   - `config/policy/default.json`
+   - calibrated `claim_likeness` thresholds promoted and policy version bumped.
+5. Regression coverage:
+   - `tests/test_claim_calibration.py`
+   - `tests/test_calibrate_claim_likeness_script.py`
+
+## 5. Verification Commands
+
+```bash
+python -m pytest -q tests/test_claim_calibration.py tests/test_calibrate_claim_likeness_script.py tests/test_claim_likeness.py tests/test_policy_claim_likeness.py
+python scripts/calibrate_claim_likeness.py --pretty
+python -m pytest -q
+python scripts/check_contract.py
+```

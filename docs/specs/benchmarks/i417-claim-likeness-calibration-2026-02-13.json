@@ -1,0 +1,240 @@
+{
+  "active_policy_thresholds": {
+    "high_threshold": 0.75,
+    "medium_threshold": 0.45
+  },
+  "annotation_guide_version": "ml-annotation-guide-v1",
+  "baseline": {
+    "benign_false_positive_rate": 0.666667,
+    "candidate": {
+      "high_threshold": 0.7,
+      "medium_threshold": 0.4
+    },
+    "global_metrics": {
+      "f1": 0.4,
+      "false_positive_rate": 0.666667,
+      "fn": 200,
+      "fp": 1000,
+      "precision": 0.285714,
+      "recall": 0.666667,
+      "tn": 500,
+      "tp": 400
+    },
+    "language_metrics": {
+      "en": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 500,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 200
+      },
+      "sh": {
+        "f1": 0.363636,
+        "false_positive_rate": 0.5,
+        "fn": 100,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 0.5,
+        "tn": 250,
+        "tp": 100
+      },
+      "sw": {
+        "f1": 0.363636,
+        "false_positive_rate": 0.5,
+        "fn": 100,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 0.5,
+        "tn": 250,
+        "tp": 100
+      }
+    },
+    "subgroup_metrics": {
+      "central-urban": {
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "fn": 100,
+        "fp": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tn": 250,
+        "tp": 0
+      },
+      "coast-urban": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      },
+      "nairobi-urban": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      },
+      "north-eastern-rural": {
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "fn": 100,
+        "fp": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tn": 250,
+        "tp": 0
+      },
+      "rift-valley-rural": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      },
+      "western-rural": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      }
+    }
+  },
+  "candidate_count": 39,
+  "dataset_path": "data/datasets/ml_calibration/v1/corpus.jsonl",
+  "dataset_release_metadata_path": "data/datasets/ml_calibration/v1/release_metadata.json",
+  "generated_at": "2026-02-13T10:41:31.776946Z",
+  "governance_target_thresholds": {
+    "high_threshold": 0.75,
+    "medium_threshold": 0.45
+  },
+  "policy_require_election_anchor": true,
+  "sample_count": 2100,
+  "selected": {
+    "benign_false_positive_rate": 0.666667,
+    "candidate": {
+      "high_threshold": 0.75,
+      "medium_threshold": 0.45
+    },
+    "global_metrics": {
+      "f1": 0.4,
+      "false_positive_rate": 0.666667,
+      "fn": 200,
+      "fp": 1000,
+      "precision": 0.285714,
+      "recall": 0.666667,
+      "tn": 500,
+      "tp": 400
+    },
+    "language_metrics": {
+      "en": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 500,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 200
+      },
+      "sh": {
+        "f1": 0.363636,
+        "false_positive_rate": 0.5,
+        "fn": 100,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 0.5,
+        "tn": 250,
+        "tp": 100
+      },
+      "sw": {
+        "f1": 0.363636,
+        "false_positive_rate": 0.5,
+        "fn": 100,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 0.5,
+        "tn": 250,
+        "tp": 100
+      }
+    },
+    "subgroup_metrics": {
+      "central-urban": {
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "fn": 100,
+        "fp": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tn": 250,
+        "tp": 0
+      },
+      "coast-urban": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      },
+      "nairobi-urban": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      },
+      "north-eastern-rural": {
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "fn": 100,
+        "fp": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tn": 250,
+        "tp": 0
+      },
+      "rift-valley-rural": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      },
+      "western-rural": {
+        "f1": 0.444444,
+        "false_positive_rate": 1.0,
+        "fn": 0,
+        "fp": 250,
+        "precision": 0.285714,
+        "recall": 1.0,
+        "tn": 0,
+        "tp": 100
+      }
+    }
+  },
+  "selected_is_baseline": false
+}

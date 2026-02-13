@@ -29,7 +29,7 @@ def _appeal_payload() -> dict[str, object]:
         "original_reason_codes": ["R_INCITE_CALL_TO_HARM"],
         "original_model_version": "sentinel-multi-v2",
         "original_lexicon_version": "hatelex-v2.1",
-        "original_policy_version": "policy-2026.10",
+        "original_policy_version": "policy-2026.11",
         "original_pack_versions": {"en": "pack-en-0.1"},
         "rationale": "content owner disputes context",
     }

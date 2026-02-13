@@ -1,5 +1,5 @@
 {
-  "version": "policy-2026.10",
+  "version": "policy-2026.11",
   "model_version": "sentinel-multi-v2",
   "pack_versions": {
     "en": "pack-en-0.1",
@@ -15,8 +15,8 @@
   "allow_reason_code": "R_ALLOW_NO_POLICY_MATCH",
   "allow_confidence": 0.65,
   "claim_likeness": {
-    "medium_threshold": 0.4,
-    "high_threshold": 0.7,
+    "medium_threshold": 0.45,
+    "high_threshold": 0.75,
     "require_election_anchor": true
   },
   "electoral_phase": null,
