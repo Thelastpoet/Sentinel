@@ -1,8 +1,10 @@
 # Sentinel
 
-Open-source multilingual moderation API built to protect Kenya's 2027 general election from ethnic incitement and election disinformation.
+Open-source election-safety moderation API built to help protect Kenya's 2027 general election from ethnic incitement and election disinformation.
 
-Sentinel handles code-switched text across English, Swahili, and Sheng. It returns deterministic moderation decisions (`ALLOW`, `REVIEW`, or `BLOCK`) with full audit evidence, so every action can be explained and appealed.
+Sentinel currently supports code-switched moderation across English (`en`), Swahili (`sw`), and Sheng (`sh`) in the live moderation hot path. Language-pack artifacts for additional languages (including Luo and Kalenjin) are included for operator evaluation and staged rollout, but are not active in default hot-path enforcement.
+
+Sentinel returns deterministic moderation decisions (`ALLOW`, `REVIEW`, or `BLOCK`) with full audit evidence, so every action can be explained and appealed.
 
 ## Who is this for?
 
@@ -11,6 +13,12 @@ Sentinel handles code-switched text across English, Swahili, and Sheng. It retur
 **Self-host operators** — You want to deploy and manage a Sentinel instance for your organization. Start with the [Deployment Guide](docs/deployment.md).
 
 Both audiences should begin with the [Quickstart](docs/quickstart.md).
+
+## Capability Snapshot
+
+- **Available now (default runtime)**: moderation routing and enforcement for `en`, `sw`, `sh`
+- **Included but not default-active**: additional language-pack artifacts (e.g., Luo, Kalenjin)
+- **Contract stability**: `POST /v1/moderate` is the stable integration surface; admin/internal interfaces are operator-oriented and can evolve
 
 ## What Sentinel returns
 

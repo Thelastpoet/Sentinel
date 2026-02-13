@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sentinel.dev/schemas/metrics-response.schema.json",
+  "$id": "urn:sentinel:schema:metrics-response",
   "title": "MetricsResponse",
   "type": "object",
   "additionalProperties": false,

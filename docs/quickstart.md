@@ -5,6 +5,8 @@ Choose your path:
 - **Path A** — You're an integrator calling an existing Sentinel instance
 - **Path B** — You're an operator setting up Sentinel from scratch
 
+Current default runtime language support is English (`en`), Swahili (`sw`), and Sheng (`sh`).
+
 ## Path A: Integrator
 
 You have access to a running Sentinel instance and an API key. Four steps to your first moderation call.

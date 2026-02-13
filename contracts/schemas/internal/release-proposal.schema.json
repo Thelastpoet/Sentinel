@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sentinel.dev/schemas/internal/release-proposal.schema.json",
+  "$id": "urn:sentinel:schema:internal:release-proposal",
   "title": "ReleaseProposal",
   "type": "object",
   "additionalProperties": false,

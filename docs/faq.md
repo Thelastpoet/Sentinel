@@ -4,7 +4,7 @@
 
 ### What is Sentinel?
 
-Sentinel is an open-source multilingual moderation API built to protect Kenya's 2027 general election from ethnic incitement and election disinformation. It handles code-switched text across English, Swahili, and Sheng, and returns deterministic moderation decisions (`ALLOW`, `REVIEW`, `BLOCK`) with full audit evidence.
+Sentinel is an open-source election-safety moderation API built to help protect Kenya's 2027 general election from ethnic incitement and election disinformation. It currently supports code-switched moderation across English (`en`), Swahili (`sw`), and Sheng (`sh`), and returns deterministic moderation decisions (`ALLOW`, `REVIEW`, `BLOCK`) with full audit evidence.
 
 ### Is Sentinel production-ready?
 
@@ -25,7 +25,9 @@ Sentinel currently supports three language codes in the moderation pipeline:
 - **Swahili (sw)** — baseline deterministic support with hint-word detection
 - **Sheng (sh)** — baseline deterministic support with hint-word detection
 
-Language routing is token-informed and returns span-level `language_spans`, so code-switched text (e.g., English + Sheng in one sentence) is handled natively. Additional languages can be added via the language pack system.
+Language routing is token-informed and returns span-level `language_spans`, so code-switched text (e.g., English + Sheng in one sentence) is handled natively.
+
+Sentinel also includes language-pack artifacts for additional languages (currently Luo and Kalenjin), but these are for staged/operator rollout and are not active in the default moderation hot path.
 
 ### What are the six labels?
 

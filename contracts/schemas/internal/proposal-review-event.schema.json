@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sentinel.dev/schemas/internal/proposal-review-event.schema.json",
+  "$id": "urn:sentinel:schema:internal:proposal-review-event",
   "title": "ProposalReviewEvent",
   "type": "object",
   "additionalProperties": false,
