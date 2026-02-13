@@ -1,0 +1,13 @@
+{
+  "binary_harmful_kappa": 0.701063,
+  "exact_label_set_match_rate": 0.883333,
+  "per_label_kappa": {
+    "BENIGN_POLITICAL_SPEECH": 0.736557,
+    "DISINFO_RISK": 0.951411,
+    "DOGWHISTLE_WATCH": 0.825269,
+    "ETHNIC_CONTEMPT": 0.952765,
+    "HARASSMENT_THREAT": 0.952765,
+    "INCITEMENT_VIOLENCE": 0.95356
+  },
+  "sample_count": 360
+}

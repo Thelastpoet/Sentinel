@@ -1,0 +1,360 @@
+{"id": "ml-calibration-v1-000001", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000002", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000003", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000004", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000005", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000006", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000007", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000008", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000009", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000010", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000011", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000012", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000013", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000014", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000015", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000016", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000017", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000018", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000019", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000020", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000021", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000022", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000023", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000024", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000025", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000026", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000027", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000028", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000029", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000030", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000031", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000032", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000033", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000034", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000035", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000036", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000037", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000038", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000039", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000040", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000041", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000042", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000043", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000044", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000045", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000046", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000047", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000048", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000049", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000050", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000051", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000052", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000053", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000054", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000055", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000056", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000057", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000058", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000059", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000060", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000061", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000062", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000063", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000064", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000065", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000066", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000067", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000068", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000069", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000070", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000071", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000072", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000073", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000074", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000075", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000076", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000077", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000078", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000079", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000080", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000081", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000082", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000083", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000084", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000085", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000086", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000087", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000088", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000089", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000090", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000091", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000092", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000093", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000094", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000095", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000096", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000097", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000098", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000099", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000100", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000101", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000102", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000103", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000104", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000105", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000106", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000107", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000108", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000109", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000110", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000111", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000112", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000113", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000114", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000115", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000116", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000117", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000118", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000119", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000120", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000121", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000122", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000123", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000124", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000125", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000126", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000127", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000128", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000129", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000130", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000131", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000132", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000133", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000134", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000135", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000136", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000137", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000138", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000139", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000140", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000141", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000142", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000143", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000144", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000145", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000146", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000147", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000148", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000149", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000150", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000151", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000152", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000153", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000154", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000155", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000156", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000157", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000158", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000159", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000160", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000161", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000162", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000163", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000164", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000165", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000166", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000167", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000168", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000169", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000170", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000171", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000172", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000173", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000174", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000175", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000176", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000177", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000178", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000179", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000180", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000181", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000182", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000183", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000184", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000185", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000186", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000187", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000188", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000189", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000190", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000191", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000192", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000193", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000194", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000195", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000196", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000197", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000198", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000199", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000200", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000201", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000202", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000203", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000204", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000205", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000206", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000207", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000208", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000209", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000210", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000211", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000212", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000213", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000214", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000215", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000216", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000217", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000218", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000219", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000220", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000221", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000222", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000223", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000224", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000225", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000226", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000227", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000228", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000229", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000230", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000231", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000232", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000233", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000234", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000235", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000236", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000237", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000238", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000239", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000240", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000241", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000242", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000243", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000244", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000245", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000246", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000247", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000248", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000249", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000250", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000251", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000252", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000253", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000254", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000255", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000256", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000257", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000258", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000259", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000260", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000261", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000262", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000263", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000264", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000265", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000266", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000267", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000268", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000269", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000270", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000271", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000272", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000273", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000274", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000275", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000276", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000277", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000278", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000279", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000280", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000281", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000282", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000283", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000284", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000285", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000286", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000287", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000288", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000289", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000290", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000291", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000292", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000293", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000294", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000295", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000296", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000297", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000298", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000299", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000300", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000301", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000302", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000303", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000304", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["DOGWHISTLE_WATCH", "INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000305", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000306", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000307", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000308", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000309", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000310", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000311", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000312", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000313", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000314", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000315", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000316", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000317", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000318", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000319", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000320", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000321", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000322", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000323", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000324", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000325", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000326", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000327", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000328", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000329", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000330", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000331", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000332", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000333", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000334", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000335", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000336", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000337", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000338", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000339", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000340", "language": "en", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000341", "language": "sw", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000342", "language": "sh", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000343", "language": "en", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000344", "language": "sw", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000345", "language": "sh", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000346", "language": "en", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000347", "language": "sw", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000348", "language": "sh", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000349", "language": "en", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000350", "language": "sw", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000351", "language": "sh", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000352", "language": "en", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000353", "language": "sw", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}
+{"id": "ml-calibration-v1-000354", "language": "sh", "annotator_a_labels": ["ETHNIC_CONTEMPT"], "annotator_b_labels": ["ETHNIC_CONTEMPT"], "adjudicated_labels": ["ETHNIC_CONTEMPT"]}
+{"id": "ml-calibration-v1-000355", "language": "en", "annotator_a_labels": ["HARASSMENT_THREAT"], "annotator_b_labels": ["HARASSMENT_THREAT"], "adjudicated_labels": ["HARASSMENT_THREAT"]}
+{"id": "ml-calibration-v1-000356", "language": "sw", "annotator_a_labels": ["DOGWHISTLE_WATCH"], "annotator_b_labels": ["DOGWHISTLE_WATCH"], "adjudicated_labels": ["DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000357", "language": "sh", "annotator_a_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK", "DOGWHISTLE_WATCH"]}
+{"id": "ml-calibration-v1-000358", "language": "en", "annotator_a_labels": ["BENIGN_POLITICAL_SPEECH"], "annotator_b_labels": ["BENIGN_POLITICAL_SPEECH"], "adjudicated_labels": ["BENIGN_POLITICAL_SPEECH"]}
+{"id": "ml-calibration-v1-000359", "language": "sw", "annotator_a_labels": ["DISINFO_RISK"], "annotator_b_labels": ["DISINFO_RISK"], "adjudicated_labels": ["DISINFO_RISK"]}
+{"id": "ml-calibration-v1-000360", "language": "sh", "annotator_a_labels": ["INCITEMENT_VIOLENCE"], "annotator_b_labels": ["INCITEMENT_VIOLENCE"], "adjudicated_labels": ["INCITEMENT_VIOLENCE"]}

@@ -1,0 +1,41 @@
+{
+  "agreement_report_path": "docs/specs/benchmarks/i418-inter-annotator-agreement-2026-02-13.json",
+  "agreement_summary": {
+    "binary_harmful_kappa": 0.701063,
+    "exact_label_set_match_rate": 0.883333,
+    "per_label_kappa": {
+      "BENIGN_POLITICAL_SPEECH": 0.736557,
+      "DISINFO_RISK": 0.951411,
+      "DOGWHISTLE_WATCH": 0.825269,
+      "ETHNIC_CONTEMPT": 0.952765,
+      "HARASSMENT_THREAT": 0.952765,
+      "INCITEMENT_VIOLENCE": 0.95356
+    },
+    "sample_count": 360
+  },
+  "annotation_guide_path": "docs/specs/annotation-guides/ml-calibration-v1.md",
+  "annotation_guide_version": "ml-annotation-guide-v1",
+  "dataset_path": "data/datasets/ml_calibration/v1/corpus.jsonl",
+  "dataset_version": "ml-calibration-v1",
+  "double_annotation_path": "data/datasets/ml_calibration/v1/double_annotation_sample.jsonl",
+  "generated_at": "2026-02-13T10:20:35.534411Z",
+  "generated_by": "scripts/build_ml_calibration_dataset.py",
+  "label_counts": {
+    "BENIGN_POLITICAL_SPEECH": 300,
+    "DISINFO_RISK": 600,
+    "DOGWHISTLE_WATCH": 600,
+    "ETHNIC_CONTEMPT": 300,
+    "HARASSMENT_THREAT": 300,
+    "INCITEMENT_VIOLENCE": 300
+  },
+  "language_counts": {
+    "en": 700,
+    "sh": 700,
+    "sw": 700
+  },
+  "meets_minimum_sample_count": true,
+  "sample_count": 2100,
+  "seed": 20260213,
+  "source": "synthetic_bootstrap",
+  "tier1_coverage_complete": true
+}

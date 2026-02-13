@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ML Double Annotation Sample",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "language",
+    "annotator_a_labels",
+    "annotator_b_labels",
+    "adjudicated_labels"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "language": {
+      "type": "string",
+      "enum": ["en", "sw", "sh"]
+    },
+    "annotator_a_labels": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "ETHNIC_CONTEMPT",
+          "INCITEMENT_VIOLENCE",
+          "HARASSMENT_THREAT",
+          "DOGWHISTLE_WATCH",
+          "DISINFO_RISK",
+          "BENIGN_POLITICAL_SPEECH"
+        ]
+      }
+    },
+    "annotator_b_labels": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "ETHNIC_CONTEMPT",
+          "INCITEMENT_VIOLENCE",
+          "HARASSMENT_THREAT",
+          "DOGWHISTLE_WATCH",
+          "DISINFO_RISK",
+          "BENIGN_POLITICAL_SPEECH"
+        ]
+      }
+    },
+    "adjudicated_labels": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "ETHNIC_CONTEMPT",
+          "INCITEMENT_VIOLENCE",
+          "HARASSMENT_THREAT",
+          "DOGWHISTLE_WATCH",
+          "DISINFO_RISK",
+          "BENIGN_POLITICAL_SPEECH"
+        ]
+      }
+    }
+  }
+}

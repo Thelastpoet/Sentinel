@@ -28,6 +28,11 @@ Calibration corpus requirements (normative):
    - inter-annotator agreement report,
    - reviewer/owner accountability trail.
 
+Current corpus reference (from `I-418`):
+
+- `data/datasets/ml_calibration/v1/corpus.jsonl`
+- `data/datasets/ml_calibration/v1/release_metadata.json`
+
 ## 3. Acceptance Criteria
 
 1. Calibration report includes per-language and subgroup metrics.
