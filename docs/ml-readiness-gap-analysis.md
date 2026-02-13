@@ -68,8 +68,10 @@ This is the only trained model in the system. It is not bundled and must be prov
 
 | Capability | Spec | Task ID | Status |
 |---|---|---|---|
-| Embedding model selection | `docs/master.md` Sec. 20 | None | Pending decision |
-| Multi-label inference | `docs/master.md` Sec. 5.2 | None | No spec or task |
+| Embedding model selection | `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | I-415 | `todo` |
+| Multi-label inference rollout (shadow-first) | `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | I-416 | `todo` |
+| Model runtime interface boundary | `docs/specs/phase4/i413-model-runtime-interface-and-registry.md` | I-413 | `todo` |
+| `model_version` contract clarity | `docs/specs/phase4/i414-model-version-contract-clarity.md` | I-414 | `todo` |
 
 ### `model_version` is misleading
 
@@ -100,6 +102,8 @@ The `model_version` field in the moderation response (e.g. `"sentinel-multi-v2"`
 ## Related documents
 
 - Master plan: `docs/master.md` (Sec. 5.2, 8.2, 9.1, 13.1, 20)
+- ML execution RFC: `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`
+- Model interface ADR: `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md`
 - Claim-likeness spec: `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md`
 - Deployment stages: `docs/specs/phase4/i405-deployment-stage-controls.md`
 - Evaluation harness: `docs/specs/phase4/i406-evaluation-bias-harness-baseline.md`

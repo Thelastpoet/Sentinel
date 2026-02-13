@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Draft for implementation
+- Status: Active implementation (baseline complete; ML readiness wave in planning)
 - Scope: System blueprint and operating model for 2027 election readiness
 - Canonical document: This file is the single source of truth for project direction
 
@@ -88,7 +88,8 @@ Input
 -> Normalize and route language spans
 -> Fast lexical triggers (Redis)
 -> Semantic similarity (Postgres + pgvector)
--> Multi-label inference (single pass)
+-> Claim-likeness signal (deterministic baseline)
+-> Multi-label inference (shadow-first during ML readiness wave)
 -> Deterministic policy logic
 -> Action (ALLOW / REVIEW / BLOCK)
 -> Structured output (labels, evidence, reason codes, versions, latency)
@@ -199,6 +200,7 @@ Sentinel does not claim full real-time fact checking.
 
 - claim-likeness detection;
 - similarity against known narrative and claim IDs;
+- shadow-first multi-label disinformation/harm inference during ML readiness rollout;
 - output as `DISINFO_RISK` with evidence references.
 
 ### 9.2 Async Path
@@ -337,6 +339,7 @@ Privacy baseline:
 - Tier 2 language expansion.
 - Partner SLAs and governance charter finalization.
 - Independent evaluation and public reporting framework.
+- ML readiness execution wave tracked in `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`.
 
 ## 17. Open Source and Community Operating Model
 
@@ -373,6 +376,7 @@ Privacy baseline:
 8. Per-language benchmark reports generate successfully.
 9. Latency remains below P95 <150ms on hot path under expected load.
 10. Formal go-live gate package is approved per `docs/specs/phase4/i408-go-live-readiness-gate.md`.
+11. `model_version` semantics and model artifact provenance are documented and auditable.
 
 ## 20. Key Decisions Pending
 
@@ -380,10 +384,12 @@ Privacy baseline:
 2. Primary governance body for lexicon and policy updates.
 3. Cloud region strategy for East Africa latency and legal requirements.
 4. Sustainability model across grants, institutional partners, and service tiers.
+5. First multi-label inference model family and shadow promotion criteria.
 
 Resolved decision:
 
 - Tier 2 language priority order is ratified in `docs/specs/phase4/i401-tier2-language-priority-and-gates.md`.
+- Deterministic claim-likeness baseline is integrated per `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md`.
 
 ## 21. Stakeholder Engagement and Risk Register
 

@@ -19,7 +19,7 @@ Status legend:
 | Phase 1: Foundation | Months 1-6 | Stable hot-path API and deterministic governance baseline | All Phase 1 tasks `done` |
 | Phase 2: Intelligence Integration | Months 7-12 | Define async intelligence/update pipeline and control plane specs | T-017, T-020, T-021 `done` |
 | Phase 3: Election Readiness | Months 13-18 | Codify election-time controls, appeals, and transparency workflows | T-018, T-019 `done` + I-301..I-307 `done` |
-| Phase 4: Scale and Sustainability | Months 19-24 | Tier-2 language expansion, partner integrations, and evaluation/transparency operations | Gate target: T-022 `done` + I-401..I-412 `done` |
+| Phase 4: Scale and Sustainability | Months 19-24 | Tier-2 language expansion, partner integrations, evaluation/transparency operations, and ML readiness execution | Gate target: T-022 `done` + I-401..I-417 `done` |
 
 ## Phase 1: Foundation (Months 1-6)
 
@@ -105,16 +105,28 @@ Status legend:
 | I-410 | Latency SLO CI gate (`P95 < 150ms`) | `docs/master.md` (Sec. 3.1, Sec. 19), `docs/specs/phase4/i410-latency-slo-ci-gate.md` | `done` | Hot-path benchmark runs in CI with failing gate on p95 budget breach and artifact retention |
 | I-411 | Hate-Lex metadata completeness + taxonomy coverage hardening | `docs/master.md` (Sec. 6.1, Sec. 8.1), `docs/specs/phase4/i411-lexicon-metadata-and-taxonomy-coverage.md` | `done` | Lexicon schema/seed include lifecycle metadata fields and baseline includes reachable `HARASSMENT_THREAT` coverage |
 | I-412 | Disinformation claim-likeness baseline integration | `docs/master.md` (Sec. 9.1), `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md` | `done` | Deterministic claim-likeness signal is integrated into hot path with tests and no public contract break |
+| I-413 | Model runtime interfaces and registry wiring | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i413-model-runtime-interface-and-registry.md`, `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md` | `todo` | Protocol-based adapters and registry are implemented with deterministic fallback and policy-engine decoupling |
+| I-414 | `model_version` contract clarity and provenance docs | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i414-model-version-contract-clarity.md`, `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md` | `todo` | OpenAPI/RFC/ops docs explicitly define `model_version` semantics with no response-shape break |
+| I-415 | Semantic embedding model selection gate | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | `todo` | Candidate embeddings are benchmarked vs baseline, one strategy is selected, and rollback is documented |
+| I-416 | Multi-label inference integration (shadow-first) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | `todo` | Classifier path runs in shadow/advisory mode with guardrails, latency budget compliance, and divergence observability |
+| I-417 | Claim-likeness calibration and governance thresholds | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i417-claim-likeness-calibration-governance.md` | `todo` | Threshold updates are evidence-backed, audited, and governance-approved with per-language/subgroup reporting |
 
 ## Immediate Next (Execution Order)
 
-1. All currently scoped Phase 4 tasks (`I-401`..`I-412`) are `done`.
-2. Next work should open as new task IDs linked to updated phase or release specs.
+1. `I-413`: establish model runtime interfaces and registry boundary.
+2. `I-414`: clarify `model_version` contract semantics before model rollout.
+3. `I-415`: run embedding bakeoff and ratify first production strategy.
+4. `I-416`: integrate multi-label inference in shadow-first mode.
+5. `I-417`: calibrate claim-likeness thresholds with governance sign-off.
 
 ## Execution Dependencies
 
 1. `I-409` and `I-410` are hard prerequisites for `I-408`.
 2. `I-408` cannot reach `done` while unresolved Section 20 decisions lack explicit launch disposition records.
+3. `I-413` is prerequisite for `I-415` and `I-416`.
+4. `I-414` is prerequisite for `I-416` go-live promotion beyond shadow.
+5. `I-415` is prerequisite for `I-416` if classifier depends on semantic embedding provider.
+6. `I-417` closes calibration/governance requirements after `I-416` shadow evidence is available.
 
 ## Update Rule
 
