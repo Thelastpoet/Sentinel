@@ -127,6 +127,15 @@ python scripts/run_partner_connector_ingest.py \
 - `SENTINEL_DEPLOYMENT_STAGE`: `shadow|advisory|supervised`.
 - `SENTINEL_ELECTORAL_PHASE`: `pre_campaign|campaign|silence_period|voting_day|results_period`.
 
+## `model_version` provenance
+
+- `model_version` in moderation responses identifies the active inference artifact
+  set used for that decision.
+- The value is audit/provenance metadata and can refer to deterministic heuristic
+  paths, learned model artifacts, or a governed combination.
+- For appeals and transparency workflows, persist the exact emitted
+  `original_model_version` value unchanged.
+
 ## Rate limiting environment
 
 - `SENTINEL_RATE_LIMIT_PER_MINUTE`: default `120`.

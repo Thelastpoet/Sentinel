@@ -37,6 +37,15 @@ Given a valid moderation request, the API returns:
 - language spans;
 - artifact versions and latency.
 
+`model_version` semantics:
+
+- `model_version` is provenance metadata for the active moderation inference artifact
+  set at decision time.
+- It may represent deterministic heuristics, learned model artifacts, or a governed
+  combination.
+- It must not be interpreted as a guarantee that a standalone trained model made
+  the decision.
+
 ## 6. API and Schema Impact
 
 - OpenAPI path: `/v1/moderate`
@@ -92,7 +101,7 @@ Initial reason-code families:
 1. Endpoint validates request against schema and rejects malformed payloads.
 2. Endpoint returns response conforming to schema for all code paths.
 3. Action always includes reason codes and evidence.
-4. Version fields are always present.
+4. Version fields are always present and semantics are documented.
 5. Integration tests cover harmful, benign, and code-switched samples.
 6. Unexpected server failures return structured `ErrorResponse` with `HTTP_500` and `request_id`.
 

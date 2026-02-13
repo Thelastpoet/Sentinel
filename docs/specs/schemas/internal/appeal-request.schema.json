@@ -29,7 +29,12 @@
         "pattern": "^R_[A-Z0-9_]+$"
       }
     },
-    "original_model_version": {"type": "string", "minLength": 1, "maxLength": 128},
+    "original_model_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Exact model_version emitted in the original moderation response for appeal/audit traceability."
+    },
     "original_lexicon_version": {"type": "string", "minLength": 1, "maxLength": 128},
     "original_policy_version": {"type": "string", "minLength": 1, "maxLength": 128},
     "original_pack_versions": {

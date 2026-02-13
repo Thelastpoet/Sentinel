@@ -70,7 +70,10 @@
         }
       }
     },
-    "model_version": {"type": "string"},
+    "model_version": {
+      "type": "string",
+      "description": "Identifier of the active moderation inference artifact set used for this decision. May reference deterministic heuristics, learned models, or a governed combination."
+    },
     "lexicon_version": {"type": "string"},
     "pack_versions": {
       "type": "object",

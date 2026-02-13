@@ -190,6 +190,12 @@ components:
             $ref: '#/components/schemas/LanguageSpan'
         model_version:
           type: string
+          description: |
+            Identifier of the active moderation inference artifact set used for this
+            decision. This value is provenance metadata and may refer to deterministic
+            heuristics, learned models, or a governed combination; it is not a
+            guarantee that a standalone trained model made the decision.
+          example: sentinel-multi-v2
         lexicon_version:
           type: string
         pack_versions:
