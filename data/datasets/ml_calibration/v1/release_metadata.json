@@ -1,5 +1,5 @@
 {
-  "agreement_report_path": "docs/specs/benchmarks/i418-inter-annotator-agreement-2026-02-13.json",
+  "agreement_report_path": "reports/ml/i418-inter-annotator-agreement-2026-02-13.json",
   "agreement_summary": {
     "binary_harmful_kappa": 0.701063,
     "exact_label_set_match_rate": 0.883333,
@@ -13,7 +13,7 @@
     },
     "sample_count": 360
   },
-  "annotation_guide_path": "docs/specs/annotation-guides/ml-calibration-v1.md",
+  "annotation_guide_path": "resources/annotation-guides/ml-calibration-v1.md",
   "annotation_guide_version": "ml-annotation-guide-v1",
   "dataset_path": "data/datasets/ml_calibration/v1/corpus.jsonl",
   "dataset_version": "ml-calibration-v1",

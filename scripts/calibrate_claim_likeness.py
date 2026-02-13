@@ -24,12 +24,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--output-json",
-        default="docs/specs/benchmarks/i417-claim-likeness-calibration-2026-02-13.json",
+        default="reports/ml/i417-claim-likeness-calibration-2026-02-13.json",
         help="Path to write calibration report JSON.",
     )
     parser.add_argument(
         "--output-md",
-        default="docs/specs/benchmarks/i417-claim-likeness-calibration-2026-02-13.md",
+        default="reports/ml/i417-claim-likeness-calibration-2026-02-13.md",
         help="Path to write calibration report markdown.",
     )
     parser.add_argument(

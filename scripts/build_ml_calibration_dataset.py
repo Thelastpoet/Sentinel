@@ -88,7 +88,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--agreement-report-path",
-        default="docs/specs/benchmarks/i418-inter-annotator-agreement-2026-02-13.json",
+        default="reports/ml/i418-inter-annotator-agreement-2026-02-13.json",
         help="Path to write agreement report JSON.",
     )
     parser.add_argument(
@@ -265,7 +265,7 @@ def run() -> int:
         "tier1_coverage_complete": corpus_summary["tier1_coverage_complete"],
         "meets_minimum_sample_count": corpus_summary["meets_minimum_sample_count"],
         "annotation_guide_version": GUIDE_VERSION,
-        "annotation_guide_path": "docs/specs/annotation-guides/ml-calibration-v1.md",
+        "annotation_guide_path": "resources/annotation-guides/ml-calibration-v1.md",
         "agreement_report_path": str(agreement_report_path),
         "agreement_summary": agreement_summary,
         "source": "synthetic_bootstrap",

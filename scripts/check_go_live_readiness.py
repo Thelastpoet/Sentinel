@@ -54,7 +54,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--bundle-dir",
         required=True,
-        help="Directory path to docs/releases/go-live/<release-id> evidence bundle.",
+        help="Directory path to releases/go-live/<release-id> evidence bundle.",
     )
     parser.add_argument(
         "--json",

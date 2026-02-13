@@ -18,7 +18,7 @@ def set_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_response_contains_all_required_schema_fields() -> None:
-    schema_path = Path("docs/specs/schemas/moderation-response.schema.json")
+    schema_path = Path("contracts/schemas/moderation-response.schema.json")
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     required = set(schema["required"])
 
@@ -41,7 +41,7 @@ def test_request_schema_text_required() -> None:
 
 
 def test_metrics_response_contains_required_schema_fields() -> None:
-    schema_path = Path("docs/specs/schemas/metrics-response.schema.json")
+    schema_path = Path("contracts/schemas/metrics-response.schema.json")
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     required = set(schema["required"])
 
@@ -53,10 +53,10 @@ def test_metrics_response_contains_required_schema_fields() -> None:
 
 def test_internal_async_schema_files_exist_and_are_object_contracts() -> None:
     schema_paths = [
-        Path("docs/specs/schemas/internal/monitoring-queue-item.schema.json"),
-        Path("docs/specs/schemas/internal/monitoring-cluster.schema.json"),
-        Path("docs/specs/schemas/internal/release-proposal.schema.json"),
-        Path("docs/specs/schemas/internal/proposal-review-event.schema.json"),
+        Path("contracts/schemas/internal/monitoring-queue-item.schema.json"),
+        Path("contracts/schemas/internal/monitoring-cluster.schema.json"),
+        Path("contracts/schemas/internal/release-proposal.schema.json"),
+        Path("contracts/schemas/internal/proposal-review-event.schema.json"),
     ]
     for schema_path in schema_paths:
         assert schema_path.exists(), f"missing schema: {schema_path}"

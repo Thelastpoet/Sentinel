@@ -29,5 +29,5 @@
 ## Checklist
 
 - [ ] Specs updated before implementation
-- [ ] `docs/specs/tasks.md` updated
+- [ ] contracts/docs updated when behavior changed
 - [ ] Tests added/updated for behavior changes
