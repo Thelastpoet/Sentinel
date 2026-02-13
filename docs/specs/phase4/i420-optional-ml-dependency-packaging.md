@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Done
 - Effective date: 2026-02-13
 - Scope: Add optional ML dependency extras for embedding/classifier integrations
 - Task linkage: `I-420` in `docs/specs/tasks.md`

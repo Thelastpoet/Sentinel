@@ -66,7 +66,7 @@ Every response follows a strict contract:
 
 ## Project status
 
-**Active development** — core implementation phases are complete through I-407. Final go-live hardening (I-408 through I-412) is in progress. See the [task board](docs/specs/tasks.md) for current status.
+**Active development** — implementation is complete through `I-420`; `I-421` is the remaining Phase 4 item. See the [task board](docs/specs/tasks.md) for current status.
 
 Not yet in production. Contributions and feedback are welcome.
 
@@ -108,6 +108,16 @@ pip install -e .[dev,ops]
 
 export SENTINEL_API_KEY='your-strong-api-key-here'
 uvicorn sentinel_api.main:app --reload
+```
+
+### Optional ML extras
+
+Use ML extras when you need fastText LID model support or optional embedding/classifier runtime dependencies:
+
+```bash
+pip install -e .[ml]
+# or install all local development extras together
+pip install -e .[dev,ops,ml]
 ```
 
 ### Try a moderation request

@@ -29,6 +29,10 @@ ops = [
   "alembic",
   "tenacity",
 ]
+ml = [
+  "fasttext-wheel",
+  "sentence-transformers",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

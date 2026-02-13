@@ -49,6 +49,30 @@ jobs:
       - name: Unit and integration tests
         run: pytest -q
 
+  ml-extras-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ML extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[ml]
+
+      - name: Verify optional ML imports
+        run: |
+          python - <<'PY'
+          import fasttext
+          import sentence_transformers
+          print("ml-extra-imports: ok")
+          PY
+
   postgres-integration:
     runs-on: ubuntu-latest
     services:

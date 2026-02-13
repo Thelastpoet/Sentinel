@@ -25,10 +25,17 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .[dev,ops]
+# Optional ML runtime extras (I-420)
+python -m pip install -e .[ml]
 export SENTINEL_API_KEY='replace-with-strong-api-key'
 ```
 
 `SENTINEL_API_KEY` is required. There is no built-in fallback key.
+
+Install profiles:
+
+- Base deterministic runtime: `python -m pip install -e .[dev,ops]`
+- ML-enabled runtime: `python -m pip install -e .[dev,ops,ml]`
 
 ## Manual migration and seed sync
 
