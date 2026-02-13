@@ -5,11 +5,13 @@ import importlib
 import json
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 
 REASON_CODE_PATTERN = re.compile(r"^R_[A-Z0-9_]+$")
 VALID_ACTIONS = {"BLOCK", "REVIEW"}
 REQUIRED_INGEST_FIELDS = ("term", "action", "label", "reason_code", "severity", "lang")
+DEFAULT_METADATA_TIMESTAMP = "1970-01-01T00:00:00+00:00"
 SUPPORTED_PROMOTION_PROPOSAL_TYPE = "lexicon"
 RETENTION_CLASS_DECISION_RECORD = "decision_record"
 RETENTION_CLASS_GOVERNANCE_AUDIT = "governance_audit"
@@ -66,7 +68,7 @@ def parse_args() -> argparse.Namespace:
 
     promote_proposal = subparsers.add_parser(
         "promote-proposal",
-        help=("Promote an approved lexicon proposal into a governed draft release " "artifact."),
+        help=("Promote an approved lexicon proposal into a governed draft release artifact."),
     )
     promote_proposal.add_argument("--proposal-id", required=True, type=int)
     promote_proposal.add_argument("--target-version", required=True)
@@ -484,6 +486,56 @@ def load_ingest_entries(input_path: str) -> list[dict[str, object]]:
     raise ValueError("ingest input must be a JSON list or an object with an 'entries' list")
 
 
+def _normalize_metadata_timestamp(value: object | None) -> str:
+    if value is None:
+        return DEFAULT_METADATA_TIMESTAMP
+    normalized = str(value).strip()
+    if not normalized:
+        return DEFAULT_METADATA_TIMESTAMP
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    try:
+        datetime.fromisoformat(normalized)
+    except ValueError:
+        return DEFAULT_METADATA_TIMESTAMP
+    return normalized
+
+
+def _normalize_change_history(value: object | None, *, fallback_at: str) -> str:
+    if isinstance(value, list):
+        normalized: list[dict[str, str]] = []
+        for event in value:
+            if not isinstance(event, dict):
+                continue
+            action = str(event.get("action", "")).strip().lower()
+            actor = str(event.get("actor", "system")).strip() or "system"
+            details = str(event.get("details", "")).strip()
+            created_at = _normalize_metadata_timestamp(event.get("created_at"))
+            if not action:
+                continue
+            normalized.append(
+                {
+                    "action": action,
+                    "actor": actor,
+                    "details": details,
+                    "created_at": created_at,
+                }
+            )
+        if normalized:
+            return json.dumps(normalized, sort_keys=True)
+    return json.dumps(
+        [
+            {
+                "action": "seed_import",
+                "actor": "system",
+                "details": "legacy-metadata-placeholder",
+                "created_at": fallback_at,
+            }
+        ],
+        sort_keys=True,
+    )
+
+
 def normalize_ingest_entries(raw_entries: list[dict[str, object]]) -> list[dict[str, object]]:
     normalized: list[dict[str, object]] = []
     seen: set[tuple[str, str, str, str, str]] = set()
@@ -535,6 +587,13 @@ def normalize_ingest_entries(raw_entries: list[dict[str, object]]) -> list[dict[
             )
         seen.add(key)
 
+        first_seen = _normalize_metadata_timestamp(item.get("first_seen"))
+        last_seen = _normalize_metadata_timestamp(item.get("last_seen"))
+        change_history = _normalize_change_history(
+            item.get("change_history"),
+            fallback_at=first_seen,
+        )
+
         normalized.append(
             {
                 "term": term,
@@ -543,6 +602,9 @@ def normalize_ingest_entries(raw_entries: list[dict[str, object]]) -> list[dict[
                 "reason_code": reason_code,
                 "severity": severity,
                 "lang": lang,
+                "first_seen": first_seen,
+                "last_seen": last_seen,
+                "change_history": change_history,
             }
         )
 
@@ -746,15 +808,21 @@ def ingest_entries(
                 lang,
                 status,
                 lexicon_version,
+                first_seen,
+                last_seen,
+                change_history,
                 retention_class,
                 legal_hold
               )
             VALUES
-              (%s, %s, %s, %s, %s, %s, 'active', %s, %s, FALSE)
+              (%s, %s, %s, %s, %s, %s, 'active', %s, %s, %s, %s::jsonb, %s, FALSE)
             ON CONFLICT (term, action, label, reason_code, lang, lexicon_version)
             DO UPDATE SET
               severity = EXCLUDED.severity,
               status = EXCLUDED.status,
+              first_seen = EXCLUDED.first_seen,
+              last_seen = EXCLUDED.last_seen,
+              change_history = EXCLUDED.change_history,
               retention_class = EXCLUDED.retention_class,
               updated_at = NOW()
             """,
@@ -766,6 +834,9 @@ def ingest_entries(
                 item["severity"],
                 item["lang"],
                 version,
+                item["first_seen"],
+                item["last_seen"],
+                item["change_history"],
                 RETENTION_CLASS_DECISION_RECORD,
             ),
         )

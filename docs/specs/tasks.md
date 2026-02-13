@@ -1,6 +1,6 @@
 # Sentinel Spec Task Board
 
-Last updated: 2026-02-12
+Last updated: 2026-02-13
 
 Scope note: this board currently tracks phase-aligned spec/governance milestones.
 Implementation tasks are opened only after the corresponding phase specs are approved.
@@ -100,19 +100,16 @@ Status legend:
 | I-405 | Deployment-stage controls (shadow -> advisory -> supervised) | `docs/master.md` (Sec. 13.1, Sec. 16), `docs/specs/phase4/i405-deployment-stage-controls.md` | `done` | Runtime stage controls enforce mode-specific decision behavior with audit visibility and safe rollback toggles |
 | I-406 | Per-language evaluation and bias-audit harness | `docs/master.md` (Sec. 13.2, Sec. 19), `docs/specs/phase4/i406-evaluation-bias-harness-baseline.md` | `done` | Eval pipeline reports precision/recall/F1 by language and harm class, plus false-positive and subgroup disparity metrics |
 | I-407 | Tier-2 language-pack Wave 1 delivery | `docs/master.md` (Sec. 7.1, Sec. 7.2, Sec. 16), `docs/specs/phase4/i407-tier2-language-pack-wave1-delivery.md` | `done` | First Tier-2 language packs ship with versioned normalization/lexicon/calibration artifacts and pass defined eval gates |
-| I-408 | Go-live readiness gate and release sign-off package | `docs/master.md` (Sec. 11, Sec. 13, Sec. 19, Sec. 20), `docs/specs/phase4/i408-go-live-readiness-gate.md` | `todo` | Deterministic go/no-go gate, evidence bundle format, and role-based sign-off workflow are implemented and exercised with prerequisite quality/latency artifacts |
-| I-409 | Tooling quality gates (`ruff` + `pyright`) | `docs/master.md` (Sec. 15), `docs/specs/phase4/i409-tooling-quality-gates.md` | `todo` | Ruff/pyright configs exist, local commands are documented, and CI enforces both gates |
-| I-410 | Latency SLO CI gate (`P95 < 150ms`) | `docs/master.md` (Sec. 3.1, Sec. 19), `docs/specs/phase4/i410-latency-slo-ci-gate.md` | `todo` | Hot-path benchmark runs in CI with failing gate on p95 budget breach and artifact retention |
-| I-411 | Hate-Lex metadata completeness + taxonomy coverage hardening | `docs/master.md` (Sec. 6.1, Sec. 8.1), `docs/specs/phase4/i411-lexicon-metadata-and-taxonomy-coverage.md` | `todo` | Lexicon schema/seed include lifecycle metadata fields and baseline includes reachable `HARASSMENT_THREAT` coverage |
-| I-412 | Disinformation claim-likeness baseline integration | `docs/master.md` (Sec. 9.1), `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md` | `todo` | Deterministic claim-likeness signal is integrated into hot path with tests and no public contract break |
+| I-408 | Go-live readiness gate and release sign-off package | `docs/master.md` (Sec. 11, Sec. 13, Sec. 19, Sec. 20), `docs/specs/phase4/i408-go-live-readiness-gate.md` | `done` | Deterministic go/no-go gate, evidence bundle format, and role-based sign-off workflow are implemented and exercised with prerequisite quality/latency artifacts |
+| I-409 | Tooling quality gates (`ruff` + `pyright`) | `docs/master.md` (Sec. 15), `docs/specs/phase4/i409-tooling-quality-gates.md` | `done` | Ruff/pyright configs exist, local commands are documented, and CI enforces both gates |
+| I-410 | Latency SLO CI gate (`P95 < 150ms`) | `docs/master.md` (Sec. 3.1, Sec. 19), `docs/specs/phase4/i410-latency-slo-ci-gate.md` | `done` | Hot-path benchmark runs in CI with failing gate on p95 budget breach and artifact retention |
+| I-411 | Hate-Lex metadata completeness + taxonomy coverage hardening | `docs/master.md` (Sec. 6.1, Sec. 8.1), `docs/specs/phase4/i411-lexicon-metadata-and-taxonomy-coverage.md` | `done` | Lexicon schema/seed include lifecycle metadata fields and baseline includes reachable `HARASSMENT_THREAT` coverage |
+| I-412 | Disinformation claim-likeness baseline integration | `docs/master.md` (Sec. 9.1), `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md` | `done` | Deterministic claim-likeness signal is integrated into hot path with tests and no public contract break |
 
 ## Immediate Next (Execution Order)
 
-1. I-409 - add repo and CI quality gates for `ruff` and `pyright`.
-2. I-410 - enforce latency P95 budget in CI.
-3. I-411 - harden lexicon metadata schema/seed and baseline taxonomy coverage.
-4. I-412 - add claim-likeness baseline signal for disinfo hot path.
-5. I-408 - implement go-live readiness gate using outputs from I-409 and I-410.
+1. All currently scoped Phase 4 tasks (`I-401`..`I-412`) are `done`.
+2. Next work should open as new task IDs linked to updated phase or release specs.
 
 ## Execution Dependencies
 

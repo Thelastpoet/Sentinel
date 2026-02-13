@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-12
 - Scope: Deterministic claim-likeness signal for disinformation-risk handling
 - Task linkage: `I-412` in `docs/specs/tasks.md`
@@ -39,3 +39,18 @@ Implement a transparent, deterministic claim-likeness signal so disinfo handling
 3. Benign political speech false-positive behavior is monitored with existing eval harness.
 4. Public API response shape remains unchanged.
 5. Score-to-band mapping and thresholds are validated by tests.
+
+## 5. Implementation Notes
+
+1. Deterministic scorer:
+   - `src/sentinel_core/claim_likeness.py`
+2. Hot-path integration:
+   - `src/sentinel_api/policy.py` routes medium/high claim-likeness to `REVIEW`
+     with `DISINFO_RISK` and reason codes:
+     - `R_DISINFO_CLAIM_LIKENESS_MEDIUM`
+     - `R_DISINFO_CLAIM_LIKENESS_HIGH`
+3. Threshold and policy runtime config:
+   - `config/policy/default.json` (`claim_likeness` section)
+   - `src/sentinel_core/policy_config.py` (`ClaimLikenessConfig`)
+4. Heuristic documentation:
+   - `docs/specs/phase4/i412-claim-likeness-heuristics.md`

@@ -1,0 +1,41 @@
+[
+  {
+    "role": "engineering_lead",
+    "signer": "eng-lead-id",
+    "signed_at": "2026-02-13T00:00:00+00:00",
+    "rationale": "Engineering readiness confirmed.",
+    "evidence_refs": [
+      "reliability_latency.json",
+      "decision.json"
+    ]
+  },
+  {
+    "role": "safety_governance_lead",
+    "signer": "safety-lead-id",
+    "signed_at": "2026-02-13T00:00:00+00:00",
+    "rationale": "Safety and governance checks approved.",
+    "evidence_refs": [
+      "safety_quality.json",
+      "section20_dispositions.json"
+    ]
+  },
+  {
+    "role": "security_lead",
+    "signer": "security-lead-id",
+    "signed_at": "2026-02-13T00:00:00+00:00",
+    "rationale": "Security controls verified.",
+    "evidence_refs": [
+      "security_controls.json"
+    ]
+  },
+  {
+    "role": "legal_policy_owner",
+    "signer": "legal-policy-id",
+    "signed_at": "2026-02-13T00:00:00+00:00",
+    "rationale": "Legal and policy obligations reviewed.",
+    "evidence_refs": [
+      "legal_governance.json",
+      "operational_readiness.json"
+    ]
+  }
+]

@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 ReasonCode = Annotated[str, StringConstraints(pattern=r"^R_[A-Z0-9_]+$")]
 
@@ -50,6 +50,20 @@ class PhasePolicyOverride(BaseModel):
     no_match_action: str | None = Field(default=None, pattern=r"^(ALLOW|REVIEW)$")
 
 
+class ClaimLikenessConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    medium_threshold: float = Field(ge=0, le=1, default=0.40)
+    high_threshold: float = Field(ge=0, le=1, default=0.70)
+    require_election_anchor: bool = True
+
+    @model_validator(mode="after")
+    def validate_threshold_order(self) -> ClaimLikenessConfig:
+        if self.medium_threshold >= self.high_threshold:
+            raise ValueError("claim_likeness medium_threshold must be < high_threshold")
+        return self
+
+
 class PolicyConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -61,6 +75,7 @@ class PolicyConfig(BaseModel):
     allow_reason_code: ReasonCode
     allow_confidence: float = Field(ge=0, le=1)
     language_hints: LanguageHints
+    claim_likeness: ClaimLikenessConfig = Field(default_factory=ClaimLikenessConfig)
     electoral_phase: ElectoralPhase | None = None
     deployment_stage: DeploymentStage | None = None
     phase_overrides: dict[ElectoralPhase, PhasePolicyOverride] = Field(default_factory=dict)
@@ -77,6 +92,7 @@ class EffectivePolicyRuntime(BaseModel):
     allow_confidence: float = Field(ge=0, le=1)
     vector_match_threshold: float | None = Field(default=None, ge=0, le=1)
     no_match_action: str = Field(pattern=r"^(ALLOW|REVIEW)$")
+    claim_likeness: ClaimLikenessConfig
 
 
 def _default_config_path() -> Path:
@@ -163,4 +179,5 @@ def resolve_policy_runtime(config: PolicyConfig | None = None) -> EffectivePolic
         allow_confidence=allow_confidence,
         vector_match_threshold=vector_match_threshold,
         no_match_action=no_match_action,
+        claim_likeness=config.claim_likeness,
     )

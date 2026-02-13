@@ -1,6 +1,6 @@
 # RFC-0004: Intelligence-Layer Execution Wave
 
-- Status: Review
+- Status: Approved
 - Authors: Core maintainers
 - Created: 2026-02-12
 - Target milestone: Phase 3 implementation kickoff

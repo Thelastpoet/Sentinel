@@ -6,6 +6,54 @@ import json
 import os
 from pathlib import Path
 
+DEFAULT_METADATA_TIMESTAMP = "1970-01-01T00:00:00+00:00"
+
+
+def _normalize_metadata_timestamp(value: object | None) -> str:
+    if value is None:
+        return DEFAULT_METADATA_TIMESTAMP
+    normalized = str(value).strip()
+    if not normalized:
+        return DEFAULT_METADATA_TIMESTAMP
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    return normalized
+
+
+def _normalize_change_history(value: object | None, *, fallback_at: str) -> str:
+    if isinstance(value, list):
+        normalized: list[dict[str, str]] = []
+        for event in value:
+            if not isinstance(event, dict):
+                continue
+            action = str(event.get("action", "")).strip().lower()
+            actor = str(event.get("actor", "system")).strip() or "system"
+            details = str(event.get("details", "")).strip()
+            created_at = _normalize_metadata_timestamp(event.get("created_at"))
+            if not action:
+                continue
+            normalized.append(
+                {
+                    "action": action,
+                    "actor": actor,
+                    "details": details,
+                    "created_at": created_at,
+                }
+            )
+        if normalized:
+            return json.dumps(normalized, sort_keys=True)
+    return json.dumps(
+        [
+            {
+                "action": "seed_import",
+                "actor": "system",
+                "details": "legacy-metadata-placeholder",
+                "created_at": fallback_at,
+            }
+        ],
+        sort_keys=True,
+    )
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -51,16 +99,37 @@ def main() -> None:
             )
 
             for item in entries:
+                first_seen = _normalize_metadata_timestamp(item.get("first_seen"))
+                last_seen = _normalize_metadata_timestamp(item.get("last_seen"))
+                change_history = _normalize_change_history(
+                    item.get("change_history"),
+                    fallback_at=first_seen,
+                )
                 cur.execute(
                     """
                     INSERT INTO lexicon_entries
-                      (term, action, label, reason_code, severity, lang, status, lexicon_version)
+                      (
+                        term,
+                        action,
+                        label,
+                        reason_code,
+                        severity,
+                        lang,
+                        status,
+                        lexicon_version,
+                        first_seen,
+                        last_seen,
+                        change_history
+                      )
                     VALUES
-                      (%s, %s, %s, %s, %s, %s, 'active', %s)
+                      (%s, %s, %s, %s, %s, %s, 'active', %s, %s, %s, %s::jsonb)
                     ON CONFLICT (term, action, label, reason_code, lang, lexicon_version)
                     DO UPDATE SET
                       severity = EXCLUDED.severity,
                       status = EXCLUDED.status,
+                      first_seen = EXCLUDED.first_seen,
+                      last_seen = EXCLUDED.last_seen,
+                      change_history = EXCLUDED.change_history,
                       updated_at = NOW()
                     """,
                     (
@@ -71,6 +140,9 @@ def main() -> None:
                         int(item["severity"]),
                         item["lang"],
                         version,
+                        first_seen,
+                        last_seen,
+                        change_history,
                     ),
                 )
 

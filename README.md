@@ -2,7 +2,7 @@
 
 **Multilingual political-safety infrastructure for the 2027 Kenyan General Election.**
 
-Sentinel detects ethnic incitement, hate speech, and election-related disinformation across Kenya's multilingual digital landscape — where Swahili, Sheng, English, Kikuyu, Luo, Kalenjin, and other languages mix freely in a single post.
+Sentinel detects ethnic incitement, hate speech, and election-related disinformation across Kenya's multilingual digital landscape — where Swahili, Sheng, English, Luhya, Kikuyu, Luo, Kalenjin, and other languages mix freely in a single post.
 
 Built for newsrooms, digital publishers, civil society platforms, and fact-check partners who need fast, auditable moderation decisions during high-stakes election cycles.
 
@@ -20,7 +20,7 @@ Generic moderation tools fail on Kenyan political content. Harmful rhetoric appe
 
 ```
 Input text
-  -> Normalize and route language spans (sw, en, sheng, kik, luo, kal)
+  -> Normalize and route language spans (sw, en, sheng, kik, Luh, luo, kal)
   -> Fast lexical triggers (Redis, O(1) lookup)
   -> Semantic similarity (Postgres + pgvector)
   -> Deterministic policy logic

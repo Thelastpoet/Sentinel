@@ -1,6 +1,6 @@
 # ADR-0008: Staged Package Boundary Migration to `core/router/lexicon/langpack/api`
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-02-12
 - Decision makers: Core maintainers
 - Related RFCs: `docs/specs/rfcs/0001-v1-moderation-api.md`, `docs/specs/rfcs/0004-intelligence-layer-execution-wave.md`

@@ -1,0 +1,25 @@
+{
+  "release_id": "YYYY-MM-DD-vX",
+  "generated_at": "2026-02-13T00:00:00+00:00",
+  "decision": "NO_GO",
+  "prerequisites": {
+    "i409": {
+      "status": "pass",
+      "artifacts": [
+        "ci-lint-typecheck.log"
+      ]
+    },
+    "i410": {
+      "status": "pass",
+      "artifacts": [
+        "latency-benchmark.json"
+      ]
+    }
+  },
+  "critical_checks": {
+    "latency_gate": "pass",
+    "security_findings": "pass",
+    "safety_regressions": "pass",
+    "evidence_completeness": "pass"
+  }
+}

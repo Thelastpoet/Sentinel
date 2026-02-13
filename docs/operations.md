@@ -82,6 +82,18 @@ python scripts/evaluate_language_packs.py --input-path data/eval/sample_eval.jso
 python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
 ```
 
+## Go-live readiness gate
+
+Prepare a release bundle by copying:
+
+- `docs/releases/go-live/template/` -> `docs/releases/go-live/<release-id>/`
+
+Then validate:
+
+```bash
+python scripts/check_go_live_readiness.py --bundle-dir docs/releases/go-live/<release-id>
+```
+
 ## Async worker
 
 ```bash

@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-12
 - Scope: Priority order and acceptance/rollback gates for Tier-2 language-pack delivery
 - Task linkage: `I-401` in `docs/specs/tasks.md`
@@ -115,4 +115,3 @@ This document defines pack-level gates; runtime stage behavior remains governed 
 
 - `I-406` must implement the metric pipeline needed to compute Section 4 and Section 5 thresholds.
 - `I-407` must deliver packs in the ratified order from Section 1 and produce gate evidence for each pack release.
-

@@ -5,6 +5,7 @@ Prefer importing from `sentinel_core.policy_config` for new code.
 """
 
 from sentinel_core.policy_config import (  # noqa: F401
+    ClaimLikenessConfig,
     EffectivePolicyRuntime,
     ElectoralPhase,
     LanguageHints,

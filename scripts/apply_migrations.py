@@ -4,7 +4,7 @@ import argparse
 import importlib
 from pathlib import Path
 
-from alembic import command
+import alembic.command as alembic_command
 from alembic.config import Config
 
 LEGACY_ALEMBIC_ID_MAP: dict[str, str] = {
@@ -18,6 +18,7 @@ LEGACY_ALEMBIC_ID_MAP: dict[str, str] = {
     "0008_appeals_core": "s0008",
     "0009_appeals_original_decision_id_backfill": "s0009",
     "0010_monitoring_queue_event_uniqueness": "s0010",
+    "0011_lexicon_entry_metadata_hardening": "s0011",
 }
 
 
@@ -87,9 +88,9 @@ def main() -> None:
         _normalize_existing_alembic_version(args.database_url)
     config = _build_alembic_config(args.database_url)
     if args.dry_run:
-        command.upgrade(config, args.revision, sql=True)
+        alembic_command.upgrade(config, args.revision, sql=True)
         return
-    command.upgrade(config, args.revision)
+    alembic_command.upgrade(config, args.revision)
     print(f"alembic upgrade complete: {args.revision}")
 
 

@@ -25,6 +25,27 @@ jobs:
       - name: Contract check
         run: python scripts/check_contract.py
 
+      - name: Lint (ruff)
+        run: python -m ruff check src scripts tests
+
+      - name: Type check (pyright)
+        run: python -m pyright src scripts
+
+      - name: Latency SLO gate (P95 < 150ms)
+        run: |
+          python scripts/benchmark_hot_path.py \
+            --iterations 300 \
+            --warmup 30 \
+            --p95-budget-ms 150 \
+            --json > latency-benchmark.json
+
+      - name: Upload latency benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: latency-benchmark
+          path: latency-benchmark.json
+          retention-days: 14
+
       - name: Unit and integration tests
         run: pytest -q
 

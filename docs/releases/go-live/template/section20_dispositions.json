@@ -1,0 +1,16 @@
+[
+  {
+    "decision_id": "S20-01",
+    "disposition": "accepted_for_launch",
+    "owner": "owner-id",
+    "rationale": "Rationale for launch disposition."
+  },
+  {
+    "decision_id": "S20-02",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation.",
+    "mitigation": "Mitigation plan summary.",
+    "target_resolution_date": "2026-06-30"
+  }
+]

@@ -7,7 +7,18 @@
       "label": "INCITEMENT_VIOLENCE",
       "reason_code": "R_INCITE_CALL_TO_HARM",
       "severity": 3,
-      "lang": "en"
+      "lang": "en",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline incitement trigger",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "term": "burn them",
@@ -15,7 +26,18 @@
       "label": "INCITEMENT_VIOLENCE",
       "reason_code": "R_INCITE_CALL_TO_HARM",
       "severity": 3,
-      "lang": "en"
+      "lang": "en",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline incitement phrase",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "term": "mchome",
@@ -23,7 +45,37 @@
       "label": "ETHNIC_CONTEMPT",
       "reason_code": "R_ETHNIC_SLUR_MATCH",
       "severity": 3,
-      "lang": "sw"
+      "lang": "sw",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline ethnic contempt trigger",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "term": "hunt you down",
+      "action": "BLOCK",
+      "label": "HARASSMENT_THREAT",
+      "reason_code": "R_TARGETED_THREAT_MATCH",
+      "severity": 3,
+      "lang": "en",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline harassment threat coverage",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "term": "deal with them",
@@ -31,7 +83,18 @@
       "label": "DOGWHISTLE_WATCH",
       "reason_code": "R_DOGWHISTLE_CONTEXT_REQUIRED",
       "severity": 2,
-      "lang": "en"
+      "lang": "en",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline dogwhistle phrase",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "term": "wataona",
@@ -39,7 +102,18 @@
       "label": "DOGWHISTLE_WATCH",
       "reason_code": "R_DOGWHISTLE_CONTEXT_REQUIRED",
       "severity": 2,
-      "lang": "sw"
+      "lang": "sw",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline dogwhistle sw trigger",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
     },
     {
       "term": "rigged",
@@ -47,7 +121,18 @@
       "label": "DISINFO_RISK",
       "reason_code": "R_DISINFO_NARRATIVE_SIMILARITY",
       "severity": 1,
-      "lang": "en"
+      "lang": "en",
+      "first_seen": "2025-01-01T00:00:00+00:00",
+      "last_seen": "2026-02-13T00:00:00+00:00",
+      "status": "active",
+      "change_history": [
+        {
+          "action": "seed_import",
+          "actor": "system",
+          "details": "baseline disinfo risk trigger",
+          "created_at": "2025-01-01T00:00:00+00:00"
+        }
+      ]
     }
   ]
 }

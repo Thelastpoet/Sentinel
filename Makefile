@@ -1,9 +1,10 @@
-.PHONY: run test contract lint format typecheck precommit-install precommit-run up down seed-lexicon apply-migrations test-db release-list release-create release-ingest release-activate release-deprecate release-validate release-audit benchmark-hot-path worker-once eval-language connector-ingest verify-tier2-wave1
+.PHONY: run test contract lint format typecheck precommit-install precommit-run up down seed-lexicon apply-migrations test-db release-list release-create release-ingest release-activate release-deprecate release-validate release-audit benchmark-hot-path worker-once eval-language connector-ingest verify-tier2-wave1 go-live-check
 
 LIMIT ?= 20
 ITERATIONS ?= 300
 WARMUP ?= 30
 P95_BUDGET_MS ?= 150
+BUNDLE_DIR ?= docs/releases/go-live/template
 
 run:
 	python -m uvicorn sentinel_api.main:app --reload
@@ -79,3 +80,6 @@ connector-ingest:
 
 verify-tier2-wave1:
 	python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
+
+go-live-check:
+	python scripts/check_go_live_readiness.py --bundle-dir "$(BUNDLE_DIR)"

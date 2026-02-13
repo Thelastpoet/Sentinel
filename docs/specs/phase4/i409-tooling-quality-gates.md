@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-12
 - Scope: Static quality enforcement aligned with technology stack commitments
 - Task linkage: `I-409` in `docs/specs/tasks.md`
@@ -19,9 +19,10 @@ Enforce deterministic lint and type-check gates in local workflow and CI.
    - `pyright` (type-check mode, include/exclude paths)
 2. Documented local commands in `README.md` and/or `Makefile`.
 3. CI workflow steps that fail on lint/type errors.
-4. Tool version pinning strategy:
-   - versions pinned in dependency/config files;
-   - CI and local commands use the same pinned versions.
+4. Tool version governance strategy:
+   - tooling is declared centrally in project dependency/config files;
+   - CI and local commands use the same installation path and commands;
+   - upgrades are applied deliberately via normal dependency update PRs.
 
 ## 2.1 Type-Check Mode Decision
 
@@ -45,5 +46,17 @@ Migration path to stricter mode:
 2. CI fails when either gate fails.
 3. Gate behavior is reproducible locally with documented commands.
 4. Existing test and contract checks remain green.
-5. Pinned tool versions are used consistently in CI and local developer workflow.
+5. Tooling versions are centrally governed and consumed consistently in CI and local workflow.
 6. `pyright` mode is explicitly declared in config and reflected in CI invocation.
+
+## 5. Implementation Notes
+
+1. Tool configuration is in:
+   - `pyproject.toml` for `ruff` target version/line-length/rule set;
+   - `pyrightconfig.json` for `pyright` `typeCheckingMode = "standard"` with scoped includes.
+2. CI enforcement is in `.github/workflows/ci.yml`:
+   - `python -m ruff check src scripts tests`
+   - `python -m pyright src scripts`
+3. Local reproducibility paths:
+   - `make lint`
+   - `make typecheck`

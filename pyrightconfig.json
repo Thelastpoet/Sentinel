@@ -1,6 +1,8 @@
 {
   "pythonVersion": "3.12",
   "typeCheckingMode": "standard",
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
   "include": [
     "src",
     "scripts"

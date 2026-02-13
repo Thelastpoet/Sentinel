@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-12
 - Scope: Align lexicon artifact fields and baseline taxonomy coverage with master plan
 - Task linkage: `I-411` in `docs/specs/tasks.md`
@@ -57,3 +57,15 @@ Current baseline note:
 3. Ingest/release commands operate successfully with upgraded schema.
 4. Public moderation response contract remains unchanged.
 5. `change_history` derivation aligns with `lexicon_release_audit` semantics and is tested.
+
+## 6. Implementation Notes
+
+1. Schema hardening migration:
+   - `migrations/0011_lexicon_entry_metadata_hardening.sql`
+   - `alembic/versions/0011_lexicon_entry_metadata_hardening.py`
+2. Seed upgrade:
+   - `data/lexicon_seed.json` now includes `first_seen`, `last_seen`, `status`, `change_history`.
+   - baseline now includes reachable `HARASSMENT_THREAT` entry.
+3. Runtime ingestion and repository compatibility:
+   - `scripts/sync_lexicon_seed.py` and `scripts/manage_lexicon_release.py` ingest metadata.
+   - `src/sentinel_lexicon/lexicon_repository.py` provides deterministic defaults for legacy entries.

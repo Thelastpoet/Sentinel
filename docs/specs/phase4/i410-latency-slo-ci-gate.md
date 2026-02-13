@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-12
 - Scope: Automated latency budget enforcement in CI
 - Task linkage: `I-410` in `docs/specs/tasks.md`
@@ -35,3 +35,11 @@ Benchmark profile documentation path:
 2. Step returns non-zero when p95 > budget.
 3. Benchmark report artifact is uploaded and retained.
 4. Checklist alignment: `docs/master.md` Sec. 19 item 9 becomes continuously verifiable.
+
+## 5. Implementation Notes
+
+1. CI gate command is in `.github/workflows/ci.yml`:
+   - `python scripts/benchmark_hot_path.py --iterations 300 --warmup 30 --p95-budget-ms 150 --json > latency-benchmark.json`
+2. Artifact upload is enforced in the same workflow via `actions/upload-artifact@v4`:
+   - artifact name: `latency-benchmark`
+   - retention: 14 days.

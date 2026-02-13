@@ -1,0 +1,6 @@
+{
+  "incident_drill": "pass",
+  "rollback_drill_policy": "pass",
+  "rollback_drill_lexicon": "pass",
+  "rollback_drill_langpack": "pass"
+}

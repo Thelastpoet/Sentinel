@@ -110,7 +110,31 @@ def test_phase_override_cannot_lower_block_toxicity(monkeypatch, tmp_path) -> No
     path = tmp_path / "policy.json"
     path.write_text(json.dumps(cfg), encoding="utf-8")
     monkeypatch.setenv("SENTINEL_POLICY_CONFIG_PATH", str(path))
-    with pytest.raises(
-        ValueError, match="cannot lower BLOCK toxicity threshold below baseline"
-    ):
+    with pytest.raises(ValueError, match="cannot lower BLOCK toxicity threshold below baseline"):
         resolve_policy_runtime()
+
+
+def test_invalid_claim_likeness_threshold_order_fails_validation(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    cfg = {
+        "version": "policy-claim-threshold-order",
+        "model_version": "sentinel-multi-v2",
+        "pack_versions": {"en": "pack-en-0.1"},
+        "toxicity_by_action": {"BLOCK": 0.9, "REVIEW": 0.45, "ALLOW": 0.05},
+        "allow_label": "BENIGN_POLITICAL_SPEECH",
+        "allow_reason_code": "R_ALLOW_NO_POLICY_MATCH",
+        "allow_confidence": 0.65,
+        "claim_likeness": {
+            "medium_threshold": 0.8,
+            "high_threshold": 0.7,
+            "require_election_anchor": True,
+        },
+        "phase_overrides": {},
+        "language_hints": {"sw": ["na"], "sh": ["msee"]},
+    }
+    path = tmp_path / "policy.json"
+    path.write_text(json.dumps(cfg), encoding="utf-8")
+    monkeypatch.setenv("SENTINEL_POLICY_CONFIG_PATH", str(path))
+    with pytest.raises(ValidationError, match="medium_threshold must be < high_threshold"):
+        get_policy_config()

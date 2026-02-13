@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-12
 - Scope: Operational go/no-go gate for customer production launch
 - Task linkage: `I-408` in `docs/specs/tasks.md`
@@ -77,3 +77,20 @@ Each sign-off record must include timestamp, evidence references, and decision r
 4. Go/no-go records are stored with immutable audit trail fields.
 5. Gate run fails if prerequisite artifacts from `I-409` and `I-410` are absent.
 6. Gate run fails when any Section 20 decision lacks disposition metadata.
+
+## 6. Implementation Notes
+
+1. Gate validator:
+   - `scripts/check_go_live_readiness.py`
+2. Operational command path:
+   - `make go-live-check BUNDLE_DIR=docs/releases/go-live/<release-id>`
+3. Template evidence bundle:
+   - `docs/releases/go-live/template/`
+   - includes `decision.json`, prerequisite artifacts, Section 20 dispositions,
+     and role sign-off records.
+4. Validator enforces:
+   - required artifact presence;
+   - prerequisite pass status for `i409` and `i410`;
+   - required critical checks;
+   - mandatory sign-off roles;
+   - Section 20 disposition validity and blocker/no-blocker logic.

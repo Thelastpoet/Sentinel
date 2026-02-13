@@ -1,0 +1,6 @@
+{
+  "eval_snapshot_id": "eval-YYYYMMDD",
+  "false_positive_rate_benign_political": 0.0,
+  "subgroup_disparity_ratio_max": 0.0,
+  "notes": ""
+}

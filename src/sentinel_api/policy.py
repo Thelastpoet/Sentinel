@@ -4,6 +4,7 @@ import time
 from dataclasses import dataclass
 from typing import cast, get_args
 
+from sentinel_core.claim_likeness import assess_claim_likeness
 from sentinel_core.models import Action, EvidenceItem, Label, LanguageSpan, ModerationResponse
 from sentinel_core.policy_config import (
     DeploymentStage,
@@ -193,6 +194,35 @@ def evaluate_text(text: str, matcher=None, config=None, runtime=None) -> Decisio
                 )
             ],
             toxicity=toxicity,
+        )
+        return _apply_deployment_stage(decision, runtime=runtime)
+
+    claim_assessment = assess_claim_likeness(
+        text,
+        medium_threshold=runtime.claim_likeness.medium_threshold,
+        high_threshold=runtime.claim_likeness.high_threshold,
+    )
+    claim_matches_anchor = (
+        claim_assessment.has_election_anchor or not runtime.claim_likeness.require_election_anchor
+    )
+    if claim_matches_anchor and claim_assessment.band in {"medium", "high"}:
+        reason_code = (
+            "R_DISINFO_CLAIM_LIKENESS_HIGH"
+            if claim_assessment.band == "high"
+            else "R_DISINFO_CLAIM_LIKENESS_MEDIUM"
+        )
+        decision = Decision(
+            action="REVIEW",
+            labels=["DISINFO_RISK"],
+            reason_codes=[reason_code],
+            evidence=[
+                EvidenceItem(
+                    type="model_span",
+                    span=text[:80],
+                    confidence=claim_assessment.score,
+                )
+            ],
+            toxicity=runtime.toxicity_by_action.REVIEW,
         )
         return _apply_deployment_stage(decision, runtime=runtime)
 
