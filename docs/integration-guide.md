@@ -4,6 +4,8 @@ This guide is for platform integrators calling the Sentinel API from a backend a
 
 Sentinel is a server-side API. Never call it directly from a browser or mobile client — always proxy through your backend.
 
+Default runtime language support for the moderation hot path is English (`en`), Swahili (`sw`), and Sheng (`sh`).
+
 ## Authentication
 
 All moderation requests require an API key passed in the `X-API-Key` header:

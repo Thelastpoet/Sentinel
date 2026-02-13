@@ -20,6 +20,8 @@ Sentinel has three runtime components:
 - **PostgreSQL with pgvector** — Stores lexicon entries, releases, embeddings, appeals, transparency data, model artifacts. Required for production.
 - **Redis** — Distributed rate limiting and hot-trigger caching. Optional; Sentinel degrades gracefully if unavailable.
 
+Default moderation routing is active for `en`, `sw`, and `sh`. Additional language-pack artifacts may exist in the repository for staged rollout but are not automatically active in hot-path enforcement.
+
 Without Postgres, Sentinel runs in file-based fallback mode (lexicon loaded from `data/lexicon_seed.json`, appeals stored in-memory). This is suitable for development but not production.
 
 ## Environment variables
