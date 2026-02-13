@@ -59,11 +59,24 @@ class InMemoryMetrics:
     http_status_counts: Counter[int] = field(default_factory=Counter)
     latency_ms_buckets: Counter[str] = field(default_factory=Counter)
     validation_error_count: int = 0
+    classifier_shadow_status_counts: Counter[str] = field(default_factory=Counter)
+    classifier_shadow_disagreement_count: int = 0
     _registry: PromCollectorRegistryType | None = field(default=None, init=False, repr=False)
     _action_total: PromCounterType | None = field(default=None, init=False, repr=False)
     _http_status_total: PromCounterType | None = field(default=None, init=False, repr=False)
     _validation_error_total: PromCounterType | None = field(default=None, init=False, repr=False)
     _moderation_latency_ms: PromHistogramType | None = field(default=None, init=False, repr=False)
+    _classifier_shadow_total: PromCounterType | None = field(default=None, init=False, repr=False)
+    _classifier_shadow_disagreement_total: PromCounterType | None = field(
+        default=None,
+        init=False,
+        repr=False,
+    )
+    _classifier_shadow_latency_ms: PromHistogramType | None = field(
+        default=None,
+        init=False,
+        repr=False,
+    )
 
     def __post_init__(self) -> None:
         if (
@@ -98,6 +111,23 @@ class InMemoryMetrics:
             buckets=histogram_buckets + (float("inf"),),
             registry=self._registry,
         )
+        self._classifier_shadow_total = PromCounter(
+            "sentinel_classifier_shadow_total",
+            "Total classifier shadow executions by provider and status.",
+            ["provider", "status"],
+            registry=self._registry,
+        )
+        self._classifier_shadow_disagreement_total = PromCounter(
+            "sentinel_classifier_shadow_disagreement_total",
+            "Total classifier shadow disagreements with enforced decision.",
+            registry=self._registry,
+        )
+        self._classifier_shadow_latency_ms = PromHistogram(
+            "sentinel_classifier_shadow_latency_ms",
+            "Classifier shadow inference latency in milliseconds.",
+            buckets=histogram_buckets + (float("inf"),),
+            registry=self._registry,
+        )
 
     def record_action(self, action: str) -> None:
         with self.lock:
@@ -124,6 +154,38 @@ class InMemoryMetrics:
             if self._validation_error_total is not None:
                 self._validation_error_total.inc()
 
+    def record_classifier_shadow(
+        self,
+        *,
+        provider_id: str,
+        status: str,
+        latency_ms: int,
+        disagreed: bool,
+    ) -> None:
+        normalized_provider = provider_id.strip() or "unknown"
+        normalized_status = status.strip() or "unknown"
+        counter_key = f"{normalized_provider}:{normalized_status}"
+        with self.lock:
+            self.classifier_shadow_status_counts[counter_key] += 1
+            if disagreed:
+                self.classifier_shadow_disagreement_count += 1
+            if self._classifier_shadow_total is not None:
+                self._classifier_shadow_total.labels(
+                    provider=normalized_provider,
+                    status=normalized_status,
+                ).inc()
+            if self._classifier_shadow_latency_ms is not None:
+                self._classifier_shadow_latency_ms.observe(float(max(0, latency_ms)))
+            if disagreed and self._classifier_shadow_disagreement_total is not None:
+                self._classifier_shadow_disagreement_total.inc()
+
+    def classifier_shadow_snapshot(self) -> dict[str, object]:
+        with self.lock:
+            return {
+                "status_counts": dict(self.classifier_shadow_status_counts),
+                "disagreement_count": self.classifier_shadow_disagreement_count,
+            }
+
     def snapshot(self) -> MetricsSnapshot:
         with self.lock:
             return {
@@ -141,6 +203,8 @@ class InMemoryMetrics:
             self.http_status_counts.clear()
             self.latency_ms_buckets.clear()
             self.validation_error_count = 0
+            self.classifier_shadow_status_counts.clear()
+            self.classifier_shadow_disagreement_count = 0
 
     def prometheus_text(self) -> str:
         if self._registry is None or generate_latest is None:

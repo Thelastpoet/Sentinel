@@ -137,14 +137,13 @@ Runtime latency protection requirements (normative):
   - shadow disagreement spikes,
   - fallback-only mode persistence.
 
-## 15. Open Questions
+## 15. Decision Status
 
-1. Which multilingual embedding model should be standard first (`e5`, `LaBSE`, other)?
-2. What minimum shadow-quality threshold is required before advisory-mode promotion?
-3. Should claim-likeness remain heuristic-backed after classifier rollout or become ensemble-weighted?
-
-Resolution path:
-
-1. Q1 is resolved in `I-415` and is blocking for `I-416`.
-2. Q2 is resolved in `I-416` using explicit promotion criteria and minimum shadow duration.
-3. Q3 is resolved in `I-417` after calibration evidence is reviewed.
+1. Embedding-model decision (`Q1`) is resolved by `I-415`:
+   - baseline `hash-bow-v1` retained pending optional-ML packaging (`I-420`) and rerun.
+2. Shadow-promotion thresholds (`Q2`) are resolved by `I-416`:
+   - criteria and evidence checklist documented in
+     `docs/specs/benchmarks/i416-shadow-promotion-checklist.md`.
+3. Remaining open question (`Q3`):
+   - should claim-likeness remain heuristic-backed after classifier rollout or become ensemble-weighted?
+   - resolution remains in scope for `I-417`.

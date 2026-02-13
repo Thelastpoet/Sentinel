@@ -10,7 +10,7 @@ This document captures the gap between ML/AI capabilities described in the maste
 
 | Capability | Master plan reference | Current implementation |
 |---|---|---|
-| Multi-label inference (single pass) | Sec. 5.2 hot path flow | Not implemented. Labels are derived from lexicon matches only. No classifier exists. |
+| Multi-label inference (single pass) | Sec. 5.2 hot path flow | Shadow-only classifier path is implemented (`I-416` done). Enforced action remains deterministic; classifier output is observational in `shadow|advisory` when enabled. |
 | Embedding model for semantic similarity | Sec. 8.2, Sec. 20 (pending decision) | `hash-bow-v1`: deterministic 64-dim feature hashing using `blake2b`. No trained model. |
 | Claim-likeness detection | Sec. 9.1 hot path | Deterministic heuristic baseline integrated in hot path. Emits `DISINFO_RISK` review signals (`R_DISINFO_CLAIM_LIKENESS_MEDIUM`/`HIGH`) when thresholds pass. No trained claim classifier yet. |
 | Toxicity scoring | Sec. 5.3 output contract | Static float mapped per action in policy config (e.g. BLOCK=0.95, REVIEW=0.60, ALLOW=0.05). Not model-derived. |
@@ -29,7 +29,7 @@ The hot path in `src/sentinel_api/policy.py` follows a deterministic sequence:
 4. Claim-likeness heuristic scoring for disinformation-oriented statements
 5. Static policy rules (no-match action, deployment stage overrides)
 
-Every label, reason code, and evidence item traces back to a lexicon entry, deterministic similarity heuristic, claim-likeness heuristic, or policy config value. No learned classifier currently participates in harm-label inference.
+Every enforced label, reason code, and evidence item traces back to a lexicon entry, deterministic similarity heuristic, claim-likeness heuristic, or policy config value. Classifier output currently runs in shadow mode only and cannot directly enforce `BLOCK`.
 
 ### Hash-BOW embeddings
 
@@ -62,7 +62,7 @@ This is the only trained model in the system. It is not bundled and must be prov
 - **Core interface boundary exists.** Protocol contracts and registry wiring landed in `I-413`.
 - **No optional ML extras yet.** `I-420` tracks packaging for model-runtime dependencies.
 - **Model artifact lifecycle governance is pending.** `I-419` tracks register/validate/activate/deprecate/revoke flow.
-- **Classifier integration pipeline is pending.** `I-416` tracks shadow/advisory rollout and enforcement guardrails.
+- **Classifier shadow integration is complete.** `I-416` provides stage-gated shadow execution, divergence telemetry, and circuit-breaker/timeout guardrails.
 
 ### Remaining capability gaps
 
@@ -71,7 +71,7 @@ This is the only trained model in the system. It is not bundled and must be prov
 | Model runtime interface boundary | `docs/specs/phase4/i413-model-runtime-interface-and-registry.md` | I-413 | `done` |
 | `model_version` contract clarity | `docs/specs/phase4/i414-model-version-contract-clarity.md` | I-414 | `done` |
 | Embedding model selection | `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | I-415 | `done` (baseline retained; optional-model rerun pending `I-420`) |
-| Multi-label inference rollout (shadow-first) | `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | I-416 | `todo` |
+| Multi-label inference rollout (shadow-first) | `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | I-416 | `done` |
 | Labeled corpus and annotation workflow | `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | I-418 | `todo` |
 | Model artifact lifecycle governance | `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md` | I-419 | `todo` |
 | Optional ML dependency packaging | `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | I-420 | `todo` |
@@ -93,13 +93,13 @@ This is the only trained model in the system. It is not bundled and must be prov
 
 ## Recommendations
 
-1. **Define a model integration interface** before selecting specific models. A `Protocol` for embedding and classification would allow the hash-BOW and any future model to be swapped without modifying the policy engine.
+1. **Operationalize `I-416` shadow evidence collection** so classifier telemetry continuously supports advisory-promotion decisions.
 
 2. **Calibrate claim-likeness thresholds** with labeled data and publish per-language false-positive/false-negative slices so the heuristic baseline can be tuned with evidence.
 
 3. **Evaluate real embedding models** against the hash-BOW baseline. Sentence-transformers or multilingual-e5 models would capture semantic similarity that hash-BOW cannot, but add latency and infrastructure requirements that must be measured against the P95 < 150ms budget.
 
-4. **Clarify `model_version` semantics** in the API documentation and OpenAPI spec. Either rename it to `system_version` or document that it does not imply a trained ML model.
+4. **Keep `model_version` provenance documentation in lockstep with runtime changes** so future ML promotion phases do not drift from OpenAPI/schema semantics.
 
 5. **Add ML dependencies as optional extras** in `pyproject.toml` (e.g. `pip install sentinel[ml]`) to keep the base install lightweight while enabling model-backed components.
 

@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-13
 - Scope: Introduce bounded-latency multi-label inference in shadow/advisory stages
 - Task linkage: `I-416` in `docs/specs/tasks.md`
@@ -44,3 +44,25 @@ Implement the first multi-label inference path while preserving deterministic go
 3. Metrics/logs include classifier latency and disagreement counters.
 4. CI latency gate remains green with classifier path enabled in benchmark profile.
 5. Promotion checklist and minimum shadow-duration evidence are documented.
+
+## 4. Implementation Notes
+
+1. Runtime classifier providers:
+   - `src/sentinel_api/model_registry.py`
+   - Added fallback classifier provider: `keyword-shadow-v1`
+2. Guardrails and bounded latency:
+   - `predict_classifier_shadow(...)` enforces timeout/error fallback and circuit-breaker disable on sustained failures.
+3. Shadow observability and persistence:
+   - `src/sentinel_api/main.py`
+   - Stage-gated execution in `shadow|advisory` when `SENTINEL_CLASSIFIER_SHADOW_ENABLED=true`
+   - Structured event: `classifier_shadow_prediction`
+   - Optional JSONL persistence via `SENTINEL_SHADOW_PREDICTIONS_PATH`
+4. Metrics:
+   - `src/sentinel_api/metrics.py`
+   - Added classifier shadow status counters, disagreement counter, and latency histogram (Prometheus).
+5. Test coverage:
+   - `tests/test_model_registry.py`
+   - `tests/test_api.py`
+   - `tests/test_metrics.py`
+6. Promotion evidence checklist:
+   - `docs/specs/benchmarks/i416-shadow-promotion-checklist.md`

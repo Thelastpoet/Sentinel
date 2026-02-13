@@ -78,6 +78,10 @@ Returns action/status counts, validation errors, and latency buckets.
 
 ```bash
 python scripts/benchmark_hot_path.py --iterations 300 --warmup 30 --p95-budget-ms 150
+SENTINEL_CLASSIFIER_SHADOW_ENABLED=true \
+SENTINEL_CLASSIFIER_PROVIDER=keyword-shadow-v1 \
+SENTINEL_DEPLOYMENT_STAGE=advisory \
+python scripts/benchmark_hot_path.py --iterations 300 --warmup 30 --p95-budget-ms 150
 python scripts/benchmark_embedding_candidates.py --input-path data/eval/embedding_bakeoff_v1.jsonl --lexicon-path data/lexicon_seed.json --similarity-threshold 0.35 --pretty
 python scripts/evaluate_language_packs.py --input-path data/eval/sample_eval.jsonl --pretty
 python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
@@ -127,6 +131,13 @@ python scripts/run_partner_connector_ingest.py \
 - `SENTINEL_POLICY_CONFIG_PATH`: override policy config path.
 - `SENTINEL_DEPLOYMENT_STAGE`: `shadow|advisory|supervised`.
 - `SENTINEL_ELECTORAL_PHASE`: `pre_campaign|campaign|silence_period|voting_day|results_period`.
+- `SENTINEL_CLASSIFIER_SHADOW_ENABLED`: enable classifier shadow inference (`true|false`, default `false`).
+- `SENTINEL_CLASSIFIER_PROVIDER`: classifier provider ID (default `none-v1`, fallback `keyword-shadow-v1`).
+- `SENTINEL_CLASSIFIER_TIMEOUT_MS`: per-request classifier timeout budget (default `40`).
+- `SENTINEL_CLASSIFIER_MIN_SCORE`: minimum classifier score retained for shadow labels (default `0.55`).
+- `SENTINEL_CLASSIFIER_CIRCUIT_FAILURE_THRESHOLD`: consecutive timeout/error count before opening circuit (default `3`).
+- `SENTINEL_CLASSIFIER_CIRCUIT_RESET_SECONDS`: cooldown before classifier shadow path retries after circuit open (default `120`).
+- `SENTINEL_SHADOW_PREDICTIONS_PATH`: optional JSONL path for persisted shadow prediction records.
 
 ## `model_version` provenance
 
