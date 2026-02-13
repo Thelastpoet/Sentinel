@@ -18,6 +18,24 @@ Implement the first multi-label inference path while preserving deterministic go
 2. Start in shadow mode with enforced decision unchanged by classifier output.
 3. Emit observability for shadow-vs-enforced divergence.
 4. Add explicit policy guardrail: classifier-only signal cannot directly `BLOCK` in initial rollout.
+5. Persist shadow predictions for audit and promotion analysis:
+   - `request_id`,
+   - classifier model/version,
+   - predicted labels/scores,
+   - enforced action/labels,
+   - timestamp.
+6. Define classifier selection source:
+   - selected model from `I-415` outputs or explicitly approved fallback classifier spec.
+7. Define advisory-promotion criteria and minimum shadow window:
+   - minimum 14 consecutive days of shadow metrics,
+   - global weighted F1 >= baseline + 0.02 absolute,
+   - per-language weighted F1 must not regress by > 0.03 absolute versus baseline,
+   - benign political FP non-regression (<= +1pp),
+   - shadow disagreement rate <= 15% over rolling 7-day window,
+   - no unresolved critical safety regressions.
+8. Runtime behavior on latency stress:
+   - classifier timeout/error must fall back to deterministic path for that request,
+   - sustained timeout/error triggers circuit-breaker disable for classifier path.
 
 ## 3. Acceptance Criteria
 
@@ -25,3 +43,4 @@ Implement the first multi-label inference path while preserving deterministic go
 2. Tests validate shadow outputs do not alter action when guardrail is active.
 3. Metrics/logs include classifier latency and disagreement counters.
 4. CI latency gate remains green with classifier path enabled in benchmark profile.
+5. Promotion checklist and minimum shadow-duration evidence are documented.

@@ -22,9 +22,31 @@ Define and implement explicit model interfaces so model-backed and heuristic-bac
 3. Preserve deterministic fallback when model providers are unavailable.
 4. Keep moderation API contract unchanged.
 
+Protocol contract (normative):
+
+1. `EmbeddingProvider`:
+   - `name: str`, `version: str`, `dimension: int`
+   - `embed(text: str, *, timeout_ms: int) -> list[float] | None`
+   - returns `None` on timeout/error/unavailable (never raises to request path).
+2. `MultiLabelClassifier`:
+   - `name: str`, `version: str`, `labels: tuple[str, ...]`
+   - `predict(text: str, *, timeout_ms: int) -> list[tuple[str, float]] | None`
+   - scores are `[0,1]`; unknown labels must be dropped before policy merge.
+3. `ClaimScorer`:
+   - `name: str`, `version: str`
+   - `score(text: str, *, timeout_ms: int) -> tuple[float, str] | None`
+   - tuple is `(score, band)` where `band in {"low","medium","high"}`.
+4. Error contract:
+   - providers must not throw uncaught exceptions into policy runtime;
+   - runtime logs provider failures and falls back to deterministic baseline.
+5. Registry contract:
+   - selected provider IDs come from config/env;
+   - missing/invalid provider IDs must route to baseline provider.
+
 ## 3. Acceptance Criteria
 
 1. Policy code depends on interfaces, not concrete model classes.
 2. At least one deterministic baseline adapter is registered per interface.
 3. Unit tests cover selection, fallback, and error handling paths.
 4. `ruff`, `pyright`, `pytest`, and `scripts/check_contract.py` remain green.
+5. Protocol signature tests enforce return types and timeout/failure fallback behavior.

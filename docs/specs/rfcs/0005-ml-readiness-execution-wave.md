@@ -37,6 +37,10 @@ Delivery order (strict):
 3. `I-415`: embedding model bakeoff and selection gate versus `hash-bow-v1` baseline.
 4. `I-416`: multi-label inference in shadow/advisory mode with bounded latency and safety guardrails.
 5. `I-417`: claim-likeness calibration and governance thresholds using evaluation harness outputs.
+6. `I-418`: labeled dataset and annotation workflow for claim/disinfo calibration.
+7. `I-419`: model artifact lifecycle and deployment governance.
+8. `I-420`: optional ML dependency packaging (`sentinel[ml]` extras).
+9. `I-421`: `I-408` go-live gate extension for ML-enforced launch readiness.
 
 ## 6. API and Schema Impact
 
@@ -64,6 +68,14 @@ Indicative stage budgets during ML wave:
 - Embedding inference/retrieval path: <= 60ms
 - Multi-label inference path: <= 45ms
 - Policy merge/decision assembly: <= 20ms
+- Remaining end-to-end overhead (router/lexicon/hot-trigger/serialization): <= 20ms
+
+Runtime latency protection requirements (normative):
+
+1. Per-request model timeout is mandatory (default 40ms classifier, 50ms embedding).
+2. Timeout/error must fail closed to deterministic baseline path (`REVIEW`/`ALLOW` only; no model-only `BLOCK`).
+3. Sustained timeout/error rates must trigger temporary model circuit-breaker mode.
+4. Circuit-breaker mode must be observable in logs/metrics and auto-recover on health criteria.
 
 ## 9. Security, Privacy, and Abuse Considerations
 
@@ -82,8 +94,10 @@ Indicative stage budgets during ML wave:
 
 - Stage A: adapter interfaces + version semantics (`I-413`, `I-414`).
 - Stage B: embedding model evaluation and decision (`I-415`).
-- Stage C: classifier shadow/advisory rollout (`I-416`).
-- Stage D: claim-likeness calibration governance closeout (`I-417`).
+- Stage C: classifier shadow/advisory rollout (`I-416`) after embedding decision from `I-415`.
+- Stage D: claim-likeness calibration governance closeout (`I-417`) using labeled corpus from `I-418`.
+- Stage E: artifact lifecycle and packaging completion (`I-419`, `I-420`) before ML-enforced launch consideration.
+- Stage F: go-live gate extension (`I-421`) and launch decision.
 
 ## 12. Acceptance Criteria
 
@@ -92,6 +106,7 @@ Indicative stage budgets during ML wave:
 3. Latency gate remains enforced in CI with artifact retention.
 4. Safety policy guarantees are preserved (no uncalibrated model direct-block path).
 5. All model artifacts and thresholds are auditable and versioned.
+6. Runtime timeout and circuit-breaker behavior is tested and documented.
 
 ## 13. Test Plan
 
@@ -127,3 +142,9 @@ Indicative stage budgets during ML wave:
 1. Which multilingual embedding model should be standard first (`e5`, `LaBSE`, other)?
 2. What minimum shadow-quality threshold is required before advisory-mode promotion?
 3. Should claim-likeness remain heuristic-backed after classifier rollout or become ensemble-weighted?
+
+Resolution path:
+
+1. Q1 is resolved in `I-415` and is blocking for `I-416`.
+2. Q2 is resolved in `I-416` using explicit promotion criteria and minimum shadow duration.
+3. Q3 is resolved in `I-417` after calibration evidence is reviewed.

@@ -72,6 +72,10 @@ This is the only trained model in the system. It is not bundled and must be prov
 | Multi-label inference rollout (shadow-first) | `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | I-416 | `todo` |
 | Model runtime interface boundary | `docs/specs/phase4/i413-model-runtime-interface-and-registry.md` | I-413 | `todo` |
 | `model_version` contract clarity | `docs/specs/phase4/i414-model-version-contract-clarity.md` | I-414 | `todo` |
+| Labeled corpus and annotation workflow | `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | I-418 | `todo` |
+| Model artifact lifecycle governance | `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md` | I-419 | `todo` |
+| Optional ML dependency packaging | `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | I-420 | `todo` |
+| Go-live gate extension for ML mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md` | I-421 | `todo` |
 
 ### `model_version` is misleading
 
@@ -104,6 +108,7 @@ The `model_version` field in the moderation response (e.g. `"sentinel-multi-v2"`
 - Master plan: `docs/master.md` (Sec. 5.2, 8.2, 9.1, 13.1, 20)
 - ML execution RFC: `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`
 - Model interface ADR: `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md`
+- Model artifact lifecycle ADR: `docs/specs/adr/0010-model-artifact-lifecycle-and-deployment.md`
 - Claim-likeness spec: `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md`
 - Deployment stages: `docs/specs/phase4/i405-deployment-stage-controls.md`
 - Evaluation harness: `docs/specs/phase4/i406-evaluation-bias-harness-baseline.md`

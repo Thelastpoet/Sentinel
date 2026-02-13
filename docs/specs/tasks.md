@@ -19,7 +19,7 @@ Status legend:
 | Phase 1: Foundation | Months 1-6 | Stable hot-path API and deterministic governance baseline | All Phase 1 tasks `done` |
 | Phase 2: Intelligence Integration | Months 7-12 | Define async intelligence/update pipeline and control plane specs | T-017, T-020, T-021 `done` |
 | Phase 3: Election Readiness | Months 13-18 | Codify election-time controls, appeals, and transparency workflows | T-018, T-019 `done` + I-301..I-307 `done` |
-| Phase 4: Scale and Sustainability | Months 19-24 | Tier-2 language expansion, partner integrations, evaluation/transparency operations, and ML readiness execution | Gate target: T-022 `done` + I-401..I-417 `done` |
+| Phase 4: Scale and Sustainability | Months 19-24 | Tier-2 language expansion, partner integrations, evaluation/transparency operations, and ML readiness execution | Gate target: T-022 `done` + I-401..I-421 `done` |
 
 ## Phase 1: Foundation (Months 1-6)
 
@@ -110,6 +110,10 @@ Status legend:
 | I-415 | Semantic embedding model selection gate | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | `todo` | Candidate embeddings are benchmarked vs baseline, one strategy is selected, and rollback is documented |
 | I-416 | Multi-label inference integration (shadow-first) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | `todo` | Classifier path runs in shadow/advisory mode with guardrails, latency budget compliance, and divergence observability |
 | I-417 | Claim-likeness calibration and governance thresholds | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i417-claim-likeness-calibration-governance.md` | `todo` | Threshold updates are evidence-backed, audited, and governance-approved with per-language/subgroup reporting |
+| I-418 | ML dataset and annotation pipeline | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | `todo` | Initial labeled corpus, annotation guide, and agreement metrics are produced and versioned |
+| I-419 | Model artifact lifecycle and deployment governance | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md`, `docs/specs/adr/0010-model-artifact-lifecycle-and-deployment.md` | `todo` | Artifact lifecycle states, activation controls, and rollback workflow are implemented and audited |
+| I-420 | Optional ML dependency packaging (`sentinel[ml]`) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | `todo` | Optional ML extras are packaged, documented, and validated without breaking base install |
+| I-421 | Go-live gate extension for ML-enforced launch mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md`, `docs/specs/phase4/i408-go-live-readiness-gate.md` | `todo` | Launch profile mode controls are enforced by go-live validator and audited in release bundle |
 
 ## Immediate Next (Execution Order)
 
@@ -117,7 +121,11 @@ Status legend:
 2. `I-414`: clarify `model_version` contract semantics before model rollout.
 3. `I-415`: run embedding bakeoff and ratify first production strategy.
 4. `I-416`: integrate multi-label inference in shadow-first mode.
-5. `I-417`: calibrate claim-likeness thresholds with governance sign-off.
+5. `I-418`: produce calibration/promotion dataset and annotation workflow.
+6. `I-417`: calibrate claim-likeness thresholds with governance sign-off.
+7. `I-419`: implement model artifact lifecycle governance.
+8. `I-420`: package optional ML dependencies.
+9. `I-421`: extend go-live gate for ML launch profile enforcement.
 
 ## Execution Dependencies
 
@@ -126,7 +134,10 @@ Status legend:
 3. `I-413` is prerequisite for `I-415` and `I-416`.
 4. `I-414` is prerequisite for `I-416` go-live promotion beyond shadow.
 5. `I-415` is prerequisite for `I-416` if classifier depends on semantic embedding provider.
-6. `I-417` closes calibration/governance requirements after `I-416` shadow evidence is available.
+6. `I-418` is prerequisite for `I-417`.
+7. `I-416` is prerequisite for `I-417` promotion evidence.
+8. `I-419` and `I-420` are prerequisites for `I-421` in `ml_enforced` launch mode.
+9. `I-421` updates launch gating behavior defined in `I-408`.
 
 ## Update Rule
 

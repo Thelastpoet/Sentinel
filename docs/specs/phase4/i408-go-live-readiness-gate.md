@@ -19,6 +19,21 @@ Define a deterministic launch decision framework so "feature complete" is not co
 1. `I-409` (`ruff` + `pyright` CI quality gate outputs)
 2. `I-410` (latency SLO CI gate output and retained benchmark artifacts)
 
+## 1.2 Launch Profile Modes
+
+Release bundle must declare one launch profile:
+
+1. `baseline_deterministic`
+2. `ml_enforced`
+
+Profile rules:
+
+1. `baseline_deterministic`:
+   - `I-413`..`I-420` may be deferred with explicit Section 20 dispositions.
+2. `ml_enforced`:
+   - `I-413`..`I-420` evidence is mandatory;
+   - missing evidence is automatic `NO-GO`.
+
 ## 2. Required Evidence Bundle
 
 1. Reliability and latency report:
@@ -77,6 +92,7 @@ Each sign-off record must include timestamp, evidence references, and decision r
 4. Go/no-go records are stored with immutable audit trail fields.
 5. Gate run fails if prerequisite artifacts from `I-409` and `I-410` are absent.
 6. Gate run fails when any Section 20 decision lacks disposition metadata.
+7. Gate run enforces profile-specific prerequisites as defined in `I-421`.
 
 ## 6. Implementation Notes
 

@@ -14,10 +14,19 @@ Move claim-likeness from static baseline thresholds to evidence-backed calibrate
 
 ## 2. Required Behavior
 
-1. Define calibration dataset and methodology.
+1. Use labeled calibration corpus produced by `I-418`.
 2. Evaluate false-positive/false-negative tradeoffs by language/subgroup.
 3. Propose threshold updates with explicit safety impact analysis.
 4. Require governance sign-off before promoting new thresholds.
+
+Calibration corpus requirements (normative):
+
+1. Minimum corpus size: 2,000 labeled items before first threshold promotion.
+2. Language mix must include Tier-1 languages at minimum.
+3. Labeling process must include:
+   - annotation guideline version,
+   - inter-annotator agreement report,
+   - reviewer/owner accountability trail.
 
 ## 3. Acceptance Criteria
 
@@ -25,3 +34,4 @@ Move claim-likeness from static baseline thresholds to evidence-backed calibrate
 2. Threshold changes are versioned in policy config and auditable.
 3. Regression tests verify deterministic score-to-band mapping after updates.
 4. No public API contract changes are introduced.
+5. Calibration evidence references dataset artifact and annotation provenance.
