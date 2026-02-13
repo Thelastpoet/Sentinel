@@ -50,9 +50,7 @@ def test_transparency_export_and_report_with_postgres(
         limit=200,
         include_identifiers=False,
     )
-    record_redacted = next(
-        item for item in export_redacted.records if item.appeal_id == created.id
-    )
+    record_redacted = next(item for item in export_redacted.records if item.appeal_id == created.id)
     assert record_redacted.request_id is None
     assert record_redacted.original_decision_id is None
 

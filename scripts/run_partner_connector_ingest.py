@@ -93,9 +93,7 @@ def main() -> None:
     if not args.database_url:
         raise SystemExit("SENTINEL_DATABASE_URL or --database-url is required")
 
-    connector = JsonFileFactCheckConnector(
-        name=args.connector_name, input_path=args.input_path
-    )
+    connector = JsonFileFactCheckConnector(name=args.connector_name, input_path=args.input_path)
     resilient_connector = ResilientPartnerConnector(
         connector,
         max_attempts=args.max_attempts,

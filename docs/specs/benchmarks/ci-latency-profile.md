@@ -24,4 +24,3 @@ Any modification to runner profile, command parameters, or budget must update:
 1. this document;
 2. `docs/specs/phase4/i410-latency-slo-ci-gate.md`;
 3. CI workflow implementation in the same PR.
-

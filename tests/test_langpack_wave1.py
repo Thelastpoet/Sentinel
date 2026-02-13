@@ -59,4 +59,3 @@ def test_wave1_registry_rejects_invalid_pack_version(tmp_path) -> None:
     )
     with pytest.raises(ValueError, match="invalid pack_version"):
         load_wave1_registry(path)
-

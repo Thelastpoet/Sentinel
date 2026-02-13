@@ -29,4 +29,3 @@ If regressions occur:
 2. Keep `sentinel_core` package present but unused.
 3. Retain shim files to avoid import breakage for existing tests/scripts.
 4. Re-run full suite and contract checks before merging rollback.
-

@@ -115,9 +115,7 @@ def test_find_vector_match_returns_result_when_similarity_meets_threshold(
     assert state["upserts"] == 1
 
 
-def test_find_vector_match_logs_warning_on_non_finite_similarity(
-    monkeypatch, caplog
-) -> None:
+def test_find_vector_match_logs_warning_on_non_finite_similarity(monkeypatch, caplog) -> None:
     class _Cursor:
         def __init__(self) -> None:
             self._fetchall_result = []

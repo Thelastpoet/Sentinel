@@ -35,4 +35,3 @@ If regressions occur:
 2. Keep `sentinel_langpack` package present but unused.
 3. Keep shim module intact to avoid import breaks.
 4. Re-run full suite and contract checks before merge.
-

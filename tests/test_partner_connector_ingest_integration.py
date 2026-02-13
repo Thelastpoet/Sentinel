@@ -50,9 +50,7 @@ def test_partner_connector_ingest_writes_event_and_queue(tmp_path: Path) -> None
     )
 
     connector = JsonFileFactCheckConnector(name=source, input_path=input_path)
-    resilient = ResilientPartnerConnector(
-        connector, max_attempts=2, sleep_fn=lambda _seconds: None
-    )
+    resilient = ResilientPartnerConnector(connector, max_attempts=2, sleep_fn=lambda _seconds: None)
     service = PartnerConnectorIngestionService(
         database_url=db_url,
         connector_name=source,

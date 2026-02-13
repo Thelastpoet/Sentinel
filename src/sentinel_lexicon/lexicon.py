@@ -24,8 +24,7 @@ class LexiconMatcher:
         self.version = version
         self.entries = entries
         self._compiled_entries: list[tuple[LexiconEntry, re.Pattern[str]]] = [
-            (entry, _compile_term_pattern(entry.term))
-            for entry in entries
+            (entry, _compile_term_pattern(entry.term)) for entry in entries
         ]
 
     def match(self, text: str) -> list[LexiconEntry]:

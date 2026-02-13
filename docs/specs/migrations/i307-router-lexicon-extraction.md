@@ -38,4 +38,3 @@ If regressions occur:
 2. Keep extracted packages present but unused.
 3. Keep shim layer intact to avoid import breaks for tests/scripts.
 4. Re-run full suite and contract checks before merge.
-

@@ -20,4 +20,3 @@ def test_resolve_pack_versions_returns_copy() -> None:
     resolved = resolve_pack_versions(source)
     assert resolved == {"en": "pack-en-0.1"}
     assert resolved is not source
-
