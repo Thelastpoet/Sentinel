@@ -4,6 +4,7 @@ import time
 from dataclasses import dataclass
 from typing import cast, get_args
 
+from sentinel_api.model_artifact_repository import resolve_runtime_model_version
 from sentinel_api.model_registry import score_claim_with_fallback
 from sentinel_core.claim_likeness import contains_election_anchor
 from sentinel_core.model_runtime import ClaimBand
@@ -281,6 +282,7 @@ def moderate(text: str, *, runtime: EffectivePolicyRuntime | None = None) -> Mod
     decision = evaluate_text(text, matcher=matcher, config=config, runtime=runtime)
     latency_ms = int((time.perf_counter() - start) * 1000)
     pack_versions = resolve_pack_versions(config.pack_versions)
+    effective_model_version = resolve_runtime_model_version(config.model_version)
     return ModerationResponse(
         toxicity=decision.toxicity,
         labels=decision.labels,
@@ -288,7 +290,7 @@ def moderate(text: str, *, runtime: EffectivePolicyRuntime | None = None) -> Mod
         reason_codes=decision.reason_codes,
         evidence=decision.evidence,
         language_spans=detect_language_span(text, config=config),
-        model_version=config.model_version,
+        model_version=effective_model_version,
         lexicon_version=matcher.version,
         pack_versions=pack_versions,
         policy_version=runtime.effective_policy_version,

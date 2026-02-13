@@ -30,6 +30,14 @@ APPEAL_STATES: set[str] = {
     "resolved_modified",
 }
 
+MODEL_ARTIFACT_STATES: set[str] = {
+    "draft",
+    "validated",
+    "active",
+    "deprecated",
+    "revoked",
+}
+
 QUEUE_ALLOWED_TRANSITIONS: dict[str, set[str]] = {
     "queued": {"processing", "dropped"},
     "processing": {"clustered", "error"},
@@ -56,6 +64,14 @@ APPEAL_ALLOWED_TRANSITIONS: dict[str, set[str]] = {
     "resolved_upheld": set(),
     "resolved_reversed": set(),
     "resolved_modified": set(),
+}
+
+MODEL_ARTIFACT_ALLOWED_TRANSITIONS: dict[str, set[str]] = {
+    "draft": {"validated", "revoked"},
+    "validated": {"active", "deprecated", "revoked"},
+    "active": {"deprecated", "revoked"},
+    "deprecated": {"active", "revoked"},
+    "revoked": set(),
 }
 
 
@@ -108,3 +124,15 @@ def validate_appeal_transition(from_state: str, to_state: str) -> TransitionResu
     if target not in APPEAL_ALLOWED_TRANSITIONS[source]:
         raise InvalidStateTransition(f"appeal transition not allowed: {source} -> {target}")
     return TransitionResult(entity="appeal", from_state=source, to_state=target)
+
+
+def validate_model_artifact_transition(from_state: str, to_state: str) -> TransitionResult:
+    source = _normalize(from_state)
+    target = _normalize(to_state)
+    if source not in MODEL_ARTIFACT_STATES:
+        raise InvalidStateTransition(f"unknown model artifact state: {from_state}")
+    if target not in MODEL_ARTIFACT_STATES:
+        raise InvalidStateTransition(f"unknown model artifact state: {to_state}")
+    if target not in MODEL_ARTIFACT_ALLOWED_TRANSITIONS[source]:
+        raise InvalidStateTransition(f"model artifact transition not allowed: {source} -> {target}")
+    return TransitionResult(entity="model_artifact", from_state=source, to_state=target)

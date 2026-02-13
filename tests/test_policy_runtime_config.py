@@ -29,3 +29,13 @@ def test_moderation_uses_external_policy_config(tmp_path, monkeypatch) -> None:
     assert result.toxicity == 0.01
     assert result.pack_versions["en"] == "pack-en-9.9"
     reset_policy_config_cache()
+
+
+def test_moderation_uses_active_model_artifact_version(monkeypatch) -> None:
+    monkeypatch.delenv("SENTINEL_DATABASE_URL", raising=False)
+    monkeypatch.setattr(
+        "sentinel_api.policy.resolve_runtime_model_version",
+        lambda _default: "model-governed-v3",
+    )
+    result = moderate("peaceful civic dialogue")
+    assert result.model_version == "model-governed-v3"

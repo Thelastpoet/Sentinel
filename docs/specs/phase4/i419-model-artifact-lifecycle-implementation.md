@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Done
 - Effective date: 2026-02-13
 - Scope: Implement governed model artifact storage, activation, and rollback workflow
 - Task linkage: `I-419` in `docs/specs/tasks.md`

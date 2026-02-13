@@ -5,6 +5,7 @@ import pytest
 from sentinel_api.async_state_machine import (
     InvalidStateTransition,
     validate_appeal_transition,
+    validate_model_artifact_transition,
     validate_proposal_transition,
     validate_queue_transition,
 )
@@ -113,6 +114,47 @@ def test_validate_appeal_transition_rejects_invalid_paths(source: str, target: s
 
 
 @pytest.mark.parametrize(
+    ("source", "target"),
+    [
+        ("draft", "validated"),
+        ("draft", "revoked"),
+        ("validated", "active"),
+        ("validated", "deprecated"),
+        ("validated", "revoked"),
+        ("active", "deprecated"),
+        ("active", "revoked"),
+        ("deprecated", "active"),
+        ("deprecated", "revoked"),
+    ],
+)
+def test_validate_model_artifact_transition_allows_expected_paths(
+    source: str,
+    target: str,
+) -> None:
+    result = validate_model_artifact_transition(source, target)
+    assert result.entity == "model_artifact"
+    assert result.from_state == source
+    assert result.to_state == target
+
+
+@pytest.mark.parametrize(
+    ("source", "target"),
+    [
+        ("draft", "active"),
+        ("active", "validated"),
+        ("revoked", "active"),
+        ("revoked", "draft"),
+    ],
+)
+def test_validate_model_artifact_transition_rejects_invalid_paths(
+    source: str,
+    target: str,
+) -> None:
+    with pytest.raises(InvalidStateTransition):
+        validate_model_artifact_transition(source, target)
+
+
+@pytest.mark.parametrize(
     ("validator", "source", "target"),
     [
         (validate_queue_transition, "unknown", "queued"),
@@ -121,6 +163,8 @@ def test_validate_appeal_transition_rejects_invalid_paths(source: str, target: s
         (validate_proposal_transition, "draft", "unknown"),
         (validate_appeal_transition, "unknown", "submitted"),
         (validate_appeal_transition, "submitted", "unknown"),
+        (validate_model_artifact_transition, "unknown", "draft"),
+        (validate_model_artifact_transition, "draft", "unknown"),
     ],
 )
 def test_unknown_states_raise(validator, source: str, target: str) -> None:  # type: ignore[no-untyped-def]

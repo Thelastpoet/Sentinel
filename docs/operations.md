@@ -65,6 +65,31 @@ python scripts/manage_lexicon_release.py --database-url "$SENTINEL_DATABASE_URL"
 python scripts/manage_lexicon_release.py --database-url "$SENTINEL_DATABASE_URL" --actor ops unhold --version hatelex-v2.2 --reason "case closed"
 ```
 
+## Model artifact lifecycle governance
+
+```bash
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops register \
+  --model-id sentinel-ml-v1 \
+  --artifact-uri s3://sentinel/models/sentinel-ml-v1.tar.gz \
+  --sha256 <artifact-sha256> \
+  --dataset-ref ml-calibration-v1 \
+  --metrics-ref metrics/sentinel-ml-v1.json \
+  --compatibility-json '{"python":"3.12","runtime":"cpu"}'
+
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops validate --model-id sentinel-ml-v1
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops activate --model-id sentinel-ml-v1
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops list
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops active --json
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops audit --limit 20
+python scripts/manage_model_artifact.py --database-url "$SENTINEL_DATABASE_URL" --actor ml-ops rollback --to-model-id sentinel-ml-v0
+```
+
+Rollback drill expectation:
+
+- Activation always enforces single-active artifact.
+- Rollback transitions target artifact to `active` and demotes current `active` artifact to `deprecated`.
+- All lifecycle actions are recorded in `model_artifact_audit`.
+
 ## Runtime metrics
 
 ```bash
