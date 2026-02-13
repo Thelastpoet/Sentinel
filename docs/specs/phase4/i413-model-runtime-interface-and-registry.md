@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-13
 - Scope: Protocol-based model integration boundary for embedding/classifier/claim modules
 - Task linkage: `I-413` in `docs/specs/tasks.md`
@@ -50,3 +50,16 @@ Protocol contract (normative):
 3. Unit tests cover selection, fallback, and error handling paths.
 4. `ruff`, `pyright`, `pytest`, and `scripts/check_contract.py` remain green.
 5. Protocol signature tests enforce return types and timeout/failure fallback behavior.
+
+## 4. Implementation Notes
+
+1. Core runtime interface contracts:
+   - `src/sentinel_core/model_runtime.py`
+2. Registry and deterministic baseline adapters:
+   - `src/sentinel_api/model_registry.py`
+3. Policy wiring through runtime scorer path:
+   - `src/sentinel_api/policy.py`
+4. Supporting helper for election-anchor checks:
+   - `src/sentinel_core/claim_likeness.py`
+5. Coverage tests:
+   - `tests/test_model_registry.py`

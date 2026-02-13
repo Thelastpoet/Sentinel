@@ -105,7 +105,7 @@ Status legend:
 | I-410 | Latency SLO CI gate (`P95 < 150ms`) | `docs/master.md` (Sec. 3.1, Sec. 19), `docs/specs/phase4/i410-latency-slo-ci-gate.md` | `done` | Hot-path benchmark runs in CI with failing gate on p95 budget breach and artifact retention |
 | I-411 | Hate-Lex metadata completeness + taxonomy coverage hardening | `docs/master.md` (Sec. 6.1, Sec. 8.1), `docs/specs/phase4/i411-lexicon-metadata-and-taxonomy-coverage.md` | `done` | Lexicon schema/seed include lifecycle metadata fields and baseline includes reachable `HARASSMENT_THREAT` coverage |
 | I-412 | Disinformation claim-likeness baseline integration | `docs/master.md` (Sec. 9.1), `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md` | `done` | Deterministic claim-likeness signal is integrated into hot path with tests and no public contract break |
-| I-413 | Model runtime interfaces and registry wiring | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i413-model-runtime-interface-and-registry.md`, `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md` | `todo` | Protocol-based adapters and registry are implemented with deterministic fallback and policy-engine decoupling |
+| I-413 | Model runtime interfaces and registry wiring | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i413-model-runtime-interface-and-registry.md`, `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md` | `done` | Protocol-based adapters and registry are implemented with deterministic fallback and policy-engine decoupling |
 | I-414 | `model_version` contract clarity and provenance docs | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i414-model-version-contract-clarity.md`, `docs/specs/adr/0009-model-runtime-interface-and-version-semantics.md` | `todo` | OpenAPI/RFC/ops docs explicitly define `model_version` semantics with no response-shape break |
 | I-415 | Semantic embedding model selection gate | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | `todo` | Candidate embeddings are benchmarked vs baseline, one strategy is selected, and rollback is documented |
 | I-416 | Multi-label inference integration (shadow-first) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | `todo` | Classifier path runs in shadow/advisory mode with guardrails, latency budget compliance, and divergence observability |
@@ -117,15 +117,14 @@ Status legend:
 
 ## Immediate Next (Execution Order)
 
-1. `I-413`: establish model runtime interfaces and registry boundary.
-2. `I-414`: clarify `model_version` contract semantics before model rollout.
-3. `I-415`: run embedding bakeoff and ratify first production strategy.
-4. `I-416`: integrate multi-label inference in shadow-first mode.
-5. `I-418`: produce calibration/promotion dataset and annotation workflow.
-6. `I-417`: calibrate claim-likeness thresholds with governance sign-off.
-7. `I-419`: implement model artifact lifecycle governance.
-8. `I-420`: package optional ML dependencies.
-9. `I-421`: extend go-live gate for ML launch profile enforcement.
+1. `I-414`: clarify `model_version` contract semantics before model rollout.
+2. `I-415`: run embedding bakeoff and ratify first production strategy.
+3. `I-416`: integrate multi-label inference in shadow-first mode.
+4. `I-418`: produce calibration/promotion dataset and annotation workflow.
+5. `I-417`: calibrate claim-likeness thresholds with governance sign-off.
+6. `I-419`: implement model artifact lifecycle governance.
+7. `I-420`: package optional ML dependencies.
+8. `I-421`: extend go-live gate for ML launch profile enforcement.
 
 ## Execution Dependencies
 
