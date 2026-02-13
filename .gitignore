@@ -13,3 +13,6 @@ pip-wheel-metadata/
 dist/
 build/
 dev_docs/
+agents.md
+.claude
+CLAUDE.md

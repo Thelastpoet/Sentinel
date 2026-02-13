@@ -1,71 +1,90 @@
 # Sentinel
 
-Sentinel is a multilingual moderation API for election-risk and civic discourse safety.
-It is designed for products that need deterministic moderation decisions with audit evidence, especially in code-switched East African contexts.
+Open-source multilingual moderation API built to protect Kenya's 2027 general election from ethnic incitement and election disinformation.
 
-## Who this is for
+Sentinel handles code-switched text across English, Swahili, and Sheng. It returns deterministic moderation decisions (`ALLOW`, `REVIEW`, or `BLOCK`) with full audit evidence, so every action can be explained and appealed.
 
-- Community forums
-- News platforms
-- Civil society reporting tools
-- Fact-check and trust-and-safety teams
+## Who is this for?
+
+**Platform integrators** — You run a forum, news platform, or civic tech tool and need a moderation API. You send text, Sentinel returns a decision. Start with the [Integration Guide](docs/integration-guide.md).
+
+**Self-host operators** — You want to deploy and manage a Sentinel instance for your organization. Start with the [Deployment Guide](docs/deployment.md).
+
+Both audiences should begin with the [Quickstart](docs/quickstart.md).
 
 ## What Sentinel returns
 
-For each text input, Sentinel returns:
+```jsonc
+{
+  "toxicity": 0.92,
+  "labels": ["INCITEMENT_VIOLENCE"],
+  "action": "BLOCK",
+  "reason_codes": ["R_INCITE_CALL_TO_HARM"],
+  "evidence": [
+    {
+      "type": "lexicon",
+      "match": "kill",
+      "severity": 3,
+      "lang": "en"
+    }
+  ],
+  "language_spans": [
+    {"start": 0, "end": 26, "lang": "en"}
+  ],
+  "model_version": "sentinel-multi-v2",
+  "lexicon_version": "hatelex-v2.1",
+  "pack_versions": {"en": "pack-en-0.1", "sw": "pack-sw-0.1", "sh": "pack-sh-0.1"},
+  "policy_version": "policy-2026.11",
+  "latency_ms": 12
+}
+```
 
-- `action`: `ALLOW`, `REVIEW`, or `BLOCK`
-- `labels` and `reason_codes`
-- `evidence` used for the decision
-- provenance fields (`model_version`, `lexicon_version`, `policy_version`)
+Every response includes the evidence that drove the decision, the versions of all artifacts involved, and the latency of the call. This is the audit trail for appeals and transparency reporting.
+
+## Key concepts
+
+**6 labels**: `ETHNIC_CONTEMPT`, `INCITEMENT_VIOLENCE`, `HARASSMENT_THREAT`, `DOGWHISTLE_WATCH`, `DISINFO_RISK`, `BENIGN_POLITICAL_SPEECH`
+
+**3 actions**: `ALLOW` (publish), `REVIEW` (hold for human moderator), `BLOCK` (reject)
+
+**3 deployment stages**: `SHADOW` (log-only, no enforcement) -> `ADVISORY` (blocks downgraded to review) -> `SUPERVISED` (full enforcement). Roll out safely with progressive stages.
+
+**5 electoral phases**: `PRE_CAMPAIGN` -> `CAMPAIGN` -> `SILENCE_PERIOD` -> `VOTING_DAY` -> `RESULTS_PERIOD`. Sensitivity thresholds tighten automatically as election day approaches.
 
 ## Quickstart
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e .[dev,ops]
-
-# optional ML extras
-python -m pip install -e .[ml]
-
-docker compose up -d --build
-export SENTINEL_API_KEY='replace-with-strong-key'
-python scripts/apply_migrations.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel
-python scripts/sync_lexicon_seed.py --database-url postgresql://sentinel:sentinel@localhost:5432/sentinel --activate-if-none
-uvicorn sentinel_api.main:app --host 0.0.0.0 --port 8000
+git clone https://github.com/Thelastpoet/sentinel.git && cd sentinel
+pip install -e .[dev,ops]
+docker compose up -d --build postgres redis
+make apply-migrations && make seed-lexicon
+export SENTINEL_API_KEY='your-key-here' && make run
 ```
 
-Test a request:
+See the full [Quickstart guide](docs/quickstart.md) for detailed instructions.
 
-```bash
-curl -sS -X POST http://localhost:8000/v1/moderate \
-  -H 'Content-Type: application/json' \
-  -H "X-API-Key: ${SENTINEL_API_KEY}" \
-  -d '{"text":"They should kill them now."}'
-```
+## Project maturity
 
-## Integration model
+Sentinel ships with a **7-term demonstration seed lexicon**. This is enough to validate the system works end-to-end, but production deployment requires building out your own lexicon with domain-expert annotation.
 
-Your backend calls Sentinel before publish:
-
-1. Send user text to `POST /v1/moderate`
-2. Apply action:
-   - `ALLOW` -> publish
-   - `REVIEW` -> moderation queue
-   - `BLOCK` -> reject
-3. Store decision metadata for audit and appeals
+The multi-label classifier currently runs in **shadow mode** (observability only). Claim-likeness scoring is active but **REVIEW-only** (it cannot produce `BLOCK`). Deterministic lexicon matches remain the only direct path to `BLOCK`.
 
 ## Documentation
 
-- [Docs index](docs/README.md)
-- [Quickstart](docs/quickstart.md)
-- [Integration Guide](docs/integration-guide.md)
-- [Deployment Guide](docs/deployment.md)
-- [API Reference](docs/api-reference.md)
-- [Security Notes](docs/security.md)
-- [FAQ](docs/faq.md)
+| Document | Audience | Description |
+|----------|----------|-------------|
+| [Quickstart](docs/quickstart.md) | Both | Get running in 5 minutes |
+| [Integration Guide](docs/integration-guide.md) | Integrators | Full request/response reference and enforcement patterns |
+| [Deployment Guide](docs/deployment.md) | Operators | Infrastructure, configuration, and operations |
+| [API Reference](docs/api-reference.md) | Both | All 13 endpoints documented |
+| [Security](docs/security.md) | Operators | Authentication, authorization, and safety architecture |
+| [FAQ](docs/faq.md) | Both | Common questions for integrators and operators |
+
+Machine-readable public moderation contract: [`contracts/api/openapi.yaml`](contracts/api/openapi.yaml) and [`contracts/schemas/`](contracts/schemas/)
+
+## Contributing
+
+Contributions are welcome. Please open an issue to discuss significant changes before submitting a pull request.
 
 ## License
 
