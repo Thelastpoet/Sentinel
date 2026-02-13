@@ -76,7 +76,7 @@ This is the only trained model in the system. It is not bundled and must be prov
 | Claim-likeness calibration and governance thresholds | `docs/specs/phase4/i417-claim-likeness-calibration-governance.md` | I-417 | `done` (calibration engine + report artifacts + policy threshold promotion verified) |
 | Model artifact lifecycle governance | `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md` | I-419 | `done` |
 | Optional ML dependency packaging | `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | I-420 | `done` |
-| Go-live gate extension for ML mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md` | I-421 | `todo` |
+| Go-live gate extension for ML mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md` | I-421 | `done` |
 
 ### `model_version` is misleading
 

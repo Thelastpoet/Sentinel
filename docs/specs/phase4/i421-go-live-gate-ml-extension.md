@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Done
 - Effective date: 2026-02-13
 - Scope: Extend `I-408` go-live gate to support ML-enforced launch readiness decisions
 - Task linkage: `I-421` in `docs/specs/tasks.md`

@@ -102,7 +102,8 @@ Each sign-off record must include timestamp, evidence references, and decision r
    - `make go-live-check BUNDLE_DIR=docs/releases/go-live/<release-id>`
 3. Template evidence bundle:
    - `docs/releases/go-live/template/`
-   - includes `decision.json`, prerequisite artifacts, Section 20 dispositions,
+   - includes `decision.json` (`launch_profile`, base prerequisites, and ML prerequisites),
+     prerequisite artifacts, Section 20 dispositions,
      and role sign-off records.
 4. Validator enforces:
    - required artifact presence;

@@ -66,7 +66,7 @@ Every response follows a strict contract:
 
 ## Project status
 
-**Active development** — implementation is complete through `I-420`; `I-421` is the remaining Phase 4 item. See the [task board](docs/specs/tasks.md) for current status.
+**Active development** — implementation tasks through `I-421` are complete. Launch remains governed by the go-live readiness gate and release sign-off bundle. See the [task board](docs/specs/tasks.md) for current status.
 
 Not yet in production. Contributions and feedback are welcome.
 

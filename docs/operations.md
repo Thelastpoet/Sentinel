@@ -136,6 +136,11 @@ Then validate:
 python scripts/check_go_live_readiness.py --bundle-dir docs/releases/go-live/<release-id>
 ```
 
+Set `decision.json.launch_profile` before validation:
+
+- `baseline_deterministic`: requires explicit Section 20 dispositions for `I-413`..`I-420`.
+- `ml_enforced`: requires `decision.json.ml_prerequisites.i413..i420` all `status=pass` with artifacts.
+
 ## Async worker
 
 ```bash

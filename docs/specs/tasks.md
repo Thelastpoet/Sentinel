@@ -113,11 +113,11 @@ Status legend:
 | I-418 | ML dataset and annotation pipeline | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | `done` | Initial labeled corpus, annotation guide, and agreement metrics are produced and versioned |
 | I-419 | Model artifact lifecycle and deployment governance | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md`, `docs/specs/adr/0010-model-artifact-lifecycle-and-deployment.md` | `done` | Artifact lifecycle states, activation controls, and rollback workflow are implemented and audited |
 | I-420 | Optional ML dependency packaging (`sentinel[ml]`) | `docs/specs/rfcs/0005-ml-readiness-execution-wave.md`, `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | `done` | Optional ML extras are packaged, documented, and validated without breaking base install |
-| I-421 | Go-live gate extension for ML-enforced launch mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md`, `docs/specs/phase4/i408-go-live-readiness-gate.md` | `todo` | Launch profile mode controls are enforced by go-live validator and audited in release bundle |
+| I-421 | Go-live gate extension for ML-enforced launch mode | `docs/specs/phase4/i421-go-live-gate-ml-extension.md`, `docs/specs/phase4/i408-go-live-readiness-gate.md` | `done` | Launch profile mode controls are enforced by go-live validator and audited in release bundle |
 
 ## Immediate Next (Execution Order)
 
-1. `I-421`: extend go-live gate for ML launch profile enforcement.
+1. No open implementation tasks. Continue release hardening and operational readiness drills via go-live bundles.
 
 ## Execution Dependencies
 
