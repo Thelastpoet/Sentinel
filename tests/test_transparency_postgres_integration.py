@@ -37,7 +37,7 @@ def test_transparency_export_and_report_with_postgres(
             original_reason_codes=["R_DISINFO_NARRATIVE_SIMILARITY"],
             original_model_version="sentinel-multi-v2",
             original_lexicon_version="hatelex-v2.1",
-            original_policy_version="policy-2026.10",
+            original_policy_version="policy-2026.11",
             original_pack_versions={"en": "pack-en-0.1"},
             rationale="transparency postgres integration artifact",
         ),
@@ -50,9 +50,7 @@ def test_transparency_export_and_report_with_postgres(
         limit=200,
         include_identifiers=False,
     )
-    record_redacted = next(
-        item for item in export_redacted.records if item.appeal_id == created.id
-    )
+    record_redacted = next(item for item in export_redacted.records if item.appeal_id == created.id)
     assert record_redacted.request_id is None
     assert record_redacted.original_decision_id is None
 

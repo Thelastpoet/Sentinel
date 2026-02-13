@@ -92,10 +92,7 @@ def _build_cluster_key(item: QueueWorkItem) -> str:
 
 
 def _policy_impact_summary(item: QueueWorkItem) -> str:
-    return (
-        f"source={item.source} priority={item.priority} "
-        f"lang={item.lang or 'unknown'}"
-    )
+    return f"source={item.source} priority={item.priority} lang={item.lang or 'unknown'}"
 
 
 def _retry_delay_seconds(
@@ -272,8 +269,7 @@ def _upsert_cluster(cur, item: QueueWorkItem) -> int:
 def _insert_proposal(cur, item: QueueWorkItem, *, cluster_id: int, actor: str) -> int:
     title = f"Async proposal: {item.source}"
     description = (
-        f"source_event_id={item.source_event_id or 'n/a'} "
-        f"request_id={item.request_id or 'n/a'}"
+        f"source_event_id={item.source_event_id or 'n/a'} request_id={item.request_id or 'n/a'}"
     )
     evidence = json.dumps(
         [
@@ -345,9 +341,7 @@ def _refresh_queue_depth_metrics(cur) -> None:
     )
     depth_map = {str(row[0]): int(row[1]) for row in cur.fetchall()}
     for priority in ("critical", "urgent", "standard", "batch"):
-        async_queue_metrics.set_queue_depth(
-            cast(Priority, priority), depth_map.get(priority, 0)
-        )
+        async_queue_metrics.set_queue_depth(cast(Priority, priority), depth_map.get(priority, 0))
 
 
 def process_one(

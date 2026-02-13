@@ -7,6 +7,8 @@ Prefer importing from `sentinel_core.async_state_machine` for new code.
 from sentinel_core.async_state_machine import (  # noqa: F401
     APPEAL_ALLOWED_TRANSITIONS,
     APPEAL_STATES,
+    MODEL_ARTIFACT_ALLOWED_TRANSITIONS,
+    MODEL_ARTIFACT_STATES,
     PROPOSAL_ALLOWED_TRANSITIONS,
     PROPOSAL_STATES,
     QUEUE_ALLOWED_TRANSITIONS,
@@ -14,6 +16,7 @@ from sentinel_core.async_state_machine import (  # noqa: F401
     InvalidStateTransition,
     TransitionResult,
     validate_appeal_transition,
+    validate_model_artifact_transition,
     validate_proposal_transition,
     validate_queue_transition,
 )

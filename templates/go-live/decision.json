@@ -1,0 +1,76 @@
+{
+  "release_id": "YYYY-MM-DD-vX",
+  "generated_at": "2026-02-13T00:00:00+00:00",
+  "decision": "NO_GO",
+  "launch_profile": "baseline_deterministic",
+  "prerequisites": {
+    "i409": {
+      "status": "pass",
+      "artifacts": [
+        "ci-lint-typecheck.log"
+      ]
+    },
+    "i410": {
+      "status": "pass",
+      "artifacts": [
+        "latency-benchmark.json"
+      ]
+    }
+  },
+  "ml_prerequisites": {
+    "i413": {
+      "status": "pass",
+      "artifacts": [
+        "i413-evidence.json"
+      ]
+    },
+    "i414": {
+      "status": "pass",
+      "artifacts": [
+        "i414-evidence.json"
+      ]
+    },
+    "i415": {
+      "status": "pass",
+      "artifacts": [
+        "i415-evidence.json"
+      ]
+    },
+    "i416": {
+      "status": "pass",
+      "artifacts": [
+        "i416-evidence.json"
+      ]
+    },
+    "i417": {
+      "status": "pass",
+      "artifacts": [
+        "i417-evidence.json"
+      ]
+    },
+    "i418": {
+      "status": "pass",
+      "artifacts": [
+        "i418-evidence.json"
+      ]
+    },
+    "i419": {
+      "status": "pass",
+      "artifacts": [
+        "i419-evidence.json"
+      ]
+    },
+    "i420": {
+      "status": "pass",
+      "artifacts": [
+        "i420-evidence.json"
+      ]
+    }
+  },
+  "critical_checks": {
+    "latency_gate": "pass",
+    "security_findings": "pass",
+    "safety_regressions": "pass",
+    "evidence_completeness": "pass"
+  }
+}

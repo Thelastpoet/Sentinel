@@ -19,6 +19,7 @@ LEGACY_ALEMBIC_ID_MAP: dict[str, str] = {
     "0009_appeals_original_decision_id_backfill": "s0009",
     "0010_monitoring_queue_event_uniqueness": "s0010",
     "0011_lexicon_entry_metadata_hardening": "s0011",
+    "0012_model_artifact_lifecycle": "s0012",
 }
 
 

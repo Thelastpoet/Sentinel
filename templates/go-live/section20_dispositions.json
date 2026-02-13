@@ -1,0 +1,72 @@
+[
+  {
+    "decision_id": "S20-01",
+    "disposition": "accepted_for_launch",
+    "owner": "owner-id",
+    "rationale": "Rationale for launch disposition."
+  },
+  {
+    "decision_id": "I-413",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Deterministic baseline remains active while ML runtime interfaces are validated.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-414",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Model provenance semantics are documented for audit continuity.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-415",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Hash baseline remains in force with vector safety guardrails.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-416",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Classifier path remains shadow-only with no direct BLOCK authority.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-417",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Disinfo claim thresholds remain governed via deterministic policy.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-418",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Dataset refreshes are scheduled with documented governance controls.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-419",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Model artifact governance runbook exists and rollback drill is documented.",
+    "target_resolution_date": "2026-06-30"
+  },
+  {
+    "decision_id": "I-420",
+    "disposition": "deferred_non_blocker",
+    "owner": "owner-id",
+    "rationale": "Deferred with controlled mitigation under baseline profile.",
+    "mitigation": "Mitigation plan summary.",
+    "target_resolution_date": "2026-06-30"
+  }
+]

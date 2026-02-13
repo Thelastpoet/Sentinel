@@ -1,16 +1,14 @@
 # Contributing to Sentinel
 
-Thank you for contributing. This repository follows a spec-driven workflow: update specs first, then implementation.
+Thank you for contributing.
 
 ## Contribution Flow
 
 1. Open or link an issue with problem statement and scope.
-2. Update relevant specs before code changes:
-   - RFC: `docs/specs/rfcs/`
-   - ADR: `docs/specs/adr/`
-   - API/schema: `docs/specs/api/`, `docs/specs/schemas/`
-3. Implement code and tests.
-4. Update `docs/specs/tasks.md` status in the same PR.
+2. Implement code and tests.
+3. Update contracts/docs when behavior changes:
+   - API: `contracts/api/openapi.yaml`
+   - Schemas: `contracts/schemas/`
 
 ## Local Setup
 
@@ -57,4 +55,4 @@ make test-db
 ## Governance and Conduct
 
 - Follow `CODE_OF_CONDUCT.md` for all interactions.
-- For moderation-outcome changes, review `docs/specs/governance.md`.
+- For moderation-outcome changes, include rationale and risk notes in your PR.

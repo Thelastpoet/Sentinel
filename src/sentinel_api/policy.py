@@ -4,7 +4,10 @@ import time
 from dataclasses import dataclass
 from typing import cast, get_args
 
-from sentinel_core.claim_likeness import assess_claim_likeness
+from sentinel_api.model_artifact_repository import resolve_runtime_model_version
+from sentinel_api.model_registry import score_claim_with_fallback
+from sentinel_core.claim_likeness import contains_election_anchor
+from sentinel_core.model_runtime import ClaimBand
 from sentinel_core.models import Action, EvidenceItem, Label, LanguageSpan, ModerationResponse
 from sentinel_core.policy_config import (
     DeploymentStage,
@@ -69,6 +72,14 @@ def _apply_deployment_stage(
             toxicity=runtime.toxicity_by_action.ALLOW,
         )
     return decision
+
+
+def _band_from_score(score: float, *, medium_threshold: float, high_threshold: float) -> ClaimBand:
+    if score >= high_threshold:
+        return "high"
+    if score >= medium_threshold:
+        return "medium"
+    return "low"
 
 
 def detect_language_span(text: str, config=None) -> list[LanguageSpan]:
@@ -197,18 +208,23 @@ def evaluate_text(text: str, matcher=None, config=None, runtime=None) -> Decisio
         )
         return _apply_deployment_stage(decision, runtime=runtime)
 
-    claim_assessment = assess_claim_likeness(
-        text,
+    claim_score = score_claim_with_fallback(text)
+    if claim_score is not None:
+        claim_score_value, _ = claim_score
+    else:
+        claim_score_value = 0.0
+    claim_band = _band_from_score(
+        claim_score_value,
         medium_threshold=runtime.claim_likeness.medium_threshold,
         high_threshold=runtime.claim_likeness.high_threshold,
     )
     claim_matches_anchor = (
-        claim_assessment.has_election_anchor or not runtime.claim_likeness.require_election_anchor
+        contains_election_anchor(text) or not runtime.claim_likeness.require_election_anchor
     )
-    if claim_matches_anchor and claim_assessment.band in {"medium", "high"}:
+    if claim_matches_anchor and claim_band in {"medium", "high"}:
         reason_code = (
             "R_DISINFO_CLAIM_LIKENESS_HIGH"
-            if claim_assessment.band == "high"
+            if claim_band == "high"
             else "R_DISINFO_CLAIM_LIKENESS_MEDIUM"
         )
         decision = Decision(
@@ -219,7 +235,7 @@ def evaluate_text(text: str, matcher=None, config=None, runtime=None) -> Decisio
                 EvidenceItem(
                     type="model_span",
                     span=text[:80],
-                    confidence=claim_assessment.score,
+                    confidence=claim_score_value,
                 )
             ],
             toxicity=runtime.toxicity_by_action.REVIEW,
@@ -266,6 +282,7 @@ def moderate(text: str, *, runtime: EffectivePolicyRuntime | None = None) -> Mod
     decision = evaluate_text(text, matcher=matcher, config=config, runtime=runtime)
     latency_ms = int((time.perf_counter() - start) * 1000)
     pack_versions = resolve_pack_versions(config.pack_versions)
+    effective_model_version = resolve_runtime_model_version(config.model_version)
     return ModerationResponse(
         toxicity=decision.toxicity,
         labels=decision.labels,
@@ -273,7 +290,7 @@ def moderate(text: str, *, runtime: EffectivePolicyRuntime | None = None) -> Mod
         reason_codes=decision.reason_codes,
         evidence=decision.evidence,
         language_spans=detect_language_span(text, config=config),
-        model_version=config.model_version,
+        model_version=effective_model_version,
         lexicon_version=matcher.version,
         pack_versions=pack_versions,
         policy_version=runtime.effective_policy_version,

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel.dev/schemas/moderation-response.schema.json",
+  "title": "ModerationResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "toxicity",
+    "labels",
+    "action",
+    "reason_codes",
+    "evidence",
+    "language_spans",
+    "model_version",
+    "lexicon_version",
+    "pack_versions",
+    "policy_version",
+    "latency_ms"
+  ],
+  "properties": {
+    "toxicity": {"type": "number", "minimum": 0, "maximum": 1},
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ETHNIC_CONTEMPT",
+          "INCITEMENT_VIOLENCE",
+          "HARASSMENT_THREAT",
+          "DOGWHISTLE_WATCH",
+          "DISINFO_RISK",
+          "BENIGN_POLITICAL_SPEECH"
+        ]
+      }
+    },
+    "action": {"type": "string", "enum": ["ALLOW", "REVIEW", "BLOCK"]},
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "pattern": "^R_[A-Z0-9_]+$"}
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "properties": {
+          "type": {"type": "string", "enum": ["lexicon", "vector_match", "model_span"]},
+          "match": {"type": "string"},
+          "severity": {"type": "integer", "minimum": 1, "maximum": 3},
+          "lang": {"type": "string"},
+          "match_id": {"type": "string"},
+          "similarity": {"type": "number", "minimum": 0, "maximum": 1},
+          "span": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "language_spans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["start", "end", "lang"],
+        "properties": {
+          "start": {"type": "integer", "minimum": 0},
+          "end": {"type": "integer", "minimum": 0},
+          "lang": {"type": "string", "maxLength": 16}
+        }
+      }
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Identifier of the active moderation inference artifact set used for this decision. May reference deterministic heuristics, learned models, or a governed combination."
+    },
+    "lexicon_version": {"type": "string"},
+    "pack_versions": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "policy_version": {"type": "string"},
+    "latency_ms": {"type": "integer", "minimum": 0}
+  }
+}

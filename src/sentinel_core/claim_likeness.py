@@ -87,6 +87,10 @@ def _tokenize(value: str) -> list[str]:
     return TOKEN_PATTERN.findall(_normalize_text(value))
 
 
+def contains_election_anchor(text: str) -> bool:
+    return bool(set(_tokenize(text)) & ELECTION_ANCHOR_TERMS)
+
+
 def _clamp_score(value: float) -> float:
     return max(0.0, min(1.0, value))
 

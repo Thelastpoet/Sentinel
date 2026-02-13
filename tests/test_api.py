@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
 from sentinel_api.main import app, rate_limiter
 from sentinel_api.metrics import metrics
+from sentinel_api.model_registry import ClassifierShadowResult
 
 client = TestClient(app)
 TEST_API_KEY = "test-api-key"
@@ -159,3 +162,63 @@ def test_moderate_internal_error_returns_structured_500(monkeypatch) -> None:
     assert payload["error_code"] == "HTTP_500"
     assert payload["message"] == "Internal server error"
     assert response.headers["X-Request-ID"] == payload["request_id"]
+
+
+def test_classifier_shadow_disabled_by_default(monkeypatch) -> None:
+    def _unexpected_shadow_call(text: str):
+        raise AssertionError(f"shadow classifier should be disabled, text={text}")
+
+    monkeypatch.setenv("SENTINEL_DEPLOYMENT_STAGE", "shadow")
+    monkeypatch.delenv("SENTINEL_CLASSIFIER_SHADOW_ENABLED", raising=False)
+    monkeypatch.setattr(
+        "sentinel_api.main.predict_classifier_shadow",
+        _unexpected_shadow_call,
+    )
+
+    response = client.post(
+        "/v1/moderate",
+        json={"text": "We should discuss policy peacefully."},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+
+
+def test_classifier_shadow_records_metrics_and_persistence(monkeypatch, tmp_path) -> None:
+    shadow_path = tmp_path / "shadow_predictions.jsonl"
+    monkeypatch.setenv("SENTINEL_DEPLOYMENT_STAGE", "advisory")
+    monkeypatch.setenv("SENTINEL_CLASSIFIER_SHADOW_ENABLED", "true")
+    monkeypatch.setenv("SENTINEL_SHADOW_PREDICTIONS_PATH", str(shadow_path))
+
+    monkeypatch.setattr(
+        "sentinel_api.main.predict_classifier_shadow",
+        lambda _text: ClassifierShadowResult(
+            provider_id="mock-provider-v1",
+            model_version="mock-classifier-v1",
+            predicted_labels=[("INCITEMENT_VIOLENCE", 0.99)],
+            latency_ms=12,
+            status="ok",
+        ),
+    )
+    response = client.post(
+        "/v1/moderate",
+        json={"text": "We should discuss policy peacefully.", "request_id": "shadow-req-1"},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["action"] == "ALLOW"
+
+    shadow_metrics = metrics.classifier_shadow_snapshot()
+    status_counts = shadow_metrics["status_counts"]
+    assert isinstance(status_counts, dict)
+    assert status_counts.get("mock-provider-v1:ok") == 1
+    assert shadow_metrics["disagreement_count"] == 1
+
+    rows = shadow_path.read_text(encoding="utf-8").strip().splitlines()
+    assert len(rows) == 1
+    event = json.loads(rows[0])
+    assert event["request_id"] == "shadow-req-1"
+    assert event["classifier_model_version"] == "mock-classifier-v1"
+    assert event["enforced_action"] == "ALLOW"
+    assert event["predicted_action"] == "REVIEW"
+    assert event["disagreement"] is True

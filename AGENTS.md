@@ -6,8 +6,8 @@
 - `tests/`: Unit and integration tests (`test_api.py`, lexicon/release workflow tests, Postgres integration tests).
 - `scripts/`: Operational tooling (contract checks, migrations, seed sync, release management).
 - `migrations/`: Ordered SQL migrations (`0001_...sql`, `0002_...sql`).
-- `docs/master.md`: Strategic project blueprint.
-- `docs/specs/`: Spec-first source of truth (RFCs, ADRs, OpenAPI, JSON schemas, task board).
+- `contracts/`: API/spec contract artifacts used by checks and tests.
+- `templates/go-live/`: Go-live bundle template used by readiness validator.
 - `data/lexicon_seed.json`: Local fallback lexicon seed.
 
 ## Build, Test, and Development Commands
@@ -27,7 +27,7 @@
 - Prefer small, focused modules; keep business logic out of route handlers.
 - File names: `snake_case.py`; tests: `test_*.py`.
 - Migration files must be ordered (`000N_descriptive_name.sql`).
-- Keep response contracts deterministic and aligned with `docs/specs/api/openapi.yaml`.
+- Keep response contracts deterministic and aligned with `contracts/api/openapi.yaml`.
 
 ## Testing Guidelines
 
@@ -40,7 +40,7 @@
 
 - This workspace may not include full Git history; use Conventional Commit style (e.g., `feat:`, `fix:`, `docs:`).
 - PRs should include:
-  - linked task ID from `docs/specs/tasks.md`,
+  - linked issue/task ID,
   - spec references (RFC/ADR/OpenAPI/schema),
   - test evidence (`pytest` + contract check),
   - migration notes when schema changes are included.

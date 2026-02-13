@@ -13,29 +13,33 @@ def fail(message: str) -> None:
 
 
 def main() -> None:
-    openapi_path = Path("docs/specs/api/openapi.yaml")
-    response_schema_path = Path("docs/specs/schemas/moderation-response.schema.json")
-    request_schema_path = Path("docs/specs/schemas/moderation-request.schema.json")
-    metrics_schema_path = Path("docs/specs/schemas/metrics-response.schema.json")
+    openapi_path = Path("contracts/api/openapi.yaml")
+    response_schema_path = Path("contracts/schemas/moderation-response.schema.json")
+    request_schema_path = Path("contracts/schemas/moderation-request.schema.json")
+    metrics_schema_path = Path("contracts/schemas/metrics-response.schema.json")
     internal_schema_paths = {
-        "queue": Path("docs/specs/schemas/internal/monitoring-queue-item.schema.json"),
-        "cluster": Path("docs/specs/schemas/internal/monitoring-cluster.schema.json"),
-        "proposal": Path("docs/specs/schemas/internal/release-proposal.schema.json"),
-        "proposal_review": Path("docs/specs/schemas/internal/proposal-review-event.schema.json"),
-        "appeal_request": Path("docs/specs/schemas/internal/appeal-request.schema.json"),
-        "appeal_transition": Path(
-            "docs/specs/schemas/internal/appeal-state-transition.schema.json"
-        ),
-        "appeal_resolution": Path("docs/specs/schemas/internal/appeal-resolution.schema.json"),
+        "queue": Path("contracts/schemas/internal/monitoring-queue-item.schema.json"),
+        "cluster": Path("contracts/schemas/internal/monitoring-cluster.schema.json"),
+        "proposal": Path("contracts/schemas/internal/release-proposal.schema.json"),
+        "proposal_review": Path("contracts/schemas/internal/proposal-review-event.schema.json"),
+        "appeal_request": Path("contracts/schemas/internal/appeal-request.schema.json"),
+        "appeal_transition": Path("contracts/schemas/internal/appeal-state-transition.schema.json"),
+        "appeal_resolution": Path("contracts/schemas/internal/appeal-resolution.schema.json"),
         "transparency_export_record": Path(
-            "docs/specs/schemas/internal/transparency-export-record.schema.json"
+            "contracts/schemas/internal/transparency-export-record.schema.json"
         ),
         "transparency_report": Path(
-            "docs/specs/schemas/internal/transparency-appeals-report.schema.json"
+            "contracts/schemas/internal/transparency-appeals-report.schema.json"
         ),
-        "partner_signal": Path("docs/specs/schemas/internal/partner-connector-signal.schema.json"),
+        "partner_signal": Path("contracts/schemas/internal/partner-connector-signal.schema.json"),
         "partner_ingest_report": Path(
-            "docs/specs/schemas/internal/partner-connector-ingest-report.schema.json"
+            "contracts/schemas/internal/partner-connector-ingest-report.schema.json"
+        ),
+        "ml_calibration_sample": Path(
+            "contracts/schemas/internal/ml-calibration-sample.schema.json"
+        ),
+        "ml_double_annotation_sample": Path(
+            "contracts/schemas/internal/ml-double-annotation-sample.schema.json"
         ),
     }
 
@@ -217,6 +221,18 @@ def main() -> None:
     )
     if partner_ingest_status != {"ok", "error", "circuit_open"}:
         fail("internal partner ingest report status enum mismatch")
+
+    ml_language_enum = set(
+        internal_schemas["ml_calibration_sample"]["properties"]["language"].get("enum", [])
+    )
+    if ml_language_enum != {"en", "sw", "sh"}:
+        fail("internal ml calibration language enum mismatch")
+
+    ml_double_language_enum = set(
+        internal_schemas["ml_double_annotation_sample"]["properties"]["language"].get("enum", [])
+    )
+    if ml_double_language_enum != {"en", "sw", "sh"}:
+        fail("internal ml double-annotation language enum mismatch")
 
     expected_retention_classes = {
         "operational_runtime",

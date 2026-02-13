@@ -6,7 +6,7 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 COPY data ./data
 COPY config ./config
-COPY docs/specs ./docs/specs
+COPY contracts ./contracts
 
 RUN pip install --no-cache-dir .
 

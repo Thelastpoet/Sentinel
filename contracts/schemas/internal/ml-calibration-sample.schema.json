@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ML Calibration Sample",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "text",
+    "language",
+    "labels",
+    "is_benign_political",
+    "subgroup",
+    "source",
+    "annotation_guide_version",
+    "qa_status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 5000
+    },
+    "language": {
+      "type": "string",
+      "enum": ["en", "sw", "sh"]
+    },
+    "labels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "ETHNIC_CONTEMPT",
+          "INCITEMENT_VIOLENCE",
+          "HARASSMENT_THREAT",
+          "DOGWHISTLE_WATCH",
+          "DISINFO_RISK",
+          "BENIGN_POLITICAL_SPEECH"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "is_benign_political": {
+      "type": "boolean"
+    },
+    "is_code_switched": {
+      "type": "boolean"
+    },
+    "subgroup": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "annotation_guide_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "qa_status": {
+      "type": "string",
+      "enum": ["accepted", "rejected", "pending"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

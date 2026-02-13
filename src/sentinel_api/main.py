@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import os
 import secrets
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import UTC, datetime
+from pathlib import Path as FilePath
 from typing import Literal
 from uuid import uuid4
 
@@ -37,6 +39,7 @@ from sentinel_api.appeals import (
 from sentinel_api.async_priority import async_queue_metrics
 from sentinel_api.logging import get_logger
 from sentinel_api.metrics import metrics
+from sentinel_api.model_registry import predict_classifier_shadow
 from sentinel_api.oauth import OAuthPrincipal, require_oauth_scope
 from sentinel_api.policy import moderate
 from sentinel_api.rate_limit import build_rate_limiter
@@ -46,14 +49,17 @@ from sentinel_api.transparency import (
     get_transparency_runtime,
 )
 from sentinel_core.models import (
+    Action,
     ErrorResponse,
     MetricsResponse,
     ModerationRequest,
     ModerationResponse,
 )
-from sentinel_core.policy_config import resolve_policy_runtime
+from sentinel_core.policy_config import DeploymentStage, resolve_policy_runtime
 
 logger = get_logger("sentinel.api")
+CLASSIFIER_SHADOW_ENABLED_ENV = "SENTINEL_CLASSIFIER_SHADOW_ENABLED"
+SHADOW_PREDICTIONS_PATH_ENV = "SENTINEL_SHADOW_PREDICTIONS_PATH"
 
 
 @asynccontextmanager
@@ -152,6 +158,83 @@ def _parse_iso_datetime(value: str, *, field_name: str) -> datetime:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"{field_name} must be ISO-8601 datetime",
         ) from exc
+
+
+def _is_truthy_env(name: str) -> bool:
+    value = os.getenv(name, "").strip().lower()
+    return value in {"1", "true", "yes", "on"}
+
+
+def _shadow_classifier_enabled(*, deployment_stage: DeploymentStage) -> bool:
+    if not _is_truthy_env(CLASSIFIER_SHADOW_ENABLED_ENV):
+        return False
+    return deployment_stage in {DeploymentStage.SHADOW, DeploymentStage.ADVISORY}
+
+
+def _predicted_action_from_labels(labels: Sequence[str]) -> Action:
+    if labels:
+        return "REVIEW"
+    return "ALLOW"
+
+
+def _persist_shadow_prediction(record: dict[str, object]) -> None:
+    path_value = os.getenv(SHADOW_PREDICTIONS_PATH_ENV, "").strip()
+    if not path_value:
+        return
+    path = FilePath(path_value)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=True))
+            handle.write("\n")
+    except OSError as exc:
+        logger.warning(
+            "classifier_shadow_persist_error",
+            path=str(path),
+            error=str(exc),
+        )
+
+
+def _record_classifier_shadow_prediction(
+    *,
+    request_id: str,
+    text: str,
+    result: ModerationResponse,
+    deployment_stage: DeploymentStage,
+) -> None:
+    if not _shadow_classifier_enabled(deployment_stage=deployment_stage):
+        return
+
+    shadow_result = predict_classifier_shadow(text)
+    predicted_labels = [label for label, _ in shadow_result.predicted_labels]
+    predicted_action = _predicted_action_from_labels(predicted_labels)
+    disagreement = predicted_action != result.action or set(predicted_labels) != set(result.labels)
+    metrics.record_classifier_shadow(
+        provider_id=shadow_result.provider_id,
+        status=shadow_result.status,
+        latency_ms=shadow_result.latency_ms,
+        disagreed=disagreement,
+    )
+    predictions = [
+        {"label": label, "score": score} for label, score in shadow_result.predicted_labels
+    ]
+    record = {
+        "request_id": request_id,
+        "timestamp": datetime.now(tz=UTC).isoformat(),
+        "classifier_provider_id": shadow_result.provider_id,
+        "classifier_model_version": shadow_result.model_version,
+        "classifier_status": shadow_result.status,
+        "classifier_latency_ms": shadow_result.latency_ms,
+        "predictions": predictions,
+        "predicted_action": predicted_action,
+        "enforced_action": result.action,
+        "enforced_labels": result.labels,
+        "policy_version": result.policy_version,
+        "effective_deployment_stage": deployment_stage.value,
+        "disagreement": disagreement,
+    }
+    logger.info("classifier_shadow_prediction", **record)
+    _persist_shadow_prediction(record)
 
 
 @app.get("/health")
@@ -395,6 +478,12 @@ def moderate_text(
     response.headers["X-Request-ID"] = effective_request_id
     metrics.record_action(result.action)
     metrics.record_moderation_latency(result.latency_ms)
+    _record_classifier_shadow_prediction(
+        request_id=effective_request_id,
+        text=request.text,
+        result=result,
+        deployment_stage=runtime.effective_deployment_stage,
+    )
     logger.info(
         "moderation_decision",
         request_id=effective_request_id,

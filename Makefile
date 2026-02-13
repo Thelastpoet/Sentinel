@@ -4,7 +4,7 @@ LIMIT ?= 20
 ITERATIONS ?= 300
 WARMUP ?= 30
 P95_BUDGET_MS ?= 150
-BUNDLE_DIR ?= docs/releases/go-live/template
+BUNDLE_DIR ?= templates/go-live
 
 run:
 	python -m uvicorn sentinel_api.main:app --reload

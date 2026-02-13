@@ -29,7 +29,7 @@ def _appeal_payload(*, suffix: str, reason_code: str) -> dict[str, object]:
         "original_reason_codes": [reason_code],
         "original_model_version": "sentinel-multi-v2",
         "original_lexicon_version": "hatelex-v2.1",
-        "original_policy_version": "policy-2026.10",
+        "original_policy_version": "policy-2026.11",
         "original_pack_versions": {"en": "pack-en-0.1"},
         "rationale": "transparency testing artifact",
     }
