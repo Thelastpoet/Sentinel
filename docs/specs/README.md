@@ -72,3 +72,7 @@ A feature is done only when:
 
 - Track implementation progress in `docs/specs/tasks.md`.
 - Every behavior-changing PR should update task status in that file.
+
+## 9. Engineering Memory
+
+- Record non-obvious implementation/testing lessons in `docs/specs/engineering-lessons.md`.

@@ -78,6 +78,7 @@ Returns action/status counts, validation errors, and latency buckets.
 
 ```bash
 python scripts/benchmark_hot_path.py --iterations 300 --warmup 30 --p95-budget-ms 150
+python scripts/benchmark_embedding_candidates.py --input-path data/eval/embedding_bakeoff_v1.jsonl --lexicon-path data/lexicon_seed.json --similarity-threshold 0.35 --pretty
 python scripts/evaluate_language_packs.py --input-path data/eval/sample_eval.jsonl --pretty
 python scripts/verify_tier2_wave1.py --registry-path data/langpacks/registry.json --pretty
 ```

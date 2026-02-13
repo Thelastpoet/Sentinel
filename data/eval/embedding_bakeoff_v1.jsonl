@@ -1,0 +1,24 @@
+{"id":"bakeoff-001","text":"They plan to kill them tonight.","language":"en","labels":["INCITEMENT_VIOLENCE"],"is_benign_political":false}
+{"id":"bakeoff-002","text":"We must burn them and drive them out.","language":"en","labels":["INCITEMENT_VIOLENCE"],"is_benign_political":false}
+{"id":"bakeoff-003","text":"Those leaders are mchome and do not belong.","language":"sw","labels":["ETHNIC_CONTEMPT"],"is_benign_political":false}
+{"id":"bakeoff-004","text":"I will hunt you down after the rally.","language":"en","labels":["HARASSMENT_THREAT"],"is_benign_political":false}
+{"id":"bakeoff-005","text":"They should deal with them once voting starts.","language":"en","labels":["DOGWHISTLE_WATCH"],"is_benign_political":false}
+{"id":"bakeoff-006","text":"Wataona what happens when results are announced.","language":"sw","labels":["DOGWHISTLE_WATCH"],"is_benign_political":false}
+{"id":"bakeoff-007","text":"The election was rigged in three counties.","language":"en","labels":["DISINFO_RISK"],"is_benign_political":false}
+{"id":"bakeoff-008","text":"Tallies were manipulated before publication.","language":"en","labels":["DISINFO_RISK"],"is_benign_political":false}
+{"id":"bakeoff-009","text":"We should discuss policy reforms peacefully.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-010","text":"People can criticize IEBC decisions without threats.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-011","text":"Election observers asked for transparent tally forms.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-012","text":"Vote peacefully and wait for verified results.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-013","text":"That candidate should be killed politically.","language":"en","labels":["INCITEMENT_VIOLENCE"],"is_benign_political":false}
+{"id":"bakeoff-014","text":"Burn them all if they protest the tally.","language":"en","labels":["INCITEMENT_VIOLENCE"],"is_benign_political":false}
+{"id":"bakeoff-015","text":"Mchome rhetoric is spreading in campaign meetings.","language":"sw","labels":["ETHNIC_CONTEMPT"],"is_benign_political":false}
+{"id":"bakeoff-016","text":"He promised to hunt you down over your post.","language":"en","labels":["HARASSMENT_THREAT"],"is_benign_political":false}
+{"id":"bakeoff-017","text":"Deal with them after counting ends.","language":"en","labels":["DOGWHISTLE_WATCH"],"is_benign_political":false}
+{"id":"bakeoff-018","text":"Wataona once constituency totals are released.","language":"sw","labels":["DOGWHISTLE_WATCH"],"is_benign_political":false}
+{"id":"bakeoff-019","text":"The polling process was rigged from the start.","language":"en","labels":["DISINFO_RISK"],"is_benign_political":false}
+{"id":"bakeoff-020","text":"Fraud claims about election results are everywhere.","language":"en","labels":["DISINFO_RISK"],"is_benign_political":false}
+{"id":"bakeoff-021","text":"Let's compare manifestos before choosing leaders.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-022","text":"Media should report verified numbers only.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-023","text":"Peace committees urged calm after voting day.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}
+{"id":"bakeoff-024","text":"Citizens can challenge results through lawful channels.","language":"en","labels":["BENIGN_POLITICAL_SPEECH"],"is_benign_political":true}

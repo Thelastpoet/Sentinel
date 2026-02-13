@@ -57,20 +57,21 @@ This is the only trained model in the system. It is not bundled and must be prov
 
 ## What is missing
 
-### No model integration infrastructure
+### Remaining model integration infrastructure gaps
 
-- **No model interface or protocol.** There is no abstract base class for embedding models, classifiers, or claim detectors. Swapping in a real model requires modifying concrete implementations directly.
-- **No ML dependencies.** `pyproject.toml` has zero ML framework imports (no torch, transformers, sklearn, onnx, sentence-transformers).
-- **No model loading/serving abstraction.** No model registry, weight management, or inference batching.
-- **No feature extraction pipeline.** Text goes directly from raw input to lexicon matching. There is no shared tokenization or preprocessing step that a model could plug into.
+- **Core interface boundary exists.** Protocol contracts and registry wiring landed in `I-413`.
+- **No optional ML extras yet.** `I-420` tracks packaging for model-runtime dependencies.
+- **Model artifact lifecycle governance is pending.** `I-419` tracks register/validate/activate/deprecate/revoke flow.
+- **Classifier integration pipeline is pending.** `I-416` tracks shadow/advisory rollout and enforcement guardrails.
 
 ### Remaining capability gaps
 
 | Capability | Spec | Task ID | Status |
 |---|---|---|---|
-| Embedding model selection | `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | I-415 | `todo` |
+| Model runtime interface boundary | `docs/specs/phase4/i413-model-runtime-interface-and-registry.md` | I-413 | `done` |
+| `model_version` contract clarity | `docs/specs/phase4/i414-model-version-contract-clarity.md` | I-414 | `done` |
+| Embedding model selection | `docs/specs/phase4/i415-semantic-embedding-model-selection.md` | I-415 | `done` (baseline retained; optional-model rerun pending `I-420`) |
 | Multi-label inference rollout (shadow-first) | `docs/specs/phase4/i416-multilabel-inference-shadow-mode.md` | I-416 | `todo` |
-| Model runtime interface boundary | `docs/specs/phase4/i413-model-runtime-interface-and-registry.md` | I-413 | `todo` |
 | Labeled corpus and annotation workflow | `docs/specs/phase4/i418-ml-dataset-annotation-pipeline.md` | I-418 | `todo` |
 | Model artifact lifecycle governance | `docs/specs/phase4/i419-model-artifact-lifecycle-implementation.md` | I-419 | `todo` |
 | Optional ML dependency packaging | `docs/specs/phase4/i420-optional-ml-dependency-packaging.md` | I-420 | `todo` |
@@ -78,7 +79,7 @@ This is the only trained model in the system. It is not bundled and must be prov
 
 ### `model_version` is misleading
 
-The `model_version` field in the moderation response (e.g. `"sentinel-multi-v2"`) is a static string from policy config. It exists for audit traceability but does not correspond to a loaded model artifact. Consumers of the API may interpret this as evidence of a trained model behind the system.
+`I-414` clarified `model_version` semantics in OpenAPI/schema/RFC/operations docs: it is provenance metadata for the active inference artifact set and can represent deterministic heuristics, learned artifacts, or a governed combination.
 
 ## Risk assessment
 

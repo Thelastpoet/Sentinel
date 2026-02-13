@@ -380,16 +380,16 @@ Privacy baseline:
 
 ## 20. Key Decisions Pending
 
-1. Initial embedding model choice and memory budget.
-2. Primary governance body for lexicon and policy updates.
-3. Cloud region strategy for East Africa latency and legal requirements.
-4. Sustainability model across grants, institutional partners, and service tiers.
-5. First multi-label inference model family and shadow promotion criteria.
+1. Primary governance body for lexicon and policy updates.
+2. Cloud region strategy for East Africa latency and legal requirements.
+3. Sustainability model across grants, institutional partners, and service tiers.
+4. First multi-label inference model family and shadow promotion criteria.
 
 Resolved decision:
 
 - Tier 2 language priority order is ratified in `docs/specs/phase4/i401-tier2-language-priority-and-gates.md`.
 - Deterministic claim-likeness baseline is integrated per `docs/specs/phase4/i412-disinfo-claim-likeness-baseline.md`.
+- Initial embedding strategy remains `hash-bow-v1` (64-dim baseline) per `I-415` bakeoff report: `docs/specs/benchmarks/i415-embedding-selection-report-2026-02-13.md`.
 
 ## 21. Stakeholder Engagement and Risk Register
 

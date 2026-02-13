@@ -2,7 +2,7 @@
 
 ## 0. Document Control
 
-- Status: Ratified for implementation
+- Status: Implemented and verified
 - Effective date: 2026-02-13
 - Scope: Select first production embedding model using quality/latency benchmark evidence
 - Task linkage: `I-415` in `docs/specs/tasks.md`
@@ -45,3 +45,16 @@ Evaluation criteria (normative):
 3. Selection decision updates `docs/master.md` Sec. 20 decision state.
 4. Rollback configuration to baseline strategy is documented and tested.
 5. Candidate model list and benchmark corpus definition are documented in the report.
+
+## 4. Implementation Notes
+
+1. Bakeoff engine:
+   - `src/sentinel_core/embedding_bakeoff.py`
+2. CLI benchmark runner:
+   - `scripts/benchmark_embedding_candidates.py`
+3. Benchmark profile and artifacts:
+   - `docs/specs/benchmarks/i415-embedding-bakeoff-profile.md`
+   - `docs/specs/benchmarks/i415-embedding-selection-report-2026-02-13.json`
+   - `docs/specs/benchmarks/i415-embedding-selection-report-2026-02-13.md`
+4. Retrieval-focused corpus:
+   - `data/eval/embedding_bakeoff_v1.jsonl`
