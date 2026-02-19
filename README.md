@@ -71,6 +71,17 @@ export SENTINEL_API_KEY='your-key-here' && make run
 
 See the full [Quickstart guide](docs/quickstart.md) for detailed instructions.
 
+### Hardened Docker entrypoint (recommended for public hosting)
+
+If you're deploying Sentinel on a host that is reachable from the public internet, run it behind a reverse proxy and do **not** expose operator endpoints (`/metrics*`, `/admin/*`, `/internal/*`) publicly.
+
+This repo includes a hardened Compose file that exposes only `/health` and `/v1/moderate` on port 8000:
+
+```bash
+export SENTINEL_API_KEY='replace-with-a-strong-key'
+docker compose -f docker-compose.hardened.yml up -d --build
+```
+
 ## Project maturity
 
 Sentinel ships with a **7-term demonstration seed lexicon**. This is enough to validate the system works end-to-end, but production deployment requires building out your own lexicon with domain-expert annotation.

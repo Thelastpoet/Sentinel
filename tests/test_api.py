@@ -64,6 +64,23 @@ def test_moderate_uses_body_request_id_for_header() -> None:
     assert response.headers["X-Request-ID"] == "client-123"
 
 
+def test_moderate_rejects_invalid_body_request_id() -> None:
+    response = client.post(
+        "/v1/moderate",
+        json={"text": "This is peaceful speech", "request_id": "bad id"},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_400"
+
+
+def test_middleware_ignores_invalid_header_request_id() -> None:
+    response = client.get("/health", headers={"X-Request-ID": "bad id"})
+    assert response.status_code == 200
+    assert response.headers["X-Request-ID"] != "bad id"
+
+
 def test_moderate_block_path() -> None:
     response = client.post(
         "/v1/moderate",

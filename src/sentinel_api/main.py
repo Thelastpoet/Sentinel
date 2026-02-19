@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import secrets
 import time
 from collections.abc import AsyncIterator, Sequence
@@ -60,6 +61,20 @@ from sentinel_core.policy_config import DeploymentStage, resolve_policy_runtime
 logger = get_logger("sentinel.api")
 CLASSIFIER_SHADOW_ENABLED_ENV = "SENTINEL_CLASSIFIER_SHADOW_ENABLED"
 SHADOW_PREDICTIONS_PATH_ENV = "SENTINEL_SHADOW_PREDICTIONS_PATH"
+_REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+
+
+def _coerce_request_id(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if not normalized:
+        return None
+    if len(normalized) > 128:
+        return None
+    if not _REQUEST_ID_RE.match(normalized):
+        return None
+    return normalized
 
 
 @asynccontextmanager
@@ -94,12 +109,12 @@ class AdminProposalReviewResponse(BaseModel):
 
 @app.middleware("http")
 async def request_context_middleware(request: Request, call_next):  # type: ignore[no-untyped-def]
-    request_id = request.headers.get("X-Request-ID", str(uuid4()))
+    request_id = _coerce_request_id(request.headers.get("X-Request-ID")) or str(uuid4())
     request.state.request_id = request_id
     start = time.perf_counter()
     response = await call_next(request)
     duration_ms = int((time.perf_counter() - start) * 1000)
-    resolved_request_id = response.headers.get("X-Request-ID", request_id)
+    resolved_request_id = _coerce_request_id(response.headers.get("X-Request-ID")) or request_id
     response.headers["X-Request-ID"] = resolved_request_id
     metrics.record_http_status(response.status_code)
     logger.info(
@@ -470,6 +485,11 @@ def moderate_text(
     _: None = Depends(require_api_key),
     __: None = Depends(enforce_rate_limit),
 ) -> ModerationResponse:
+    if request.request_id is not None and _coerce_request_id(request.request_id) is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="request_id contains invalid characters",
+        )
     effective_request_id = request.request_id or http_request.state.request_id
     runtime = resolve_policy_runtime()
     result = moderate(request.text, runtime=runtime)
