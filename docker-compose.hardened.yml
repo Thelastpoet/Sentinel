@@ -1,0 +1,59 @@
+services:
+  proxy:
+    image: nginx:1.27-alpine
+    ports:
+      - "8000:80"
+    depends_on:
+      api:
+        condition: service_started
+    volumes:
+      - ./infra/nginx/sentinel_public.conf:/etc/nginx/conf.d/default.conf:ro
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SENTINEL_API_KEY: ${SENTINEL_API_KEY:?SENTINEL_API_KEY must be set}
+      SENTINEL_RATE_LIMIT_PER_MINUTE: 120
+      SENTINEL_DATABASE_URL: postgresql://sentinel:sentinel@postgres:5432/sentinel
+      SENTINEL_REDIS_URL: redis://redis:6379/0
+      SENTINEL_ELECTORAL_PHASE: ${SENTINEL_ELECTORAL_PHASE:-}
+      SENTINEL_LEXICON_PATH: /app/data/lexicon_seed.json
+      SENTINEL_POLICY_CONFIG_PATH: /app/config/policy/default.json
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: sentinel
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentinel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres-init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:

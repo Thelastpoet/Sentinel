@@ -338,6 +338,8 @@ curl http://localhost:8000/metrics/prometheus
 
 The metrics endpoint returns action counts, HTTP status counts, latency histogram buckets, and validation error counts.
 
+For public deployments, do not expose these endpoints on the public internet. Use network controls or a reverse proxy to restrict `/metrics*` to internal monitoring systems. The repository includes `docker-compose.hardened.yml`, which routes only `/health` and `/v1/moderate` through a proxy and blocks operator surfaces by default.
+
 ### Structured logging
 
 Sentinel propagates `X-Request-ID` headers through all requests. If the client provides one, Sentinel uses it; otherwise one is generated. Use this ID to correlate logs across your infrastructure.

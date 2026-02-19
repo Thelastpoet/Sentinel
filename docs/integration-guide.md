@@ -39,7 +39,7 @@ Keep this key server-side. If it leaks to a client, rotate it immediately.
 | `context.source` | string | No | Max 100 chars | Where the content came from (e.g., "forum-post", "comment") |
 | `context.locale` | string | No | Max 20 chars | Geographic locale (e.g., "ke" for Kenya) |
 | `context.channel` | string | No | Max 50 chars | Content channel or category |
-| `request_id` | string | No | Max 128 chars | Client-provided idempotency/correlation ID |
+| `request_id` | string | No | Max 128 chars; `^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$` | Client-provided idempotency/correlation ID |
 
 If you don't provide `request_id`, Sentinel generates one and returns it in the `X-Request-ID` response header.
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import logging
 import os
 import time
@@ -17,6 +18,14 @@ except Exception:  # pragma: no cover - optional runtime dependency
     MovingWindowRateLimiter = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
+
+_RATE_LIMIT_KEY_PREFIX = "sentinel-rate-limit:"
+
+
+def _rate_limit_bucket_key(key: str) -> str:
+    # Avoid storing raw API keys in memory or Redis keyspace.
+    digest = hashlib.sha256(key.encode("utf-8")).hexdigest()
+    return digest
 
 
 @dataclass(frozen=True)
@@ -40,7 +49,8 @@ class InMemoryRateLimiter:
 
     def check(self, key: str) -> RateLimitDecision:
         now = time.time()
-        bucket = self._events[key]
+        bucket_key = _rate_limit_bucket_key(key)
+        bucket = self._events[bucket_key]
         self._cleanup(bucket, now)
 
         if not bucket:
@@ -102,7 +112,7 @@ class LimitsRateLimiter(InMemoryRateLimiter):
         # Preserve existing response contract while shifting enforcement to
         # distributed limits storage (Redis/memcached/etc.).
         now = time.time()
-        normalized_key = f"sentinel-rate-limit:{key}"
+        normalized_key = f"{_RATE_LIMIT_KEY_PREFIX}{_rate_limit_bucket_key(key)}"
         item = self._rate_limit_item_cls(self.per_minute)
         try:
             allowed = bool(self._limiter.hit(item, normalized_key))
