@@ -5,6 +5,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+from sentinel_api.appeals import get_appeals_runtime, reset_appeals_runtime_state
 from sentinel_api.main import app, rate_limiter
 from sentinel_api.metrics import metrics
 from sentinel_api.model_registry import ClassifierShadowResult
@@ -18,6 +19,7 @@ def reset_rate_limiter(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("SENTINEL_API_KEY", TEST_API_KEY)
     rate_limiter.reset()
     metrics.reset()
+    reset_appeals_runtime_state()
 
 
 def test_health() -> None:
@@ -320,6 +322,87 @@ def test_classifier_shadow_disabled_by_default(monkeypatch) -> None:
         headers={"X-API-Key": TEST_API_KEY},
     )
     assert response.status_code == 200
+
+
+def test_public_appeal_happy_path() -> None:
+    decision_request_id = "req-abc123"
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": decision_request_id,
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_model_version": "sentinel-multi-v2",
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+            "reason": "false positive",
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 201
+    payload = response.json()
+    assert payload["status"] == "submitted"
+    assert payload["request_id"] == decision_request_id
+    assert isinstance(payload["appeal_id"], int)
+
+    runtime = get_appeals_runtime()
+    listed = runtime.list_appeals(status="submitted", request_id=decision_request_id, limit=10)
+    assert listed.items
+    appeal = listed.items[0]
+    assert appeal.submitted_by == "public-api"
+    assert appeal.request_id == decision_request_id
+    assert appeal.original_decision_id == decision_request_id
+
+
+def test_public_appeal_missing_provenance_validation_error() -> None:
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": "req-abc123",
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 400
+    assert response.json()["error_code"] == "HTTP_400"
+
+
+def test_public_appeal_empty_original_model_version_validation_error() -> None:
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": "req-abc123",
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_model_version": "",
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 400
+
+
+def test_public_appeal_unauthenticated_401() -> None:
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": "req-abc123",
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_model_version": "sentinel-multi-v2",
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+        },
+    )
+    assert response.status_code == 401
 
 
 def test_classifier_shadow_records_metrics_and_persistence(monkeypatch, tmp_path) -> None:

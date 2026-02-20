@@ -5,11 +5,14 @@ import json
 import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 from threading import Lock
 from typing import Any, Literal, cast, get_args
+from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from sentinel_api.logging import get_logger
 from sentinel_core.async_state_machine import validate_appeal_transition
 from sentinel_core.models import Action, ReasonCode
 
@@ -42,6 +45,9 @@ REVERSED_OR_MODIFIED_STATUSES: set[str] = {
 KNOWN_APPEAL_STATUSES = set(get_args(AppealStatus))
 KNOWN_RESOLVED_APPEAL_STATUSES = set(get_args(ResolvedAppealStatus))
 KNOWN_ACTIONS = set(get_args(Action))
+
+logger = get_logger("sentinel.appeals")
+TRAINING_DATA_PATH_ENV = "SENTINEL_TRAINING_DATA_PATH"
 
 
 class AppealNotFoundError(LookupError):
@@ -564,7 +570,23 @@ class _PostgresAppealsStore:
                     ),
                 )
                 updated = self._fetch_appeal_record(cur, appeal_id)
+                if payload.to_status in REVERSED_OR_MODIFIED_STATUSES:
+                    _auto_create_lexicon_proposal(
+                        cur,
+                        appeal=updated,
+                        resolution_reason_codes=list(resolution_reason_codes or []),
+                        actor=actor,
+                    )
             conn.commit()
+            if updated.status in REVERSED_OR_MODIFIED_STATUSES:
+                try:
+                    _emit_training_sample(updated)
+                except Exception as exc:  # pragma: no cover - must never fail caller
+                    logger.warning(
+                        "training_sample_emit_crashed",
+                        appeal_id=updated.id,
+                        error=str(exc),
+                    )
             return updated
 
     def reconstruct(self, *, appeal_id: int) -> AdminAppealReconstructionResponse:
@@ -647,6 +669,85 @@ def _build_reconstruction(
         original_reason_codes=list(appeal.original_reason_codes),
         resolution=resolution,
     )
+
+
+def _auto_create_lexicon_proposal(
+    cur,
+    *,
+    appeal: AdminAppealRecord,
+    resolution_reason_codes: list[str],
+    actor: str,
+) -> int:
+    title = f"Auto-proposed from appeal #{appeal.id}: {appeal.resolution_code}"
+    evidence = {
+        "appeal_id": appeal.id,
+        "original_action": appeal.original_action,
+        "original_reason_codes": list(appeal.original_reason_codes),
+        "resolution_reason_codes": list(resolution_reason_codes),
+        "original_lexicon_version": appeal.original_lexicon_version,
+    }
+    policy_impact_summary = f"appeal_reversal request_id={appeal.request_id}"
+    cur.execute(
+        """
+        INSERT INTO release_proposals
+          (proposal_type, status, title, evidence, policy_impact_summary, proposed_by, updated_at)
+        VALUES
+          ('lexicon', 'draft', %s, %s::jsonb, %s, %s, NOW())
+        RETURNING id
+        """,
+        (
+            title,
+            json.dumps(evidence, sort_keys=True, ensure_ascii=True),
+            policy_impact_summary,
+            actor,
+        ),
+    )
+    row = cur.fetchone()
+    if row is None:
+        raise ValueError("failed to auto-create release proposal")
+    proposal_id = int(row[0])
+    cur.execute(
+        """
+        INSERT INTO release_proposal_audit
+          (proposal_id, from_status, to_status, actor, details)
+        VALUES
+          (%s, %s, 'draft', %s, %s)
+        """,
+        (proposal_id, None, actor, f"auto-generated from appeal_id={appeal.id}"),
+    )
+    return proposal_id
+
+
+def _emit_training_sample(appeal: AdminAppealRecord) -> None:
+    path_value = os.getenv(TRAINING_DATA_PATH_ENV, "").strip()
+    if not path_value:
+        return
+    record = {
+        "sample_id": uuid4().hex,
+        "appeal_id": appeal.id,
+        "original_action": appeal.original_action,
+        "original_reason_codes": list(appeal.original_reason_codes),
+        "original_model_version": appeal.original_model_version,
+        "original_lexicon_version": appeal.original_lexicon_version,
+        "original_policy_version": appeal.original_policy_version,
+        "resolution": appeal.status,
+        "resolution_code": appeal.resolution_code,
+        "resolution_reason_codes": (
+            list(appeal.resolution_reason_codes)
+            if appeal.resolution_reason_codes is not None
+            else None
+        ),
+        "reviewer_actor": appeal.reviewer_actor,
+        "resolved_at": appeal.resolved_at.isoformat() if appeal.resolved_at is not None else None,
+    }
+    path = Path(path_value)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=True))
+            handle.write("\n")
+    except OSError as exc:
+        logger.warning("training_sample_emit_failed", path=str(path), error=str(exc))
 
 
 class AppealsRuntime:

@@ -61,6 +61,8 @@ from sentinel_core.models import (
     ModerationBatchResponse,
     ModerationRequest,
     ModerationResponse,
+    PublicAppealCreateRequest,
+    PublicAppealCreateResponse,
 )
 from sentinel_core.policy_config import DeploymentStage, resolve_policy_runtime
 from sentinel_langpack.registry import resolve_pack_versions
@@ -723,6 +725,48 @@ def moderate_batch(
         total=len(items),
         succeeded=succeeded,
         failed=failed,
+    )
+
+
+@app.post(
+    "/v1/appeals",
+    response_model=PublicAppealCreateResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        400: {"model": ErrorResponse},
+        401: {"model": ErrorResponse},
+        429: {"model": ErrorResponse},
+        500: {"model": ErrorResponse},
+    },
+)
+def post_public_appeal(
+    request: PublicAppealCreateRequest,
+    _: None = Depends(require_api_key),
+    __: None = Depends(enforce_rate_limit),
+) -> PublicAppealCreateResponse:
+    if _coerce_request_id(request.decision_request_id) is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="decision_request_id contains invalid characters",
+        )
+    record = appeals_runtime.create_appeal(
+        AdminAppealCreateRequest(
+            original_decision_id=request.decision_request_id,
+            request_id=request.decision_request_id,
+            original_action=request.original_action,
+            original_reason_codes=request.original_reason_codes,
+            original_model_version=request.original_model_version,
+            original_lexicon_version=request.original_lexicon_version,
+            original_policy_version=request.original_policy_version,
+            original_pack_versions=request.original_pack_versions,
+            rationale=request.reason,
+        ),
+        submitted_by="public-api",
+    )
+    return PublicAppealCreateResponse(
+        appeal_id=record.id,
+        status="submitted",
+        request_id=record.request_id,
     )
 
 
