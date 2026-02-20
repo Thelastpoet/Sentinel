@@ -492,7 +492,7 @@ def moderate_text(
         )
     effective_request_id = request.request_id or http_request.state.request_id
     runtime = resolve_policy_runtime()
-    result = moderate(request.text, runtime=runtime)
+    result = moderate(request.text, context=request.context, runtime=runtime)
     effective_phase = runtime.effective_phase.value if runtime.effective_phase is not None else None
     effective_deployment_stage = runtime.effective_deployment_stage.value
     response.headers["X-Request-ID"] = effective_request_id

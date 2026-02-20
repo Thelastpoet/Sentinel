@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sentinel_core.claim_likeness import assess_claim_likeness
+from sentinel_core.claim_likeness import assess_claim_likeness, contains_election_anchor
 
 
 def test_claim_likeness_high_band_for_assertive_election_claim() -> None:
@@ -41,3 +41,33 @@ def test_claim_likeness_respects_threshold_overrides() -> None:
         high_threshold=0.95,
     )
     assert assessment.band == "low"
+
+
+def test_swahili_election_anchor_detected() -> None:
+    assert contains_election_anchor("Uchaguzi uliibwa.") is True
+    assert contains_election_anchor("yiero mar siasa") is True
+    assert contains_election_anchor("kuraiyat") is True
+
+
+def test_swahili_disinfo_narrative_scores_high() -> None:
+    assessment = assess_claim_likeness(
+        "matokeo ni bandia",
+        medium_threshold=0.4,
+        high_threshold=0.7,
+    )
+    assert assessment.has_election_anchor is True
+    assert assessment.band in {"medium", "high"}
+
+
+def test_swahili_hedging_reduces_score() -> None:
+    direct = assess_claim_likeness(
+        "matokeo ni bandia",
+        medium_threshold=0.4,
+        high_threshold=0.7,
+    )
+    hedged = assess_claim_likeness(
+        "tetesi inadaiwa matokeo ni bandia",
+        medium_threshold=0.4,
+        high_threshold=0.7,
+    )
+    assert hedged.score < direct.score
