@@ -90,6 +90,38 @@ def _apply_deployment_stage(
     return decision
 
 
+def _derive_toxicity(
+    decision: Decision,
+    *,
+    runtime: EffectivePolicyRuntime,
+) -> float:
+    model_scores = [
+        item.confidence
+        for item in decision.evidence
+        if item.type == "model_span" and item.confidence is not None
+    ]
+    base = getattr(runtime.toxicity_by_action, decision.action)
+    if not model_scores:
+        return base
+    model_score = max(model_scores)
+    blended = 0.6 * base + 0.4 * model_score
+    return round(min(1.0, max(0.0, blended)), 4)
+
+
+def _finalize_decision(decision: Decision, *, runtime: EffectivePolicyRuntime) -> Decision:
+    staged = _apply_deployment_stage(decision, runtime=runtime)
+    toxicity = _derive_toxicity(staged, runtime=runtime)
+    if toxicity == staged.toxicity:
+        return staged
+    return Decision(
+        action=staged.action,
+        labels=staged.labels,
+        reason_codes=staged.reason_codes,
+        evidence=staged.evidence,
+        toxicity=toxicity,
+    )
+
+
 def _band_from_score(score: float, *, medium_threshold: float, high_threshold: float) -> ClaimBand:
     if score >= high_threshold:
         return "high"
@@ -217,7 +249,7 @@ def evaluate_text(
             evidence=evidence,
             toxicity=runtime.toxicity_by_action.BLOCK,
         )
-        return _apply_deployment_stage(decision, runtime=runtime)
+        return _finalize_decision(decision, runtime=runtime)
 
     review_matches = [entry for entry in matches if entry.action == "REVIEW"]
 
@@ -241,7 +273,7 @@ def evaluate_text(
             evidence=evidence,
             toxicity=runtime.toxicity_by_action.REVIEW,
         )
-        return _apply_deployment_stage(decision, runtime=runtime)
+        return _finalize_decision(decision, runtime=runtime)
 
     pack_matchers = get_wave1_pack_matchers()
     has_pack_matches = False
@@ -267,7 +299,7 @@ def evaluate_text(
             evidence=evidence,
             toxicity=runtime.toxicity_by_action.REVIEW,
         )
-        return _apply_deployment_stage(decision, runtime=runtime)
+        return _finalize_decision(decision, runtime=runtime)
 
     threshold_delta = _context_threshold_adjustment(context, runtime=runtime)
     if threshold_delta:
@@ -315,7 +347,7 @@ def evaluate_text(
             ],
             toxicity=toxicity,
         )
-        return _apply_deployment_stage(decision, runtime=runtime)
+        return _finalize_decision(decision, runtime=runtime)
 
     claim_score = score_claim_with_fallback(text)
     if claim_score is not None:
@@ -357,7 +389,7 @@ def evaluate_text(
             ],
             toxicity=runtime.toxicity_by_action.REVIEW,
         )
-        return _apply_deployment_stage(decision, runtime=runtime)
+        return _finalize_decision(decision, runtime=runtime)
 
     if runtime.no_match_action == "REVIEW":
         decision = Decision(
@@ -373,7 +405,7 @@ def evaluate_text(
             ],
             toxicity=runtime.toxicity_by_action.REVIEW,
         )
-        return _apply_deployment_stage(decision, runtime=runtime)
+        return _finalize_decision(decision, runtime=runtime)
 
     decision = Decision(
         action="ALLOW",
@@ -388,7 +420,7 @@ def evaluate_text(
         ],
         toxicity=runtime.toxicity_by_action.ALLOW,
     )
-    return _apply_deployment_stage(decision, runtime=runtime)
+    return _finalize_decision(decision, runtime=runtime)
 
 
 def moderate(
