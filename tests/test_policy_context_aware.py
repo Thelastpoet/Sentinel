@@ -33,8 +33,17 @@ def test_forward_channel_lowers_threshold(monkeypatch) -> None:
         lang="en",
     )
 
-    def _vector_stub(_text: str, *, lexicon_version: str, min_similarity: float | None = None):
+    def _vector_stub(
+        _text: str,
+        *,
+        lexicon_version: str,
+        query_embedding: list[float],
+        embedding_model: str,
+        min_similarity: float | None = None,
+    ):
         assert lexicon_version == "hatelex-v2.1"
+        assert embedding_model
+        assert query_embedding
         if min_similarity is None:
             return None
         if min_similarity <= 0.80:
@@ -43,6 +52,7 @@ def test_forward_channel_lowers_threshold(monkeypatch) -> None:
 
     runtime = resolve_policy_runtime().model_copy(update={"vector_match_threshold": 0.82})
 
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
     monkeypatch.setattr(policy, "find_hot_trigger_matches", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(policy, "get_wave1_pack_matchers", lambda: [])
     monkeypatch.setattr(policy, "find_vector_match", _vector_stub)
@@ -77,7 +87,17 @@ def test_broadcast_channel_raises_threshold(monkeypatch) -> None:
         lang="en",
     )
 
-    def _vector_stub(_text: str, *, lexicon_version: str, min_similarity: float | None = None):
+    def _vector_stub(
+        _text: str,
+        *,
+        lexicon_version: str,
+        query_embedding: list[float],
+        embedding_model: str,
+        min_similarity: float | None = None,
+    ):
+        del lexicon_version
+        assert embedding_model
+        assert query_embedding
         if min_similarity is None:
             return None
         if min_similarity <= 0.80:
@@ -86,6 +106,7 @@ def test_broadcast_channel_raises_threshold(monkeypatch) -> None:
 
     runtime = resolve_policy_runtime().model_copy(update={"vector_match_threshold": 0.82})
 
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
     monkeypatch.setattr(policy, "find_hot_trigger_matches", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(policy, "get_wave1_pack_matchers", lambda: [])
     monkeypatch.setattr(policy, "find_vector_match", _vector_stub)
@@ -104,6 +125,7 @@ def test_broadcast_channel_raises_threshold(monkeypatch) -> None:
 def test_partner_factcheck_amplifies_claim_score(monkeypatch) -> None:
     runtime = resolve_policy_runtime()
 
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
     monkeypatch.setattr(policy, "find_hot_trigger_matches", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(policy, "get_wave1_pack_matchers", lambda: [])
     monkeypatch.setattr(policy, "find_vector_match", lambda *_args, **_kwargs: None)
@@ -132,8 +154,15 @@ def test_null_context_no_change(monkeypatch) -> None:
 
     called: list[float] = []
 
-    def _vector_stub(_text: str, *, lexicon_version: str, min_similarity: float | None = None):
-        del lexicon_version
+    def _vector_stub(
+        _text: str,
+        *,
+        lexicon_version: str,
+        query_embedding: list[float],
+        embedding_model: str,
+        min_similarity: float | None = None,
+    ):
+        del lexicon_version, query_embedding, embedding_model
         called.append(min_similarity if min_similarity is not None else -1.0)
         return None
 
@@ -141,6 +170,7 @@ def test_null_context_no_change(monkeypatch) -> None:
     monkeypatch.setattr(policy, "get_wave1_pack_matchers", lambda: [])
     monkeypatch.setattr(policy, "find_vector_match", _vector_stub)
     monkeypatch.setattr(policy, "score_claim_with_fallback", lambda *_args, **_kwargs: None)
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
 
     policy.evaluate_text(
         "peaceful discussion",

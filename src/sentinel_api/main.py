@@ -752,12 +752,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     request_id = getattr(request.state, "request_id", str(uuid4()))
     metrics.record_validation_error()
     payload = ErrorResponse(
-        error_code="HTTP_422",
+        error_code="HTTP_400",
         message=f"Invalid request payload ({error_count} validation error(s))",
         request_id=request_id,
     )
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        status_code=status.HTTP_400_BAD_REQUEST,
         headers={"X-Request-ID": request_id},
         content=payload.model_dump(),
     )

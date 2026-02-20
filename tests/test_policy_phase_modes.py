@@ -60,12 +60,32 @@ def test_silence_period_escalates_no_match_to_review(monkeypatch) -> None:
 def test_phase_override_passes_vector_threshold_to_matcher(monkeypatch) -> None:
     captured: dict[str, float | None] = {"threshold": None}
 
-    def _fake_find_vector_match(_text: str, *, lexicon_version: str, min_similarity=None):
+    class _Runtime:
+        embedding_provider_id = "hash-bow-v1"
+
+        class _Provider:
+            def embed(self, _text: str, *, timeout_ms: int):  # type: ignore[no-untyped-def]
+                del timeout_ms
+                return [0.1] * 64
+
+        embedding_provider = _Provider()
+
+    def _fake_find_vector_match(
+        _text: str,
+        *,
+        lexicon_version: str,
+        query_embedding: list[float],
+        embedding_model: str,
+        min_similarity=None,
+    ):
         del lexicon_version
+        del query_embedding, embedding_model
         captured["threshold"] = min_similarity
         return None
 
     monkeypatch.setenv("SENTINEL_ELECTORAL_PHASE", "voting_day")
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
+    monkeypatch.setattr(policy, "get_model_runtime", lambda: _Runtime())
     monkeypatch.setattr(policy, "find_vector_match", _fake_find_vector_match)
     decision = policy.evaluate_text("peaceful discussion")
     assert decision.action == "REVIEW"

@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 VECTOR_DIMENSION = 64
 VECTOR_MODEL = "hash-bow-v1"
+E5_SMALL_MODEL = "e5-multilingual-small-v1"
+E5_SMALL_DIMENSION = 384
 DEFAULT_VECTOR_MATCH_THRESHOLD = 0.82
 DEFAULT_STATEMENT_TIMEOUT_MS = 60
 TOKEN_PATTERN = re.compile(r"[0-9A-Za-zÀ-ÖØ-öø-ÿ']+")
@@ -82,6 +84,25 @@ def embed_text(text: str) -> list[float]:
     return [value / norm for value in vector]
 
 
+@lru_cache(maxsize=1)
+def _load_e5_small_model():
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer("intfloat/multilingual-e5-small")
+
+
+def _embed_passage(text: str, *, embedding_model: str) -> tuple[int, list[float]] | None:
+    if embedding_model == VECTOR_MODEL:
+        return VECTOR_DIMENSION, embed_text(text)
+    if embedding_model == E5_SMALL_MODEL:
+        model = _load_e5_small_model()
+        embedding = model.encode(f"passage: {text}", normalize_embeddings=True)
+        values = embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
+        return E5_SMALL_DIMENSION, values
+    logger.warning("unsupported embedding_model for lexicon embeddings: %s", embedding_model)
+    return None
+
+
 def _vector_literal(values: list[float]) -> str:
     return "[" + ",".join(f"{value:.8f}" for value in values) + "]"
 
@@ -132,13 +153,11 @@ def _get_psycopg_module():
 
 def _maybe_get_pool(database_url: str):
     try:
-        from sentinel_api.db_pool import get_pool  # type: ignore[import-not-found]
+        from sentinel_db.pool import peek_pool  # type: ignore[import-not-found]
     except Exception:
         return None
-    try:
-        return get_pool(database_url)
-    except Exception:
-        return None
+    del database_url
+    return peek_pool()
 
 
 def _apply_statement_timeout(cur) -> None:
@@ -146,8 +165,12 @@ def _apply_statement_timeout(cur) -> None:
     cur.execute(f"SET LOCAL statement_timeout = '{timeout_ms}ms'")
 
 
-@lru_cache(maxsize=16)
-def _ensure_embeddings_for_version(database_url: str, lexicon_version: str) -> None:
+@lru_cache(maxsize=64)
+def _ensure_embeddings_for_version(
+    database_url: str,
+    lexicon_version: str,
+    embedding_model: str,
+) -> None:
     psycopg = _get_psycopg_module()
     pool = _maybe_get_pool(database_url)
     conn_ctx = pool.connection() if pool is not None else psycopg.connect(database_url)
@@ -158,7 +181,7 @@ def _ensure_embeddings_for_version(database_url: str, lexicon_version: str) -> N
                 """
                 SELECT le.id, le.term
                 FROM lexicon_entries AS le
-                LEFT JOIN lexicon_entry_embeddings AS emb
+                LEFT JOIN lexicon_entry_embeddings_v2 AS emb
                   ON emb.lexicon_entry_id = le.id
                  AND emb.embedding_model = %s
                 WHERE le.status = 'active'
@@ -166,27 +189,31 @@ def _ensure_embeddings_for_version(database_url: str, lexicon_version: str) -> N
                   AND emb.lexicon_entry_id IS NULL
                 ORDER BY le.id ASC
                 """,
-                (VECTOR_MODEL, lexicon_version),
+                (embedding_model, lexicon_version),
             )
             rows = cur.fetchall()
 
             for row in rows:
                 lexicon_entry_id = int(row[0])
                 term = str(row[1])
-                embedding_literal = _vector_literal(embed_text(term))
+                embedded = _embed_passage(term, embedding_model=embedding_model)
+                if embedded is None:
+                    continue
+                embedding_dim, embedding_values = embedded
+                embedding_literal = _vector_literal(embedding_values)
                 cur.execute(
                     """
-                    INSERT INTO lexicon_entry_embeddings
-                      (lexicon_entry_id, embedding, embedding_model, updated_at)
+                    INSERT INTO lexicon_entry_embeddings_v2
+                      (lexicon_entry_id, embedding, embedding_model, embedding_dim, updated_at)
                     VALUES
-                      (%s, %s::vector, %s, NOW())
-                    ON CONFLICT (lexicon_entry_id)
+                      (%s, %s::vector, %s, %s, NOW())
+                    ON CONFLICT (lexicon_entry_id, embedding_model)
                     DO UPDATE SET
                       embedding = EXCLUDED.embedding,
-                      embedding_model = EXCLUDED.embedding_model,
+                      embedding_dim = EXCLUDED.embedding_dim,
                       updated_at = NOW()
                     """,
-                    (lexicon_entry_id, embedding_literal, VECTOR_MODEL),
+                    (lexicon_entry_id, embedding_literal, embedding_model, embedding_dim),
                 )
         conn.commit()
 
@@ -199,6 +226,8 @@ def find_vector_match(
     text: str,
     *,
     lexicon_version: str,
+    query_embedding: list[float],
+    embedding_model: str,
     min_similarity: float | None = None,
 ) -> VectorMatch | None:
     if not _vector_matching_enabled():
@@ -209,15 +238,15 @@ def find_vector_match(
         return None
 
     try:
-        _ensure_embeddings_for_version(database_url, lexicon_version)
+        _ensure_embeddings_for_version(database_url, lexicon_version, embedding_model)
     except Exception as exc:
         logger.warning("vector embedding sync failed; falling back: %s", exc)
         return None
 
-    query_vector = embed_text(text)
-    if not any(query_vector):
+    del text
+    if not any(query_embedding):
         return None
-    query_vector_literal = _vector_literal(query_vector)
+    query_vector_literal = _vector_literal(query_embedding)
 
     threshold = _vector_match_threshold()
     if min_similarity is not None:
@@ -248,7 +277,7 @@ def find_vector_match(
                       le.lang,
                       (1 - (emb.embedding <=> %s::vector))::float8 AS similarity
                     FROM lexicon_entries AS le
-                    JOIN lexicon_entry_embeddings AS emb
+                    JOIN lexicon_entry_embeddings_v2 AS emb
                       ON emb.lexicon_entry_id = le.id
                     WHERE le.status = 'active'
                       AND le.lexicon_version = %s
@@ -260,7 +289,7 @@ def find_vector_match(
                     (
                         query_vector_literal,
                         lexicon_version,
-                        VECTOR_MODEL,
+                        embedding_model,
                         query_vector_literal,
                     ),
                 )

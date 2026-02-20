@@ -206,13 +206,13 @@ def test_batch_partial_failure(monkeypatch) -> None:
     assert payload["items"][0]["error"]["error_code"] == "HTTP_500"
 
 
-def test_batch_oversized_422() -> None:
+def test_batch_oversized_returns_validation_error() -> None:
     response = client.post(
         "/v1/moderate/batch",
         json={"items": [{"text": "hello"} for _ in range(51)]},
         headers={"X-API-Key": TEST_API_KEY},
     )
-    assert response.status_code == 422
+    assert response.status_code == 400
 
 
 def test_batch_rate_limit_429(monkeypatch) -> None:
@@ -240,6 +240,48 @@ def test_batch_unauthenticated_401() -> None:
         json={"items": [{"text": "hello"}]},
     )
     assert response.status_code == 401
+
+
+def test_moderate_uses_embedding_provider_via_env(monkeypatch) -> None:
+    monkeypatch.setenv("SENTINEL_EMBEDDING_PROVIDER", "e5-multilingual-small-v1")
+
+    captured: dict[str, object] = {}
+
+    class _Runtime:
+        embedding_provider_id = "e5-multilingual-small-v1"
+
+        class _Provider:
+            def embed(self, _text: str, *, timeout_ms: int):  # type: ignore[no-untyped-def]
+                del timeout_ms
+                return [0.0] * 384
+
+        embedding_provider = _Provider()
+
+    def _fake_find_vector_match(
+        _text: str,
+        *,
+        lexicon_version: str,
+        query_embedding: list[float],
+        embedding_model: str,
+        min_similarity=None,
+    ):
+        del lexicon_version, min_similarity
+        captured["embedding_model"] = embedding_model
+        captured["embedding_dim"] = len(query_embedding)
+        return None
+
+    monkeypatch.setattr("sentinel_api.policy._vector_matching_configured", lambda: True)
+    monkeypatch.setattr("sentinel_api.policy.get_model_runtime", lambda: _Runtime())
+    monkeypatch.setattr("sentinel_api.policy.find_vector_match", _fake_find_vector_match)
+
+    response = client.post(
+        "/v1/moderate",
+        json={"text": "peaceful civic dialogue"},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    assert captured["embedding_model"] == "e5-multilingual-small-v1"
+    assert captured["embedding_dim"] == 384
 
 
 def test_moderate_internal_error_returns_structured_500(monkeypatch) -> None:

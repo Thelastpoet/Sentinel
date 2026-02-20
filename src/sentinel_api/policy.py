@@ -7,7 +7,11 @@ from typing import cast, get_args
 
 from sentinel_api.logging import get_logger
 from sentinel_api.model_artifact_repository import resolve_runtime_model_version
-from sentinel_api.model_registry import score_claim_with_fallback
+from sentinel_api.model_registry import (
+    DEFAULT_MODEL_TIMEOUT_MS,
+    get_model_runtime,
+    score_claim_with_fallback,
+)
 from sentinel_core.claim_likeness import contains_election_anchor
 from sentinel_core.model_runtime import ClaimBand
 from sentinel_core.models import (
@@ -154,6 +158,16 @@ def _resolved_vector_match_threshold(runtime: EffectivePolicyRuntime) -> float:
     return value
 
 
+def _vector_matching_configured() -> bool:
+    database_url = os.getenv("SENTINEL_DATABASE_URL", "").strip()
+    if not database_url:
+        return False
+    raw = os.getenv("SENTINEL_VECTOR_MATCH_ENABLED")
+    if raw is None:
+        return True
+    return raw.strip().lower() not in {"0", "false", "no", "off"}
+
+
 def evaluate_text(
     text: str,
     matcher=None,
@@ -265,11 +279,20 @@ def evaluate_text(
     vector_threshold = _resolved_vector_match_threshold(runtime)
     vector_threshold = max(0.0, min(1.0, vector_threshold + threshold_delta))
 
-    vector_match = find_vector_match(
-        text,
-        lexicon_version=matcher.version,
-        min_similarity=vector_threshold,
-    )
+    vector_match = None
+    if _vector_matching_configured():
+        model_runtime = get_model_runtime()
+        embedding_provider = model_runtime.embedding_provider
+        embedding_model = model_runtime.embedding_provider_id
+        query_embedding = embedding_provider.embed(text, timeout_ms=DEFAULT_MODEL_TIMEOUT_MS)
+        if query_embedding is not None:
+            vector_match = find_vector_match(
+                text,
+                lexicon_version=matcher.version,
+                query_embedding=query_embedding,
+                embedding_model=embedding_model,
+                min_similarity=vector_threshold,
+            )
     if vector_match is not None:
         entry = vector_match.entry
         # Safety posture: semantic/vector evidence is advisory and cannot directly

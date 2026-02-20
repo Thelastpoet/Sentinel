@@ -5,7 +5,12 @@ import os
 
 import pytest
 
-from sentinel_api.vector_matcher import find_vector_match, reset_vector_match_cache
+from sentinel_api.vector_matcher import (
+    VECTOR_MODEL,
+    embed_text,
+    find_vector_match,
+    reset_vector_match_cache,
+)
 
 
 def _integration_db_url() -> str | None:
@@ -35,6 +40,8 @@ def test_pgvector_match_populates_embedding_table_and_returns_candidate(
     match = find_vector_match(
         "rigged",
         lexicon_version="hatelex-v2.1",
+        query_embedding=embed_text("rigged"),
+        embedding_model=VECTOR_MODEL,
     )
     assert match is not None
     assert match.match_id
@@ -45,7 +52,10 @@ def test_pgvector_match_populates_embedding_table_and_returns_candidate(
     psycopg = importlib.import_module("psycopg")
     with psycopg.connect(db_url) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT COUNT(1) FROM lexicon_entry_embeddings")
+            cur.execute(
+                "SELECT COUNT(1) FROM lexicon_entry_embeddings_v2 WHERE embedding_model = %s",
+                (VECTOR_MODEL,),
+            )
             row = cur.fetchone()
             assert row is not None
             assert int(row[0]) > 0
