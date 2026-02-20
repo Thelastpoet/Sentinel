@@ -43,6 +43,23 @@ Keep this key server-side. If it leaks to a client, rotate it immediately.
 
 If you don't provide `request_id`, Sentinel generates one and returns it in the `X-Request-ID` response header.
 
+### `POST /v1/moderate/batch`
+
+Batch moderation for up to 50 items in one request. Each item has the same shape as `POST /v1/moderate` (including optional `context` and `request_id`).
+
+```json
+{
+  "items": [
+    {"request_id": "req-1", "text": "We should discuss policy peacefully."},
+    {"request_id": "req-2", "text": "They should kill them now."}
+  ]
+}
+```
+
+### `POST /v1/appeals`
+
+Submit an appeal for a prior moderation decision. This endpoint requires the full original decision snapshot (action, reason codes, artifact versions) so it can be reviewed later.
+
 ## Response
 
 ### Full response schema
@@ -180,6 +197,8 @@ This data enables reconstructing exactly why a decision was made, even if the le
 
 Sentinel enforces per-key rate limits (default: 120 requests/minute).
 
+`POST /v1/moderate/batch` is rate limited per item (a 50-item batch costs 50).
+
 ### Response headers
 
 Successful moderation responses include rate limit headers. `429` responses include the same headers plus `Retry-After`.
@@ -189,6 +208,8 @@ Successful moderation responses include rate limit headers. `429` responses incl
 | `X-RateLimit-Limit` | Maximum requests allowed per window |
 | `X-RateLimit-Remaining` | Requests remaining in current window |
 | `X-RateLimit-Reset` | Seconds until the window resets |
+
+When moderation result caching is enabled on the server, responses also include `X-Cache: HIT|MISS`.
 
 ### 429 Too Many Requests
 

@@ -77,7 +77,7 @@ source .venv/bin/activate
 pip install -e .[dev,ops]
 ```
 
-This installs the Sentinel API server and all development/operations tooling. The `.[ml]` extra is optional and only needed if you want to experiment with ML classifier scaffolding.
+This installs the Sentinel API server and all development/operations tooling. The `.[ml]` extra is optional and only needed if you want to enable optional ML dependencies (FastText language ID and transformer embeddings); it is not required for the default runtime.
 
 ### 2. Start infrastructure
 
@@ -85,7 +85,7 @@ This installs the Sentinel API server and all development/operations tooling. Th
 docker compose up -d --build postgres redis
 ```
 
-This starts PostgreSQL (with pgvector) and Redis. Sentinel uses Postgres for lexicon storage, vector similarity search, appeals, and transparency exports. Redis is used for distributed rate limiting and hot-trigger caching.
+This starts PostgreSQL (with pgvector) and Redis. Sentinel uses Postgres for lexicon storage, vector similarity search, appeals, and transparency exports. Redis is used for distributed rate limiting, hot-trigger caching, and optional moderation result caching.
 
 ### 3. Run database migrations
 
@@ -93,7 +93,7 @@ This starts PostgreSQL (with pgvector) and Redis. Sentinel uses Postgres for lex
 make apply-migrations
 ```
 
-This runs all 12 migration files against the local Postgres instance, creating tables for lexicon entries, releases, embeddings, appeals, monitoring, and model artifacts.
+This runs all migration files against the local Postgres instance, creating tables for lexicon entries, releases, embeddings, appeals, monitoring, and model artifacts.
 
 ### 4. Load the seed lexicon
 

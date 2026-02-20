@@ -130,6 +130,8 @@ See the [Deployment Guide](deployment.md) for the full OAuth setup including all
 Sentinel exposes three monitoring endpoints:
 
 - `GET /health` — basic health check (no auth)
+- `GET /health/live` — liveness probe (no auth)
+- `GET /health/ready` — readiness probe (no auth)
 - `GET /metrics` — JSON metrics: action counts, HTTP status counts, latency buckets (no auth)
 - `GET /metrics/prometheus` — Prometheus text format for scraping (no auth)
 

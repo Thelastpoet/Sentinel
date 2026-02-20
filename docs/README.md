@@ -34,7 +34,7 @@ You want to deploy and manage a Sentinel instance.
 | [Quickstart](quickstart.md) | Both | Two paths: integrator (4 steps) and operator (full local setup) |
 | [Integration Guide](integration-guide.md) | Integrators | Complete request/response reference, enforcement mapping, rate limiting, errors |
 | [Deployment Guide](deployment.md) | Operators | Architecture, env vars, Docker, migrations, lexicon, phases, stages, OAuth, monitoring |
-| [API Reference](api-reference.md) | Both | All 13 endpoints: public, moderation, admin appeals, transparency, release proposals |
+| [API Reference](api-reference.md) | Both | Public, moderation, and operator endpoints |
 | [Security](security.md) | Operators | Auth, scopes, input validation, safety constraints, data handling |
 | [FAQ](faq.md) | Both | Common questions split by audience |
 
@@ -42,9 +42,9 @@ You want to deploy and manage a Sentinel instance.
 
 | Path | Contents |
 |------|----------|
-| `contracts/api/openapi.yaml` | Machine-readable contract for `/health`, `/metrics`, and `/v1/moderate` |
+| `contracts/api/openapi.yaml` | Machine-readable contract for public endpoints (`/health*`, `/metrics*`, `/v1/moderate*`, `/v1/appeals`) |
 | `contracts/schemas/` | JSON Schema definitions (public + internal operator schemas) |
 | `templates/go-live/` | Go-live readiness gate template bundle |
 | `config/policy/default.json` | Default policy configuration (thresholds, phases, hints) |
 | `data/lexicon_seed.json` | 7-term demonstration seed lexicon |
-| `migrations/` | Database migration files (0001-0012) |
+| `migrations/` | Database migration files (0001-0013) |
