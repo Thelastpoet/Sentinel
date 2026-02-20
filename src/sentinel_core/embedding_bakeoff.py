@@ -7,6 +7,7 @@ import re
 import time
 import unicodedata
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, cast
 
@@ -146,7 +147,7 @@ def _build_candidates(*, enable_optional_models: bool) -> list[BakeoffCandidate]
         BakeoffCandidate(
             candidate_id="e5-multilingual-small",
             display_name="multilingual-e5-small",
-            embedding_dim=VECTOR_DIMENSION,
+            embedding_dim=384,
             is_baseline=False,
             is_substitute=False,
             unavailable_reason=optional_reason,
@@ -154,7 +155,7 @@ def _build_candidates(*, enable_optional_models: bool) -> list[BakeoffCandidate]
         BakeoffCandidate(
             candidate_id="labse",
             display_name="LaBSE",
-            embedding_dim=VECTOR_DIMENSION,
+            embedding_dim=384,
             is_baseline=False,
             is_substitute=False,
             unavailable_reason=optional_reason,
@@ -176,9 +177,37 @@ def _build_candidates(*, enable_optional_models: bool) -> list[BakeoffCandidate]
     ]
 
 
+@lru_cache(maxsize=1)
+def _load_e5_small_model():
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer("intfloat/multilingual-e5-small")
+
+
+@lru_cache(maxsize=1)
+def _load_labse_model():
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer("sentence-transformers/LaBSE")
+
+
+def _embed_e5_small(text: str) -> list[float]:
+    embedding = _load_e5_small_model().encode(f"query: {text}", normalize_embeddings=True)
+    return embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
+
+
+def _embed_labse(text: str) -> list[float]:
+    embedding = _load_labse_model().encode(text, normalize_embeddings=True)
+    return embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
+
+
 def _embed(candidate_id: str, text: str) -> list[float]:
     if candidate_id == "hash-bow-v1":
         return embed_hash_bow_v1(text)
+    if candidate_id == "e5-multilingual-small":
+        return _embed_e5_small(text)
+    if candidate_id == "labse":
+        return _embed_labse(text)
     if candidate_id == "hash-token-v1":
         return _embed_hash_token_v1(text)
     if candidate_id == "hash-chargram-v1":

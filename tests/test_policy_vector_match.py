@@ -38,14 +38,23 @@ def test_evaluate_text_uses_vector_match_when_lexicon_has_no_hits(monkeypatch) -
         "find_hot_trigger_matches",
         lambda *_args, **_kwargs: [],
     )
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
+
+    class _Runtime:
+        embedding_provider_id = "hash-bow-v1"
+
+        class _Provider:
+            def embed(self, _text: str, *, timeout_ms: int):  # type: ignore[no-untyped-def]
+                del timeout_ms
+                return [0.1] * 64
+
+        embedding_provider = _Provider()
+
+    monkeypatch.setattr(policy, "get_model_runtime", lambda: _Runtime())
     monkeypatch.setattr(
         policy,
         "find_vector_match",
-        lambda *_args, **_kwargs: VectorMatch(
-            entry=vector_entry,
-            similarity=0.88,
-            match_id="101",
-        ),
+        lambda *_args, **_kwargs: VectorMatch(entry=vector_entry, similarity=0.88, match_id="101"),
     )
 
     decision = policy.evaluate_text(
@@ -84,11 +93,9 @@ def test_evaluate_text_prefers_lexicon_review_before_vector(monkeypatch) -> None
         "find_hot_trigger_matches",
         lambda *_args, **_kwargs: [],
     )
-    monkeypatch.setattr(
-        policy,
-        "find_vector_match",
-        lambda *_args, **_kwargs: None,
-    )
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
+    monkeypatch.setattr(policy, "get_model_runtime", lambda: object())
+    monkeypatch.setattr(policy, "find_vector_match", lambda *_args, **_kwargs: None)
 
     decision = policy.evaluate_text(
         "we should deal with them politically",
@@ -122,14 +129,23 @@ def test_evaluate_text_vector_match_never_directly_blocks(monkeypatch) -> None:
         "find_hot_trigger_matches",
         lambda *_args, **_kwargs: [],
     )
+    monkeypatch.setenv("SENTINEL_DATABASE_URL", "postgresql://example")
+
+    class _Runtime:
+        embedding_provider_id = "hash-bow-v1"
+
+        class _Provider:
+            def embed(self, _text: str, *, timeout_ms: int):  # type: ignore[no-untyped-def]
+                del timeout_ms
+                return [0.1] * 64
+
+        embedding_provider = _Provider()
+
+    monkeypatch.setattr(policy, "get_model_runtime", lambda: _Runtime())
     monkeypatch.setattr(
         policy,
         "find_vector_match",
-        lambda *_args, **_kwargs: VectorMatch(
-            entry=vector_entry,
-            similarity=0.99,
-            match_id="7",
-        ),
+        lambda *_args, **_kwargs: VectorMatch(entry=vector_entry, similarity=0.99, match_id="7"),
     )
 
     decision = policy.evaluate_text(

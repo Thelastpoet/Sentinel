@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
+from tenacity import Retrying, stop_after_attempt, wait_exponential
 
 from sentinel_api.async_priority import Priority, PrioritySignals, classify_priority, sla_due_at
 
@@ -194,30 +195,44 @@ class ResilientPartnerConnector:
             self._circuit_open_until = None
 
         retry_delays: list[int] = []
-        last_error: str | None = None
+        attempts = 0
 
-        for attempt in range(1, self.max_attempts + 1):
-            try:
-                signals = self.connector.fetch_signals(since=since, limit=limit)
-                self._consecutive_failures = 0
-                self._circuit_open_until = None
-                return ConnectorFetchOutcome(
-                    status="ok",
-                    connector_name=self.connector.name,
-                    signals=signals,
-                    attempts=attempt,
-                    retry_delays_seconds=retry_delays,
-                )
-            except Exception as exc:
-                last_error = str(exc)
-                if attempt < self.max_attempts:
-                    delay_seconds = _retry_delay_seconds(
-                        attempt=attempt,
-                        base=self.base_backoff_seconds,
-                        cap=self.max_backoff_seconds,
+        def _sleep(seconds: float) -> None:
+            self._sleep_fn(int(seconds))
+
+        def _before_sleep(retry_state) -> None:  # type: ignore[no-untyped-def]
+            next_action = getattr(retry_state, "next_action", None)
+            delay = getattr(next_action, "sleep", None)
+            if delay is None:
+                return
+            retry_delays.append(int(delay))
+
+        try:
+            for attempt in Retrying(
+                stop=stop_after_attempt(self.max_attempts),
+                wait=wait_exponential(
+                    multiplier=self.base_backoff_seconds,
+                    max=self.max_backoff_seconds,
+                ),
+                reraise=True,
+                sleep=_sleep,
+                before_sleep=_before_sleep,
+            ):
+                with attempt:
+                    attempts = attempt.retry_state.attempt_number
+                    signals = self.connector.fetch_signals(since=since, limit=limit)
+                    self._consecutive_failures = 0
+                    self._circuit_open_until = None
+                    return ConnectorFetchOutcome(
+                        status="ok",
+                        connector_name=self.connector.name,
+                        signals=signals,
+                        attempts=attempts,
+                        retry_delays_seconds=retry_delays,
                     )
-                    retry_delays.append(delay_seconds)
-                    self._sleep_fn(delay_seconds)
+        except Exception as exc:
+            attempts = max(attempts, self.max_attempts)
+            last_error = str(exc)
 
         self._consecutive_failures += 1
         if self._consecutive_failures >= self.circuit_failure_threshold:
@@ -228,7 +243,7 @@ class ResilientPartnerConnector:
         return ConnectorFetchOutcome(
             status="error",
             connector_name=self.connector.name,
-            attempts=self.max_attempts,
+            attempts=attempts,
             retry_delays_seconds=retry_delays,
             error=last_error,
         )

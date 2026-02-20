@@ -27,6 +27,8 @@ def test_find_vector_match_returns_none_without_database(monkeypatch) -> None:
     result = vector_matcher.find_vector_match(
         "election manipulation narrative",
         lexicon_version="hatelex-v2.1",
+        query_embedding=vector_matcher.embed_text("election manipulation narrative"),
+        embedding_model=vector_matcher.VECTOR_MODEL,
     )
     assert result is None
 
@@ -37,6 +39,8 @@ def test_find_vector_match_returns_none_when_disabled(monkeypatch) -> None:
     result = vector_matcher.find_vector_match(
         "election manipulation narrative",
         lexicon_version="hatelex-v2.1",
+        query_embedding=vector_matcher.embed_text("election manipulation narrative"),
+        embedding_model=vector_matcher.VECTOR_MODEL,
     )
     assert result is None
 
@@ -52,13 +56,13 @@ def test_find_vector_match_returns_result_when_similarity_meets_threshold(
             self._fetchone_result = None
 
         def execute(self, query: str, params=None) -> None:
-            if "LEFT JOIN lexicon_entry_embeddings" in query:
+            if "LEFT JOIN lexicon_entry_embeddings_v2" in query:
                 self._fetchall_result = [(7, "rigged")]
                 return
-            if "INSERT INTO lexicon_entry_embeddings" in query:
+            if "INSERT INTO lexicon_entry_embeddings_v2" in query:
                 state["upserts"] += 1
                 return
-            if "JOIN lexicon_entry_embeddings AS emb" in query:
+            if "JOIN lexicon_entry_embeddings_v2 AS emb" in query:
                 self._fetchone_result = (
                     7,
                     "rigged",
@@ -106,6 +110,8 @@ def test_find_vector_match_returns_result_when_similarity_meets_threshold(
     match = vector_matcher.find_vector_match(
         "they manipulated election results",
         lexicon_version="hatelex-v2.1",
+        query_embedding=vector_matcher.embed_text("they manipulated election results"),
+        embedding_model=vector_matcher.VECTOR_MODEL,
     )
 
     assert match is not None
@@ -122,10 +128,10 @@ def test_find_vector_match_logs_warning_on_non_finite_similarity(monkeypatch, ca
             self._fetchone_result = None
 
         def execute(self, query: str, params=None) -> None:
-            if "LEFT JOIN lexicon_entry_embeddings" in query:
+            if "LEFT JOIN lexicon_entry_embeddings_v2" in query:
                 self._fetchall_result = []
                 return
-            if "JOIN lexicon_entry_embeddings AS emb" in query:
+            if "JOIN lexicon_entry_embeddings_v2 AS emb" in query:
                 self._fetchone_result = (
                     13,
                     "rigged",
@@ -172,6 +178,8 @@ def test_find_vector_match_logs_warning_on_non_finite_similarity(monkeypatch, ca
     result = vector_matcher.find_vector_match(
         "they manipulated election results",
         lexicon_version="hatelex-v2.1",
+        query_embedding=vector_matcher.embed_text("they manipulated election results"),
+        embedding_model=vector_matcher.VECTOR_MODEL,
     )
     assert result is None
     assert "vector similarity was non-finite" in caplog.text

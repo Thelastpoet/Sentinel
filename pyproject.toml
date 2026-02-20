@@ -10,8 +10,10 @@ dependencies = [
   "prometheus-client",
   "pydantic",
   "psycopg[binary]",
+  "psycopg-pool",
   "redis",
   "structlog",
+  "tenacity",
   "uvicorn",
   "PyJWT",
 ]
@@ -27,7 +29,6 @@ dev = [
 ]
 ops = [
   "alembic",
-  "tenacity",
 ]
 ml = [
   "fasttext-wheel",

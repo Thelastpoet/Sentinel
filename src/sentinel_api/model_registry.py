@@ -67,6 +67,54 @@ class HashBowEmbeddingProvider:
             return None
 
 
+class E5MultilingualSmallEmbeddingProvider:
+    name = "e5-multilingual-small"
+    version = "e5-multilingual-small-v1"
+    dimension = 384
+
+    @staticmethod
+    @lru_cache(maxsize=1)
+    def _load_model():
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            return SentenceTransformer("intfloat/multilingual-e5-small")
+        except ImportError:
+            logger.warning("sentence-transformers not installed; e5 provider unavailable")
+            return None
+        except Exception as exc:
+            logger.warning("failed to load e5 model: %s", exc)
+            return None
+
+    def embed(self, text: str, *, timeout_ms: int) -> list[float] | None:
+        _ = timeout_ms
+        model = self._load_model()
+        if model is None:
+            return None
+        try:
+            embedding = model.encode(f"query: {text}", normalize_embeddings=True)
+            if hasattr(embedding, "tolist"):
+                return embedding.tolist()
+            return list(embedding)
+        except Exception as exc:
+            logger.warning("e5 embedding provider failed; falling back: %s", exc)
+            return None
+
+    def embed_passage(self, text: str, *, timeout_ms: int) -> list[float] | None:
+        _ = timeout_ms
+        model = self._load_model()
+        if model is None:
+            return None
+        try:
+            embedding = model.encode(f"passage: {text}", normalize_embeddings=True)
+            if hasattr(embedding, "tolist"):
+                return embedding.tolist()
+            return list(embedding)
+        except Exception as exc:
+            logger.warning("e5 passage embedding failed; falling back: %s", exc)
+            return None
+
+
 class NoopMultiLabelClassifier:
     name = "none"
     version = "none-v1"
@@ -127,6 +175,7 @@ class HeuristicClaimScorer:
 
 EMBEDDING_PROVIDERS: dict[str, EmbeddingProvider] = {
     DEFAULT_EMBEDDING_PROVIDER_ID: HashBowEmbeddingProvider(),
+    "e5-multilingual-small-v1": E5MultilingualSmallEmbeddingProvider(),
 }
 CLASSIFIERS: dict[str, MultiLabelClassifier] = {
     DEFAULT_CLASSIFIER_PROVIDER_ID: NoopMultiLabelClassifier(),

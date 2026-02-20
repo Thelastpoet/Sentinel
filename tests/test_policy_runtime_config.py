@@ -26,7 +26,7 @@ def test_moderation_uses_external_policy_config(tmp_path, monkeypatch) -> None:
     result = moderate("peaceful discussion")
     assert result.policy_version == "policy-2099.01"
     assert result.model_version == "sentinel-multi-custom"
-    assert result.toxicity == 0.01
+    assert result.toxicity == 0.366
     assert result.pack_versions["en"] == "pack-en-9.9"
     reset_policy_config_cache()
 

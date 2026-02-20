@@ -14,6 +14,20 @@ OAUTH_JWT_ALGORITHM_ENV = "SENTINEL_OAUTH_JWT_ALGORITHM"
 OAUTH_JWT_AUDIENCE_ENV = "SENTINEL_OAUTH_JWT_AUDIENCE"
 OAUTH_JWT_ISSUER_ENV = "SENTINEL_OAUTH_JWT_ISSUER"
 
+KNOWN_OAUTH_SCOPES = frozenset(
+    {
+        "internal:queue:read",
+        "admin:proposal:read",
+        "admin:proposal:review",
+        "admin:appeal:read",
+        "admin:appeal:write",
+        "admin:policy:write",
+        "admin:transparency:read",
+        "admin:transparency:export",
+        "admin:transparency:identifiers",
+    }
+)
+
 
 @dataclass(frozen=True)
 class OAuthPrincipal:
@@ -154,6 +168,9 @@ def authenticate_bearer_token(authorization: str | None) -> OAuthPrincipal:
 
 
 def require_oauth_scope(required_scope: str):
+    if required_scope not in KNOWN_OAUTH_SCOPES:
+        raise ValueError(f"Unknown OAuth scope: {required_scope}")
+
     def dependency(authorization: str | None = Header(default=None)) -> OAuthPrincipal:
         principal = authenticate_bearer_token(authorization)
         if required_scope not in principal.scopes:

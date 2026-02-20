@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
@@ -112,6 +113,21 @@ def reset_policy_config_cache() -> None:
     get_policy_config.cache_clear()
 
 
+_runtime_phase_override: ElectoralPhase | None = None
+_runtime_phase_override_lock = threading.Lock()
+
+
+def set_runtime_phase_override(phase: ElectoralPhase | None) -> None:
+    global _runtime_phase_override
+    with _runtime_phase_override_lock:
+        _runtime_phase_override = phase
+
+
+def get_runtime_phase_override() -> ElectoralPhase | None:
+    with _runtime_phase_override_lock:
+        return _runtime_phase_override
+
+
 @lru_cache(maxsize=1)
 def get_policy_config() -> PolicyConfig:
     path = Path(os.getenv("SENTINEL_POLICY_CONFIG_PATH", str(_default_config_path())))
@@ -121,6 +137,9 @@ def get_policy_config() -> PolicyConfig:
 
 
 def _resolve_effective_phase(config: PolicyConfig) -> ElectoralPhase | None:
+    runtime_override = get_runtime_phase_override()
+    if runtime_override is not None:
+        return runtime_override
     env_phase = os.getenv("SENTINEL_ELECTORAL_PHASE")
     if env_phase is None or not env_phase.strip():
         return config.electoral_phase

@@ -7,8 +7,10 @@ import jwt
 import pytest
 from fastapi.testclient import TestClient
 
+from sentinel_api.audit_events import reset_audit_events_state
 from sentinel_api.main import app
 from sentinel_api.metrics import metrics
+from sentinel_core.policy_config import set_runtime_phase_override
 
 client = TestClient(app)
 
@@ -16,7 +18,10 @@ client = TestClient(app)
 @pytest.fixture(autouse=True)
 def reset_metrics(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("SENTINEL_DATABASE_URL", raising=False)
+    monkeypatch.delenv("SENTINEL_ELECTORAL_PHASE", raising=False)
     metrics.reset()
+    set_runtime_phase_override(None)
+    reset_audit_events_state()
 
 
 def _set_registry(monkeypatch: pytest.MonkeyPatch, payload: dict[str, object]) -> None:
@@ -196,6 +201,79 @@ def test_transparency_export_allows_export_scope(monkeypatch: pytest.MonkeyPatch
     assert response.status_code == 200
     payload = response.json()
     assert "records" in payload
+
+
+def test_admin_policy_phase_requires_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-proposal-reader": {
+                "client_id": "proposal-reader",
+                "scopes": ["admin:proposal:read"],
+            }
+        },
+    )
+    response = client.post(
+        "/admin/policy/phase",
+        headers={"Authorization": "Bearer token-proposal-reader"},
+        json={"phase": "voting_day"},
+    )
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_403"
+    assert "admin:policy:write" in payload["message"]
+
+
+def test_admin_policy_phase_update_sets_override(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-policy-writer": {
+                "client_id": "policy-writer",
+                "scopes": ["admin:policy:write"],
+            }
+        },
+    )
+    monkeypatch.setenv("SENTINEL_ELECTORAL_PHASE", "campaign")
+
+    response = client.post(
+        "/admin/policy/phase",
+        headers={"Authorization": "Bearer token-policy-writer"},
+        json={"phase": "voting_day"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["effective_phase"] == "voting_day"
+    assert payload["actor"] == "policy-writer"
+
+    response = client.post(
+        "/admin/policy/phase",
+        headers={"Authorization": "Bearer token-policy-writer"},
+        json={"phase": None},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["effective_phase"] == "campaign"
+
+
+def test_admin_audit_stream_requires_scope(monkeypatch: pytest.MonkeyPatch) -> None:
+    _set_registry(
+        monkeypatch,
+        {
+            "token-appeal-reader": {
+                "client_id": "appeal-reader",
+                "scopes": ["admin:appeal:read"],
+            }
+        },
+    )
+    response = client.get(
+        "/admin/audit/stream",
+        headers={"Authorization": "Bearer token-appeal-reader"},
+    )
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["error_code"] == "HTTP_403"
+    assert "admin:transparency:read" in payload["message"]
 
 
 def test_internal_queue_metrics_accepts_valid_jwt(monkeypatch: pytest.MonkeyPatch) -> None:

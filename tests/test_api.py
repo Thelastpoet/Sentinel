@@ -5,6 +5,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+from sentinel_api.appeals import get_appeals_runtime, reset_appeals_runtime_state
 from sentinel_api.main import app, rate_limiter
 from sentinel_api.metrics import metrics
 from sentinel_api.model_registry import ClassifierShadowResult
@@ -18,6 +19,7 @@ def reset_rate_limiter(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("SENTINEL_API_KEY", TEST_API_KEY)
     rate_limiter.reset()
     metrics.reset()
+    reset_appeals_runtime_state()
 
 
 def test_health() -> None:
@@ -162,6 +164,128 @@ def test_rate_limit_exceeded() -> None:
         rate_limiter.per_minute = original
 
 
+def test_batch_happy_path_two_items() -> None:
+    response = client.post(
+        "/v1/moderate/batch",
+        json={
+            "items": [
+                {"text": "We should discuss policy peacefully."},
+                {"text": "This election is rigged."},
+            ]
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total"] == 2
+    assert payload["succeeded"] == 2
+    assert payload["failed"] == 0
+    assert len(payload["items"]) == 2
+    assert payload["items"][0]["result"] is not None
+
+
+def test_batch_partial_failure(monkeypatch) -> None:
+    import sentinel_api.policy as policy
+
+    def flaky(text: str, *, context=None, runtime=None):
+        if text == "boom":
+            raise RuntimeError("boom")
+        return policy.moderate(text, context=context, runtime=runtime)
+
+    monkeypatch.setattr("sentinel_api.main.moderate", flaky)
+
+    response = client.post(
+        "/v1/moderate/batch",
+        json={"items": [{"text": "boom"}, {"text": "We should discuss policy peacefully."}]},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total"] == 2
+    assert payload["succeeded"] == 1
+    assert payload["failed"] == 1
+    assert payload["items"][0]["result"] is None
+    assert payload["items"][0]["error"]["error_code"] == "HTTP_500"
+
+
+def test_batch_oversized_returns_validation_error() -> None:
+    response = client.post(
+        "/v1/moderate/batch",
+        json={"items": [{"text": "hello"} for _ in range(51)]},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 400
+
+
+def test_batch_rate_limit_429(monkeypatch) -> None:
+    original = rate_limiter.per_minute
+    rate_limiter.per_minute = 1
+    try:
+        monkeypatch.setattr(
+            "sentinel_api.main.moderate",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("should not run")),
+        )
+        response = client.post(
+            "/v1/moderate/batch",
+            json={"items": [{"text": "a"}, {"text": "b"}]},
+            headers={"X-API-Key": TEST_API_KEY},
+        )
+        assert response.status_code == 429
+        assert response.headers["X-RateLimit-Limit"] == "1"
+    finally:
+        rate_limiter.per_minute = original
+
+
+def test_batch_unauthenticated_401() -> None:
+    response = client.post(
+        "/v1/moderate/batch",
+        json={"items": [{"text": "hello"}]},
+    )
+    assert response.status_code == 401
+
+
+def test_moderate_uses_embedding_provider_via_env(monkeypatch) -> None:
+    monkeypatch.setenv("SENTINEL_EMBEDDING_PROVIDER", "e5-multilingual-small-v1")
+
+    captured: dict[str, object] = {}
+
+    class _Runtime:
+        embedding_provider_id = "e5-multilingual-small-v1"
+
+        class _Provider:
+            def embed(self, _text: str, *, timeout_ms: int):  # type: ignore[no-untyped-def]
+                del timeout_ms
+                return [0.0] * 384
+
+        embedding_provider = _Provider()
+
+    def _fake_find_vector_match(
+        _text: str,
+        *,
+        lexicon_version: str,
+        query_embedding: list[float],
+        embedding_model: str,
+        min_similarity=None,
+    ):
+        del lexicon_version, min_similarity
+        captured["embedding_model"] = embedding_model
+        captured["embedding_dim"] = len(query_embedding)
+        return None
+
+    monkeypatch.setattr("sentinel_api.policy._vector_matching_configured", lambda: True)
+    monkeypatch.setattr("sentinel_api.policy.get_model_runtime", lambda: _Runtime())
+    monkeypatch.setattr("sentinel_api.policy.find_vector_match", _fake_find_vector_match)
+
+    response = client.post(
+        "/v1/moderate",
+        json={"text": "peaceful civic dialogue"},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    assert captured["embedding_model"] == "e5-multilingual-small-v1"
+    assert captured["embedding_dim"] == 384
+
+
 def test_moderate_internal_error_returns_structured_500(monkeypatch) -> None:
     def broken(_text: str, *, runtime=None):
         del runtime
@@ -198,6 +322,87 @@ def test_classifier_shadow_disabled_by_default(monkeypatch) -> None:
         headers={"X-API-Key": TEST_API_KEY},
     )
     assert response.status_code == 200
+
+
+def test_public_appeal_happy_path() -> None:
+    decision_request_id = "req-abc123"
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": decision_request_id,
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_model_version": "sentinel-multi-v2",
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+            "reason": "false positive",
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 201
+    payload = response.json()
+    assert payload["status"] == "submitted"
+    assert payload["request_id"] == decision_request_id
+    assert isinstance(payload["appeal_id"], int)
+
+    runtime = get_appeals_runtime()
+    listed = runtime.list_appeals(status="submitted", request_id=decision_request_id, limit=10)
+    assert listed.items
+    appeal = listed.items[0]
+    assert appeal.submitted_by == "public-api"
+    assert appeal.request_id == decision_request_id
+    assert appeal.original_decision_id == decision_request_id
+
+
+def test_public_appeal_missing_provenance_validation_error() -> None:
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": "req-abc123",
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 400
+    assert response.json()["error_code"] == "HTTP_400"
+
+
+def test_public_appeal_empty_original_model_version_validation_error() -> None:
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": "req-abc123",
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_model_version": "",
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 400
+
+
+def test_public_appeal_unauthenticated_401() -> None:
+    response = client.post(
+        "/v1/appeals",
+        json={
+            "decision_request_id": "req-abc123",
+            "original_action": "REVIEW",
+            "original_reason_codes": ["R_DOGWHISTLE_CONTEXT_REQUIRED"],
+            "original_model_version": "sentinel-multi-v2",
+            "original_lexicon_version": "hatelex-v2.1",
+            "original_policy_version": "policy-2026.11",
+            "original_pack_versions": {"en": "pack-en-0.1"},
+        },
+    )
+    assert response.status_code == 401
 
 
 def test_classifier_shadow_records_metrics_and_persistence(monkeypatch, tmp_path) -> None:

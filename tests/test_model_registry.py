@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import sys
+import types
 
 import sentinel_api.model_registry as model_registry
 
@@ -62,6 +64,57 @@ def test_embedding_provider_returns_none_on_internal_error(monkeypatch, caplog) 
         result = provider.embed("sample", timeout_ms=10)
     assert result is None
     assert "embedding provider failed" in caplog.text
+
+
+def test_e5_provider_selected_via_env(monkeypatch) -> None:
+    monkeypatch.setenv(model_registry.EMBEDDING_PROVIDER_ENV, "e5-multilingual-small-v1")
+    model_registry.reset_model_runtime_cache()
+    runtime = model_registry.get_model_runtime()
+    assert runtime.embedding_provider_id == "e5-multilingual-small-v1"
+
+
+def test_e5_embed_returns_384_floats(monkeypatch) -> None:
+    class _FakeArray(list):
+        def tolist(self):  # type: ignore[override]
+            return list(self)
+
+    class _FakeModel:
+        def encode(self, text: str, *, normalize_embeddings: bool):
+            assert normalize_embeddings is True
+            assert text.startswith("query: ")
+            return _FakeArray([0.0] * 384)
+
+    class _FakeSentenceTransformer:
+        def __init__(self, name: str) -> None:
+            assert name == "intfloat/multilingual-e5-small"
+
+        def encode(self, text: str, *, normalize_embeddings: bool):
+            return _FakeModel().encode(text, normalize_embeddings=normalize_embeddings)
+
+    fake_module = types.SimpleNamespace(SentenceTransformer=_FakeSentenceTransformer)
+    monkeypatch.setitem(sys.modules, "sentence_transformers", fake_module)
+    model_registry.E5MultilingualSmallEmbeddingProvider._load_model.cache_clear()
+
+    monkeypatch.setenv(model_registry.EMBEDDING_PROVIDER_ENV, "e5-multilingual-small-v1")
+    model_registry.reset_model_runtime_cache()
+    runtime = model_registry.get_model_runtime()
+    provider = runtime.embedding_provider
+    embedding = provider.embed("test", timeout_ms=50)
+    assert embedding is not None
+    assert len(embedding) == 384
+
+
+def test_e5_graceful_when_sentence_transformers_missing(monkeypatch, caplog) -> None:
+    monkeypatch.setenv(model_registry.EMBEDDING_PROVIDER_ENV, "e5-multilingual-small-v1")
+    model_registry.reset_model_runtime_cache()
+    model_registry.E5MultilingualSmallEmbeddingProvider._load_model.cache_clear()
+    monkeypatch.delitem(sys.modules, "sentence_transformers", raising=False)
+
+    provider = model_registry.E5MultilingualSmallEmbeddingProvider()
+    with caplog.at_level(logging.WARNING):
+        result = provider.embed("sample", timeout_ms=10)
+    assert result is None
+    assert "sentence-transformers not installed" in caplog.text
 
 
 def test_predict_classifier_shadow_drops_unknown_and_low_scores(monkeypatch) -> None:
