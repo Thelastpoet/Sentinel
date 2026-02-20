@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import re
@@ -7,6 +8,7 @@ import secrets
 import time
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
+from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path as FilePath
 from typing import Literal
@@ -24,7 +26,7 @@ from fastapi import (
     status,
 )
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from sentinel_api.appeals import (
@@ -38,6 +40,7 @@ from sentinel_api.appeals import (
     get_appeals_runtime,
 )
 from sentinel_api.async_priority import async_queue_metrics
+from sentinel_api.audit_events import AuditEvent, events_since, publish_audit_event
 from sentinel_api.db_pool import close_pool, get_pool
 from sentinel_api.logging import get_logger
 from sentinel_api.metrics import metrics
@@ -64,7 +67,12 @@ from sentinel_core.models import (
     PublicAppealCreateRequest,
     PublicAppealCreateResponse,
 )
-from sentinel_core.policy_config import DeploymentStage, resolve_policy_runtime
+from sentinel_core.policy_config import (
+    DeploymentStage,
+    ElectoralPhase,
+    resolve_policy_runtime,
+    set_runtime_phase_override,
+)
 from sentinel_langpack.registry import resolve_pack_versions
 from sentinel_lexicon.lexicon import get_lexicon_matcher
 
@@ -123,6 +131,12 @@ class AdminProposalReviewResponse(BaseModel):
     actor: str
     status: Literal["accepted"]
     rationale: str | None = None
+
+
+class AdminPhaseUpdateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    phase: ElectoralPhase | None = None
 
 
 @app.middleware("http")
@@ -397,6 +411,44 @@ def get_admin_proposal_permissions(
     }
 
 
+@app.post("/admin/policy/phase")
+def post_admin_policy_phase(
+    request: AdminPhaseUpdateRequest,
+    principal: OAuthPrincipal = Depends(require_oauth_scope("admin:policy:write")),
+) -> dict[str, object]:
+    set_runtime_phase_override(request.phase)
+    runtime = resolve_policy_runtime()
+    effective_phase = runtime.effective_phase.value if runtime.effective_phase is not None else None
+    return {
+        "effective_phase": effective_phase,
+        "effective_policy_version": runtime.effective_policy_version,
+        "actor": principal.client_id,
+        "limitation": (
+            "in-process only; multi-worker and multi-replica deployments require a shared store"
+        ),
+    }
+
+
+async def _generate_audit_sse(start_cursor: int) -> AsyncIterator[str]:
+    cursor = max(0, int(start_cursor))
+    while True:
+        events, cursor = events_since(cursor)
+        for event in events:
+            payload = json.dumps(asdict(event), ensure_ascii=True)
+            yield f"data: {payload}\n\n"
+        if not events:
+            await asyncio.sleep(0.5)
+
+
+@app.get("/admin/audit/stream")
+def get_admin_audit_stream(
+    cursor: int = Query(default=0, ge=0),
+    principal: OAuthPrincipal = Depends(require_oauth_scope("admin:transparency:read")),
+) -> StreamingResponse:
+    _ = principal
+    return StreamingResponse(_generate_audit_sse(cursor), media_type="text/event-stream")
+
+
 @app.post(
     "/admin/release-proposals/{proposal_id}/review",
     response_model=AdminProposalReviewResponse,
@@ -614,6 +666,18 @@ def moderate_text(
             response.headers["X-Cache"] = "HIT"
             metrics.record_action(cached.action)
             metrics.record_moderation_latency(cached.latency_ms)
+            publish_audit_event(
+                AuditEvent(
+                    timestamp=datetime.now(tz=UTC).isoformat(),
+                    action=cached.action,
+                    labels=list(cached.labels),
+                    reason_codes=list(cached.reason_codes),
+                    latency_ms=cached.latency_ms,
+                    deployment_stage=runtime.effective_deployment_stage.value,
+                    lexicon_version=cached.lexicon_version,
+                    policy_version=cached.policy_version,
+                )
+            )
             return cached
         response.headers["X-Cache"] = "MISS"
 
@@ -622,6 +686,18 @@ def moderate_text(
     effective_deployment_stage = runtime.effective_deployment_stage.value
     metrics.record_action(result.action)
     metrics.record_moderation_latency(result.latency_ms)
+    publish_audit_event(
+        AuditEvent(
+            timestamp=datetime.now(tz=UTC).isoformat(),
+            action=result.action,
+            labels=list(result.labels),
+            reason_codes=list(result.reason_codes),
+            latency_ms=result.latency_ms,
+            deployment_stage=runtime.effective_deployment_stage.value,
+            lexicon_version=result.lexicon_version,
+            policy_version=result.policy_version,
+        )
+    )
     if cache_key is not None and redis_url:
         ttl_raw = os.getenv(RESULT_CACHE_TTL_SECONDS_ENV, "60").strip()
         try:
