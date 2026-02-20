@@ -23,6 +23,39 @@ paths:
                   status:
                     type: string
                     enum: [ok]
+  /health/live:
+    get:
+      summary: Liveness probe
+      operationId: getHealthLive
+      responses:
+        '200':
+          description: Process is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+  /health/ready:
+    get:
+      summary: Readiness probe
+      operationId: getHealthReady
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReadyResponse'
+        '503':
+          description: Service is degraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReadyResponse'
   /metrics:
     get:
       summary: Runtime metrics snapshot
@@ -107,6 +140,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /v1/moderate/batch:
+    post:
+      summary: Moderate a batch of texts
+      operationId: moderateBatch
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationBatchRequest'
+      responses:
+        '200':
+          description: Batch moderation result
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests allowed in the current window.
+              schema:
+                type: string
+            X-RateLimit-Remaining:
+              description: Requests remaining in the current window.
+              schema:
+                type: string
+            X-RateLimit-Reset:
+              description: Seconds until the current rate-limit window resets.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModerationBatchResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests allowed in the current window.
+              schema:
+                type: string
+            X-RateLimit-Remaining:
+              description: Always `0` when the request is throttled.
+              schema:
+                type: string
+            X-RateLimit-Reset:
+              description: Seconds until the current rate-limit window resets.
+              schema:
+                type: string
+            Retry-After:
+              description: Seconds the client should wait before retrying.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -114,6 +214,19 @@ components:
       in: header
       name: X-API-Key
   schemas:
+    HealthReadyResponse:
+      type: object
+      additionalProperties: false
+      required: [status, checks]
+      properties:
+        status:
+          type: string
+          enum: [ready, degraded]
+        checks:
+          type: object
+          additionalProperties:
+            type: string
+            enum: [ok, empty, error]
     ModerationRequest:
       type: object
       additionalProperties: false
@@ -125,22 +238,84 @@ components:
           minLength: 1
           maxLength: 5000
         context:
-          type: object
-          additionalProperties: false
-          properties:
-            source:
-              type: string
-              maxLength: 100
-            locale:
-              type: string
-              maxLength: 20
-            channel:
-              type: string
-              maxLength: 50
+          $ref: '#/components/schemas/ModerationContext'
         request_id:
           type: string
           maxLength: 128
           pattern: '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$'
+    ModerationBatchItem:
+      type: object
+      additionalProperties: false
+      required: [text]
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        context:
+          $ref: '#/components/schemas/ModerationContext'
+        request_id:
+          type: string
+          maxLength: 128
+          pattern: '^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$'
+    ModerationBatchRequest:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/ModerationBatchItem'
+    ModerationBatchItemResult:
+      type: object
+      additionalProperties: false
+      required: [request_id]
+      properties:
+        request_id:
+          type: string
+          maxLength: 128
+        result:
+          anyOf:
+            - $ref: '#/components/schemas/ModerationResponse'
+            - type: 'null'
+        error:
+          anyOf:
+            - $ref: '#/components/schemas/ErrorResponse'
+            - type: 'null'
+    ModerationBatchResponse:
+      type: object
+      additionalProperties: false
+      required: [items, total, succeeded, failed]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModerationBatchItemResult'
+        total:
+          type: integer
+          minimum: 0
+        succeeded:
+          type: integer
+          minimum: 0
+        failed:
+          type: integer
+          minimum: 0
+    ModerationContext:
+      type: object
+      additionalProperties: false
+      properties:
+        source:
+          type: string
+          maxLength: 100
+        locale:
+          type: string
+          maxLength: 20
+        channel:
+          type: string
+          maxLength: 50
     ModerationResponse:
       type: object
       additionalProperties: false

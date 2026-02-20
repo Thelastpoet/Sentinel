@@ -47,8 +47,9 @@ class InMemoryRateLimiter:
         while bucket and now - bucket[0] > self.window_seconds:
             bucket.popleft()
 
-    def check(self, key: str) -> RateLimitDecision:
+    def check(self, key: str, *, cost: int = 1) -> RateLimitDecision:
         now = time.time()
+        normalized_cost = max(1, int(cost))
         bucket_key = _rate_limit_bucket_key(key)
         bucket = self._events[bucket_key]
         self._cleanup(bucket, now)
@@ -58,7 +59,7 @@ class InMemoryRateLimiter:
         else:
             reset_after = max(1, int(self.window_seconds - (now - bucket[0])))
 
-        if len(bucket) >= self.per_minute:
+        if len(bucket) + normalized_cost > self.per_minute:
             return RateLimitDecision(
                 allowed=False,
                 limit=self.per_minute,
@@ -67,7 +68,8 @@ class InMemoryRateLimiter:
                 retry_after_seconds=reset_after,
             )
 
-        bucket.append(now)
+        for _ in range(normalized_cost):
+            bucket.append(now)
         remaining = max(self.per_minute - len(bucket), 0)
         reset_after = max(1, int(self.window_seconds - (now - bucket[0])))
         return RateLimitDecision(
@@ -77,8 +79,8 @@ class InMemoryRateLimiter:
             reset_after_seconds=reset_after,
         )
 
-    def allow(self, key: str) -> bool:
-        return self.check(key).allowed
+    def allow(self, key: str, *, cost: int = 1) -> bool:
+        return self.check(key, cost=cost).allowed
 
     def reset(self) -> None:
         self._events.clear()
@@ -108,21 +110,27 @@ class LimitsRateLimiter(InMemoryRateLimiter):
         self._limiter = MovingWindowRateLimiter(self._storage)
         self._rate_limit_item_cls: Any = RateLimitItemPerMinute
 
-    def check(self, key: str) -> RateLimitDecision:
+    def check(self, key: str, *, cost: int = 1) -> RateLimitDecision:
         # Preserve existing response contract while shifting enforcement to
         # distributed limits storage (Redis/memcached/etc.).
         now = time.time()
+        normalized_cost = max(1, int(cost))
         normalized_key = f"{_RATE_LIMIT_KEY_PREFIX}{_rate_limit_bucket_key(key)}"
         item = self._rate_limit_item_cls(self.per_minute)
         try:
-            allowed = bool(self._limiter.hit(item, normalized_key))
+            try:
+                allowed = bool(self._limiter.hit(item, normalized_key, cost=normalized_cost))
+            except TypeError:  # pragma: no cover - older limits versions
+                allowed = True
+                for _ in range(normalized_cost):
+                    allowed = allowed and bool(self._limiter.hit(item, normalized_key))
             window = self._limiter.get_window_stats(item, normalized_key)
         except Exception as exc:  # pragma: no cover - network/storage failures
             logger.warning(
                 "distributed rate limiter unavailable; using in-memory fallback: %s",
                 exc,
             )
-            return super().check(key)
+            return super().check(key, cost=normalized_cost)
 
         reset_after = max(1, int(window.reset_time - now))
         remaining = max(0, int(window.remaining))

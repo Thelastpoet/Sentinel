@@ -162,6 +162,86 @@ def test_rate_limit_exceeded() -> None:
         rate_limiter.per_minute = original
 
 
+def test_batch_happy_path_two_items() -> None:
+    response = client.post(
+        "/v1/moderate/batch",
+        json={
+            "items": [
+                {"text": "We should discuss policy peacefully."},
+                {"text": "This election is rigged."},
+            ]
+        },
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total"] == 2
+    assert payload["succeeded"] == 2
+    assert payload["failed"] == 0
+    assert len(payload["items"]) == 2
+    assert payload["items"][0]["result"] is not None
+
+
+def test_batch_partial_failure(monkeypatch) -> None:
+    import sentinel_api.policy as policy
+
+    def flaky(text: str, *, context=None, runtime=None):
+        if text == "boom":
+            raise RuntimeError("boom")
+        return policy.moderate(text, context=context, runtime=runtime)
+
+    monkeypatch.setattr("sentinel_api.main.moderate", flaky)
+
+    response = client.post(
+        "/v1/moderate/batch",
+        json={"items": [{"text": "boom"}, {"text": "We should discuss policy peacefully."}]},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total"] == 2
+    assert payload["succeeded"] == 1
+    assert payload["failed"] == 1
+    assert payload["items"][0]["result"] is None
+    assert payload["items"][0]["error"]["error_code"] == "HTTP_500"
+
+
+def test_batch_oversized_422() -> None:
+    response = client.post(
+        "/v1/moderate/batch",
+        json={"items": [{"text": "hello"} for _ in range(51)]},
+        headers={"X-API-Key": TEST_API_KEY},
+    )
+    assert response.status_code == 422
+
+
+def test_batch_rate_limit_429(monkeypatch) -> None:
+    original = rate_limiter.per_minute
+    rate_limiter.per_minute = 1
+    try:
+        monkeypatch.setattr(
+            "sentinel_api.main.moderate",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("should not run")),
+        )
+        response = client.post(
+            "/v1/moderate/batch",
+            json={"items": [{"text": "a"}, {"text": "b"}]},
+            headers={"X-API-Key": TEST_API_KEY},
+        )
+        assert response.status_code == 429
+        assert response.headers["X-RateLimit-Limit"] == "1"
+    finally:
+        rate_limiter.per_minute = original
+
+
+def test_batch_unauthenticated_401() -> None:
+    response = client.post(
+        "/v1/moderate/batch",
+        json={"items": [{"text": "hello"}]},
+    )
+    assert response.status_code == 401
+
+
 def test_moderate_internal_error_returns_structured_500(monkeypatch) -> None:
     def broken(_text: str, *, runtime=None):
         del runtime

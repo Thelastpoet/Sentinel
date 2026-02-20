@@ -130,6 +130,17 @@ def _get_psycopg_module():
     return importlib.import_module("psycopg")
 
 
+def _maybe_get_pool(database_url: str):
+    try:
+        from sentinel_api.db_pool import get_pool  # type: ignore[import-not-found]
+    except Exception:
+        return None
+    try:
+        return get_pool(database_url)
+    except Exception:
+        return None
+
+
 def _apply_statement_timeout(cur) -> None:
     timeout_ms = _vector_statement_timeout_ms()
     cur.execute(f"SET LOCAL statement_timeout = '{timeout_ms}ms'")
@@ -138,7 +149,9 @@ def _apply_statement_timeout(cur) -> None:
 @lru_cache(maxsize=16)
 def _ensure_embeddings_for_version(database_url: str, lexicon_version: str) -> None:
     psycopg = _get_psycopg_module()
-    with psycopg.connect(database_url) as conn:
+    pool = _maybe_get_pool(database_url)
+    conn_ctx = pool.connection() if pool is not None else psycopg.connect(database_url)
+    with conn_ctx as conn:
         with conn.cursor() as cur:
             _apply_statement_timeout(cur)
             cur.execute(
@@ -218,7 +231,9 @@ def find_vector_match(
     psycopg = _get_psycopg_module()
 
     try:
-        with psycopg.connect(database_url) as conn:
+        pool = _maybe_get_pool(database_url)
+        conn_ctx = pool.connection() if pool is not None else psycopg.connect(database_url)
+        with conn_ctx as conn:
             with conn.cursor() as cur:
                 _apply_statement_timeout(cur)
                 cur.execute(

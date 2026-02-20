@@ -351,6 +351,16 @@ class _InMemoryAppealsStore:
 class _PostgresAppealsStore:
     database_url: str
 
+    def _connection(self):
+        from sentinel_api.db_pool import get_pool
+
+        pool = get_pool(self.database_url)
+        if pool is not None:
+            return pool.connection()
+
+        psycopg = importlib.import_module("psycopg")
+        return psycopg.connect(self.database_url)
+
     def _fetch_appeal_record(self, cur, appeal_id: int) -> AdminAppealRecord:
         cur.execute(
             """
@@ -388,8 +398,7 @@ class _PostgresAppealsStore:
         *,
         submitted_by: str,
     ) -> AdminAppealRecord:
-        psycopg = importlib.import_module("psycopg")
-        with psycopg.connect(self.database_url) as conn:
+        with self._connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
@@ -458,8 +467,7 @@ class _PostgresAppealsStore:
         if where_conditions:
             where_clause = "WHERE " + " AND ".join(where_conditions)
 
-        psycopg = importlib.import_module("psycopg")
-        with psycopg.connect(self.database_url) as conn:
+        with self._connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     f"SELECT COUNT(1) FROM appeals {where_clause}",
@@ -506,8 +514,7 @@ class _PostgresAppealsStore:
         payload: AdminAppealTransitionRequest,
         actor: str,
     ) -> AdminAppealRecord:
-        psycopg = importlib.import_module("psycopg")
-        with psycopg.connect(self.database_url) as conn:
+        with self._connection() as conn:
             with conn.cursor() as cur:
                 current = self._fetch_appeal_record(cur, appeal_id)
                 validate_appeal_transition(current.status, payload.to_status)
@@ -561,8 +568,7 @@ class _PostgresAppealsStore:
             return updated
 
     def reconstruct(self, *, appeal_id: int) -> AdminAppealReconstructionResponse:
-        psycopg = importlib.import_module("psycopg")
-        with psycopg.connect(self.database_url) as conn:
+        with self._connection() as conn:
             with conn.cursor() as cur:
                 appeal = self._fetch_appeal_record(cur, appeal_id)
                 cur.execute(

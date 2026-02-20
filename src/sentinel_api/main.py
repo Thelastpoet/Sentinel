@@ -38,12 +38,15 @@ from sentinel_api.appeals import (
     get_appeals_runtime,
 )
 from sentinel_api.async_priority import async_queue_metrics
+from sentinel_api.db_pool import close_pool, get_pool
 from sentinel_api.logging import get_logger
 from sentinel_api.metrics import metrics
+from sentinel_api.model_artifact_repository import resolve_runtime_model_version
 from sentinel_api.model_registry import predict_classifier_shadow
 from sentinel_api.oauth import OAuthPrincipal, require_oauth_scope
 from sentinel_api.policy import moderate
 from sentinel_api.rate_limit import build_rate_limiter
+from sentinel_api.result_cache import get_cached_result, make_cache_key, set_cached_result
 from sentinel_api.transparency import (
     TransparencyAppealsExportResponse,
     TransparencyAppealsReportResponse,
@@ -53,14 +56,21 @@ from sentinel_core.models import (
     Action,
     ErrorResponse,
     MetricsResponse,
+    ModerationBatchItemResult,
+    ModerationBatchRequest,
+    ModerationBatchResponse,
     ModerationRequest,
     ModerationResponse,
 )
 from sentinel_core.policy_config import DeploymentStage, resolve_policy_runtime
+from sentinel_langpack.registry import resolve_pack_versions
+from sentinel_lexicon.lexicon import get_lexicon_matcher
 
 logger = get_logger("sentinel.api")
 CLASSIFIER_SHADOW_ENABLED_ENV = "SENTINEL_CLASSIFIER_SHADOW_ENABLED"
 SHADOW_PREDICTIONS_PATH_ENV = "SENTINEL_SHADOW_PREDICTIONS_PATH"
+RESULT_CACHE_ENABLED_ENV = "SENTINEL_RESULT_CACHE_ENABLED"
+RESULT_CACHE_TTL_SECONDS_ENV = "SENTINEL_RESULT_CACHE_TTL_SECONDS"
 _REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 
 
@@ -81,7 +91,13 @@ def _coerce_request_id(value: str | None) -> str | None:
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     # Fail fast if electoral phase override is invalid.
     resolve_policy_runtime()
-    yield
+    database_url = os.getenv("SENTINEL_DATABASE_URL", "").strip()
+    if database_url:
+        get_pool(database_url)
+    try:
+        yield
+    finally:
+        close_pool()
 
 
 app = FastAPI(title="Sentinel Moderation API", version="0.1.0", lifespan=lifespan)
@@ -143,8 +159,12 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 
 
 def enforce_rate_limit(response: Response, x_api_key: str | None = Header(default=None)) -> None:
+    _enforce_rate_limit_cost(response, x_api_key=x_api_key, cost=1)
+
+
+def _enforce_rate_limit_cost(response: Response, *, x_api_key: str | None, cost: int) -> None:
     key = x_api_key or "anonymous"
-    decision = rate_limiter.check(key)
+    decision = rate_limiter.check(key, cost=cost)
     response.headers["X-RateLimit-Limit"] = str(decision.limit)
     response.headers["X-RateLimit-Remaining"] = str(decision.remaining)
     response.headers["X-RateLimit-Reset"] = str(decision.reset_after_seconds)
@@ -255,6 +275,85 @@ def _record_classifier_shadow_prediction(
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/health/live")
+def health_live() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+def _check_lexicon_ready() -> str:
+    try:
+        matcher = get_lexicon_matcher()
+    except Exception:
+        return "error"
+    if matcher.entries:
+        return "ok"
+    return "empty"
+
+
+def _check_db_ready(database_url: str) -> str:
+    normalized = database_url.strip()
+    if not normalized:
+        return "empty"
+    try:
+        from sentinel_api.db_pool import get_pool
+
+        pool = get_pool(normalized)
+        if pool is not None:
+            conn_ctx = pool.connection()
+        else:
+            import psycopg
+
+            conn_ctx = psycopg.connect(normalized)
+        with conn_ctx as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1")
+                cur.fetchone()
+    except Exception:
+        return "error"
+    return "ok"
+
+
+def _check_redis_ready(redis_url: str) -> str:
+    normalized = redis_url.strip()
+    if not normalized:
+        return "empty"
+    try:
+        import redis
+
+        client = redis.Redis.from_url(
+            normalized,
+            socket_connect_timeout=0.5,
+            socket_timeout=0.5,
+            health_check_interval=10,
+        )
+        client.ping()
+    except Exception:
+        return "error"
+    return "ok"
+
+
+@app.get("/health/ready")
+def health_ready() -> JSONResponse:
+    checks: dict[str, str] = {}
+    checks["lexicon"] = _check_lexicon_ready()
+
+    database_url = os.getenv("SENTINEL_DATABASE_URL", "")
+    if database_url.strip():
+        checks["db"] = _check_db_ready(database_url)
+
+    redis_url = os.getenv("SENTINEL_REDIS_URL", "")
+    if redis_url.strip():
+        checks["redis"] = _check_redis_ready(redis_url)
+
+    degraded = any(value == "error" for value in checks.values())
+    status_value = "degraded" if degraded else "ready"
+    http_status = status.HTTP_503_SERVICE_UNAVAILABLE if degraded else status.HTTP_200_OK
+    return JSONResponse(
+        status_code=http_status,
+        content={"status": status_value, "checks": checks},
+    )
 
 
 @app.get("/metrics", response_model=MetricsResponse)
@@ -492,12 +591,42 @@ def moderate_text(
         )
     effective_request_id = request.request_id or http_request.state.request_id
     runtime = resolve_policy_runtime()
+    response.headers["X-Request-ID"] = effective_request_id
+
+    cache_enabled = _is_truthy_env(RESULT_CACHE_ENABLED_ENV)
+    redis_url = os.getenv("SENTINEL_REDIS_URL", "").strip()
+    cache_key: str | None = None
+    if cache_enabled and redis_url:
+        matcher = get_lexicon_matcher()
+        cache_key = make_cache_key(
+            request.text,
+            policy_version=runtime.effective_policy_version,
+            lexicon_version=matcher.version,
+            model_version=resolve_runtime_model_version(runtime.config.model_version),
+            pack_versions=resolve_pack_versions(runtime.config.pack_versions),
+            deployment_stage=runtime.effective_deployment_stage.value,
+            context=request.context,
+        )
+        cached = get_cached_result(cache_key, redis_url)
+        if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            metrics.record_action(cached.action)
+            metrics.record_moderation_latency(cached.latency_ms)
+            return cached
+        response.headers["X-Cache"] = "MISS"
+
     result = moderate(request.text, context=request.context, runtime=runtime)
     effective_phase = runtime.effective_phase.value if runtime.effective_phase is not None else None
     effective_deployment_stage = runtime.effective_deployment_stage.value
-    response.headers["X-Request-ID"] = effective_request_id
     metrics.record_action(result.action)
     metrics.record_moderation_latency(result.latency_ms)
+    if cache_key is not None and redis_url:
+        ttl_raw = os.getenv(RESULT_CACHE_TTL_SECONDS_ENV, "60").strip()
+        try:
+            ttl = int(ttl_raw)
+        except ValueError:
+            ttl = 60
+        set_cached_result(cache_key, result, redis_url, ttl=ttl)
     _record_classifier_shadow_prediction(
         request_id=effective_request_id,
         text=request.text,
@@ -518,6 +647,83 @@ def moderate_text(
         effective_deployment_stage=effective_deployment_stage,
     )
     return result
+
+
+@app.post(
+    "/v1/moderate/batch",
+    response_model=ModerationBatchResponse,
+    responses={
+        401: {"model": ErrorResponse},
+        429: {"model": ErrorResponse},
+        500: {"model": ErrorResponse},
+    },
+)
+def moderate_batch(
+    http_request: Request,
+    response: Response,
+    request: ModerationBatchRequest,
+    _: None = Depends(require_api_key),
+    x_api_key: str | None = Header(default=None),
+) -> ModerationBatchResponse:
+    effective_request_id = http_request.state.request_id
+    response.headers["X-Request-ID"] = effective_request_id
+
+    _enforce_rate_limit_cost(response, x_api_key=x_api_key, cost=len(request.items))
+
+    runtime = resolve_policy_runtime()
+    items: list[ModerationBatchItemResult] = []
+    succeeded = 0
+    failed = 0
+
+    for item in request.items:
+        item_request_id = item.request_id or str(uuid4())
+        if _coerce_request_id(item_request_id) is None:
+            failed += 1
+            items.append(
+                ModerationBatchItemResult(
+                    request_id=item_request_id,
+                    result=None,
+                    error=ErrorResponse(
+                        error_code="HTTP_400",
+                        message="request_id contains invalid characters",
+                        request_id=item_request_id,
+                    ),
+                )
+            )
+            continue
+
+        try:
+            result = moderate(item.text, context=item.context, runtime=runtime)
+        except Exception:
+            failed += 1
+            items.append(
+                ModerationBatchItemResult(
+                    request_id=item_request_id,
+                    result=None,
+                    error=ErrorResponse(
+                        error_code="HTTP_500",
+                        message="Internal server error",
+                        request_id=item_request_id,
+                    ),
+                )
+            )
+            continue
+
+        succeeded += 1
+        items.append(
+            ModerationBatchItemResult(
+                request_id=item_request_id,
+                result=result,
+                error=None,
+            )
+        )
+
+    return ModerationBatchResponse(
+        items=items,
+        total=len(items),
+        succeeded=succeeded,
+        failed=failed,
+    )
 
 
 @app.exception_handler(HTTPException)
@@ -546,12 +752,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     request_id = getattr(request.state, "request_id", str(uuid4()))
     metrics.record_validation_error()
     payload = ErrorResponse(
-        error_code="HTTP_400",
+        error_code="HTTP_422",
         message=f"Invalid request payload ({error_count} validation error(s))",
         request_id=request_id,
     )
     return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         headers={"X-Request-ID": request_id},
         content=payload.model_dump(),
     )

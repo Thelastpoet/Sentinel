@@ -34,6 +34,37 @@ class ModerationRequest(BaseModel):
     request_id: str | None = Field(default=None, max_length=128)
 
 
+class ModerationBatchItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    text: str = Field(min_length=1, max_length=5000)
+    context: ModerationContext | None = None
+    request_id: str | None = Field(default=None, max_length=128)
+
+
+class ModerationBatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[ModerationBatchItem] = Field(min_length=1, max_length=50)
+
+
+class ModerationBatchItemResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    request_id: str = Field(min_length=1, max_length=128)
+    result: ModerationResponse | None = None
+    error: ErrorResponse | None = None
+
+
+class ModerationBatchResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[ModerationBatchItemResult]
+    total: int = Field(ge=0)
+    succeeded: int = Field(ge=0)
+    failed: int = Field(ge=0)
+
+
 class EvidenceItem(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

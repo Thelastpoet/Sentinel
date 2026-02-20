@@ -352,9 +352,13 @@ def process_one(
     max_retry_attempts: int = DEFAULT_MAX_RETRY_ATTEMPTS,
     max_error_retry_seconds: int = DEFAULT_MAX_ERROR_RETRY_SECONDS,
 ) -> WorkerRunReport:
+    from sentinel_api.db_pool import get_pool
+
     psycopg = _get_psycopg_module()
     claimed_item: QueueWorkItem | None = None
-    with psycopg.connect(database_url) as conn:
+    pool = get_pool(database_url)
+    conn_ctx = pool.connection() if pool is not None else psycopg.connect(database_url)
+    with conn_ctx as conn:
         try:
             with conn.cursor() as cur:
                 claimed_item = _claim_next_queue_item(cur)
