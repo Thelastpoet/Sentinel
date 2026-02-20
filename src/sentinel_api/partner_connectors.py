@@ -196,6 +196,7 @@ class ResilientPartnerConnector:
 
         retry_delays: list[int] = []
         attempts = 0
+        last_error = "unknown error"
 
         def _sleep(seconds: float) -> None:
             self._sleep_fn(int(seconds))

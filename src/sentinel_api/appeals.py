@@ -10,6 +10,7 @@ from threading import Lock
 from typing import Any, Literal, cast, get_args
 from uuid import uuid4
 
+from psycopg import sql
 from pydantic import BaseModel, ConfigDict, Field
 
 from sentinel_api.logging import get_logger
@@ -461,22 +462,22 @@ class _PostgresAppealsStore:
         request_id: str | None,
         limit: int,
     ) -> AdminAppealListResponse:
-        where_conditions: list[str] = []
+        where_conditions: list[sql.Composable] = []
         where_params: list[object] = []
         if status is not None:
-            where_conditions.append("status = %s")
+            where_conditions.append(sql.SQL("status = %s"))
             where_params.append(status)
         if request_id is not None:
-            where_conditions.append("request_id = %s")
+            where_conditions.append(sql.SQL("request_id = %s"))
             where_params.append(request_id)
-        where_clause = ""
+        where_clause = sql.SQL("")
         if where_conditions:
-            where_clause = "WHERE " + " AND ".join(where_conditions)
+            where_clause = sql.SQL(" WHERE ") + sql.SQL(" AND ").join(where_conditions)
 
         with self._connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    f"SELECT COUNT(1) FROM appeals {where_clause}",
+                    sql.SQL("SELECT COUNT(1) FROM appeals") + where_clause,
                     tuple(where_params),
                 )
                 total_row = cur.fetchone()
@@ -484,30 +485,36 @@ class _PostgresAppealsStore:
                 query_params = list(where_params)
                 query_params.append(limit)
                 cur.execute(
-                    f"""
-                    SELECT
-                      id,
-                      status,
-                      request_id,
-                      original_decision_id,
-                      original_action,
-                      original_reason_codes,
-                      original_model_version,
-                      original_lexicon_version,
-                      original_policy_version,
-                      original_pack_versions,
-                      submitted_by,
-                      reviewer_actor,
-                      resolution_code,
-                      resolution_reason_codes,
-                      created_at,
-                      updated_at,
-                      resolved_at
-                    FROM appeals
-                    {where_clause}
-                    ORDER BY created_at DESC, id DESC
-                    LIMIT %s
-                    """,
+                    sql.SQL(
+                        """
+                        SELECT
+                          id,
+                          status,
+                          request_id,
+                          original_decision_id,
+                          original_action,
+                          original_reason_codes,
+                          original_model_version,
+                          original_lexicon_version,
+                          original_policy_version,
+                          original_pack_versions,
+                          submitted_by,
+                          reviewer_actor,
+                          resolution_code,
+                          resolution_reason_codes,
+                          created_at,
+                          updated_at,
+                          resolved_at
+                        FROM appeals
+                        """
+                    )
+                    + where_clause
+                    + sql.SQL(
+                        """
+                        ORDER BY created_at DESC, id DESC
+                        LIMIT %s
+                        """
+                    ),
                     tuple(query_params),
                 )
                 items = [_appeal_from_row(row) for row in cur.fetchall()]
