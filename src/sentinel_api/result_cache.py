@@ -48,7 +48,9 @@ def get_cached_result(cache_key: str, redis_url: str) -> ModerationResponse | No
 
         client = redis.Redis.from_url(redis_url, decode_responses=True)
         cached = client.get(cache_key)
-        if not cached:
+        if cached is None:
+            return None
+        if not isinstance(cached, str):
             return None
         return ModerationResponse.model_validate_json(cached)
     except Exception as exc:
