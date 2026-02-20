@@ -30,9 +30,10 @@ Each admin endpoint requires a specific OAuth scope. Requests without the requir
 |-------|-----------|
 | `admin:appeal:read` | List appeals, reconstruct audit trail |
 | `admin:appeal:write` | Create appeals, transition appeal states |
-| `admin:transparency:read` | Aggregate transparency reports |
+| `admin:transparency:read` | Aggregate transparency reports and read the audit stream |
 | `admin:transparency:export` | Raw appeals data export |
 | `admin:transparency:identifiers` | Include PII fields in exports (additive — also requires `admin:transparency:export`) |
+| `admin:policy:write` | Update the effective electoral phase override |
 | `admin:proposal:read` | View release proposal permissions |
 | `admin:proposal:review` | Submit, approve, reject, promote release proposals |
 | `internal:queue:read` | Internal monitoring queue metrics |

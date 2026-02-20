@@ -18,7 +18,7 @@ Both audiences should begin with the [Quickstart](docs/quickstart.md).
 
 - **Available now (default runtime)**: moderation routing and enforcement for `en`, `sw`, `sh`
 - **Included but not default-active**: additional language-pack artifacts (e.g., Luo, Kalenjin)
-- **Contract stability**: `POST /v1/moderate` is the stable integration surface; admin/internal interfaces are operator-oriented and can evolve
+- **Contract stability**: `POST /v1/moderate` is the stable integration surface; operator endpoints (`/admin/*`, `/internal/*`) can evolve
 
 ## What Sentinel returns
 
@@ -63,6 +63,7 @@ Every response includes the evidence that drove the decision, the versions of al
 
 ```bash
 git clone https://github.com/Thelastpoet/sentinel.git && cd sentinel
+python -m venv .venv && source .venv/bin/activate
 pip install -e .[dev,ops]
 docker compose up -d --build postgres redis
 make apply-migrations && make seed-lexicon
@@ -95,7 +96,7 @@ The multi-label classifier currently runs in **shadow mode** (observability only
 | [Quickstart](docs/quickstart.md) | Both | Get running in 5 minutes |
 | [Integration Guide](docs/integration-guide.md) | Integrators | Full request/response reference and enforcement patterns |
 | [Deployment Guide](docs/deployment.md) | Operators | Infrastructure, configuration, and operations |
-| [API Reference](docs/api-reference.md) | Both | All 13 endpoints documented |
+| [API Reference](docs/api-reference.md) | Both | Public, moderation, and operator endpoints |
 | [Security](docs/security.md) | Operators | Authentication, authorization, and safety architecture |
 | [FAQ](docs/faq.md) | Both | Common questions for integrators and operators |
 

@@ -18,7 +18,7 @@ Sentinel has three runtime components:
 
 - **Sentinel API** — FastAPI application serving moderation, admin, and monitoring endpoints
 - **PostgreSQL with pgvector** — Stores lexicon entries, releases, embeddings, appeals, transparency data, model artifacts. Required for production.
-- **Redis** — Distributed rate limiting and hot-trigger caching. Optional; Sentinel degrades gracefully if unavailable.
+- **Redis** — Distributed rate limiting, hot-trigger caching, and optional moderation result caching. Optional; Sentinel degrades gracefully if unavailable.
 
 Default moderation routing is active for `en`, `sw`, and `sh`. Additional language-pack artifacts may exist in the repository for staged rollout but are not automatically active in hot-path enforcement.
 
@@ -34,7 +34,7 @@ This section focuses on API runtime and operator-facing variables. A few script-
 |----------|----------|---------|-------------|
 | `SENTINEL_API_KEY` | Yes | — | API key for authenticating `POST /v1/moderate` requests |
 | `SENTINEL_DATABASE_URL` | No | — | Postgres connection string (e.g., `postgresql://user:pass@host:5432/sentinel`). Enables lexicon DB, vector search, appeals, transparency. |
-| `SENTINEL_REDIS_URL` | No | — | Redis connection string. Enables distributed rate limiting and hot-trigger caching. |
+| `SENTINEL_REDIS_URL` | No | — | Redis connection string. Enables distributed rate limiting, hot-trigger caching, and optional moderation result caching. |
 | `SENTINEL_POLICY_CONFIG_PATH` | No | auto-detected | Path to policy configuration file (`config/policy/default.json` when present) |
 
 ### Electoral and deployment
@@ -58,6 +58,13 @@ This section focuses on API runtime and operator-facing variables. A few script-
 | `SENTINEL_REDIS_HOT_TRIGGER_KEY_PREFIX` | No | `sentinel:hot-triggers` | Redis key prefix for cached hot-trigger terms |
 | `SENTINEL_REDIS_HOT_TRIGGER_TTL_SECONDS` | No | — | Optional TTL for hot-trigger cache keys |
 | `SENTINEL_REDIS_SOCKET_TIMEOUT_SECONDS` | No | `0.05` | Redis socket timeout in seconds |
+
+### Moderation result cache
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `SENTINEL_RESULT_CACHE_ENABLED` | No | `false` | Enable Redis-backed caching of `POST /v1/moderate` responses (adds `X-Cache: HIT|MISS`) |
+| `SENTINEL_RESULT_CACHE_TTL_SECONDS` | No | `60` | Cache TTL in seconds |
 
 ### OAuth (admin endpoints)
 
@@ -125,7 +132,7 @@ For production:
 
 ## Database migrations
 
-Sentinel includes 12 migration files in `migrations/`. Run them with:
+Sentinel includes migration files in `migrations/`. Run them with:
 
 ```bash
 make apply-migrations
@@ -151,6 +158,7 @@ python scripts/apply_migrations.py --database-url "$SENTINEL_DATABASE_URL"
 | `0010_monitoring_queue_event_uniqueness.sql` | Queue event deduplication |
 | `0011_lexicon_entry_metadata_hardening.sql` | Metadata validation constraints |
 | `0012_model_artifact_lifecycle.sql` | Model artifact version tracking |
+| `0013_multi_model_embeddings.sql` | Multi-model embedding storage and indexes (v2) |
 
 Migrations are ordered and tracked via Alembic revision history. Running `make apply-migrations` repeatedly is safe.
 
@@ -236,6 +244,12 @@ Or in the policy config file (`config/policy/default.json`):
 
 The environment variable takes precedence over the config file. If neither is set, no phase-specific overrides are applied.
 
+### Updating the phase at runtime
+
+For operator workflows that need a phase change without restarting the API, Sentinel also exposes `POST /admin/policy/phase` (OAuth scope `admin:policy:write`).
+
+This override is in-process only. In multi-worker or multi-replica deployments, use environment/config management or a shared store rather than relying on per-process overrides.
+
 ### Phase safety constraint
 
 Phase overrides cannot lower the BLOCK toxicity threshold below the baseline value. This prevents accidental weakening of the most critical moderation threshold during heightened periods.
@@ -310,9 +324,10 @@ JWTs must include `client_id` (or `sub`) and `scopes` (or `scope` as space-delim
 |-------|-----------------|
 | `admin:appeal:read` | List appeals, reconstruct appeal audit trail |
 | `admin:appeal:write` | Create appeals, transition appeal states |
-| `admin:transparency:read` | Aggregate transparency reports |
+| `admin:transparency:read` | Aggregate transparency reports and read the audit stream |
 | `admin:transparency:export` | Raw appeals data export |
 | `admin:transparency:identifiers` | Include identifier fields (`request_id`, `original_decision_id`) in exports |
+| `admin:policy:write` | Update the effective electoral phase override |
 | `admin:proposal:read` | View release proposal permissions |
 | `admin:proposal:review` | Submit, approve, reject, promote release proposals |
 | `internal:queue:read` | Internal monitoring queue metrics |
@@ -324,6 +339,12 @@ JWTs must include `client_id` (or `sub`) and `scopes` (or `scope` as space-delim
 ```bash
 curl http://localhost:8000/health
 # {"status": "ok"}
+
+curl http://localhost:8000/health/live
+# {"status": "ok"}
+
+curl http://localhost:8000/health/ready
+# {"status": "ready", "checks": {"lexicon": "ok", "db": "ok", "redis": "ok"}}
 ```
 
 ### Metrics

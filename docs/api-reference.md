@@ -1,14 +1,14 @@
 # API Reference
 
-Sentinel exposes 13 endpoints across four groups: public, moderation, admin, and internal.
+Sentinel exposes endpoints across four groups: public, API key, operator, and internal.
 
 ## Authentication summary
 
 | Endpoint group | Auth method | Header |
 |---------------|-------------|--------|
-| Public (`/health`, `/metrics`, `/metrics/prometheus`) | None | — |
-| Moderation (`/v1/moderate`) | API key | `X-API-Key` |
-| Admin (`/admin/*`) | OAuth bearer token | `Authorization: Bearer <token>` |
+| Public (`/health*`, `/metrics*`) | None | — |
+| API key (`/v1/moderate*`, `/v1/appeals`) | API key | `X-API-Key` |
+| Operator (`/admin/*`) | OAuth bearer token | `Authorization: Bearer <token>` |
 | Internal (`/internal/*`) | OAuth bearer token | `Authorization: Bearer <token>` |
 
 ## Public endpoints
@@ -21,6 +21,32 @@ Returns API health status.
 
 ```json
 {"status": "ok"}
+```
+
+### `GET /health/live`
+
+Liveness probe for process health.
+
+**Response** `200 OK`
+
+```json
+{"status": "ok"}
+```
+
+### `GET /health/ready`
+
+Readiness probe for downstream dependencies (lexicon, and optionally Postgres/Redis when configured).
+
+**Response** `200 OK` (ready)
+
+```json
+{"status": "ready", "checks": {"lexicon": "ok", "db": "ok", "redis": "ok"}}
+```
+
+**Response** `503 Service Unavailable` (degraded)
+
+```json
+{"status": "degraded", "checks": {"lexicon": "ok", "db": "error", "redis": "ok"}}
 ```
 
 ### `GET /metrics`
@@ -101,6 +127,16 @@ Primary moderation endpoint.
 }
 ```
 
+**Response headers**
+
+| Header | Description |
+|--------|-------------|
+| `X-Request-ID` | Request correlation ID |
+| `X-Cache` | `HIT` or `MISS` when result caching is enabled |
+| `X-RateLimit-Limit` | Max requests per window |
+| `X-RateLimit-Remaining` | Remaining requests in current window |
+| `X-RateLimit-Reset` | Seconds until window resets |
+
 | Field | Type |
 |-------|------|
 | `toxicity` | float (0..1) |
@@ -137,6 +173,101 @@ Primary moderation endpoint.
 | 429 | `HTTP_429` | Rate limited |
 | 500 | `HTTP_500` | Internal server error |
 | 503 | `HTTP_503` | API key auth not configured on server |
+
+## Batch moderation endpoint
+
+### `POST /v1/moderate/batch`
+
+Batch moderation for up to 50 items in one request. Rate limiting is applied per item (a 50-item batch costs 50).
+
+**Authentication**: `X-API-Key` header
+
+**Request body**
+
+```json
+{
+  "items": [
+    {"request_id": "req-1", "text": "We should discuss policy peacefully."},
+    {"request_id": "req-2", "text": "They should kill them now."}
+  ]
+}
+```
+
+**Response** `200 OK`
+
+```json
+{
+  "items": [
+    {"request_id": "req-1", "result": {"action": "ALLOW"}, "error": null},
+    {"request_id": "req-2", "result": {"action": "BLOCK"}, "error": null}
+  ],
+  "total": 2,
+  "succeeded": 2,
+  "failed": 0
+}
+```
+
+Errors for individual items are returned inline on `items[].error`; the overall response stays `200` unless authentication/rate limiting fails.
+
+## Public appeal submission
+
+### `POST /v1/appeals`
+
+Submit an appeal for a prior moderation decision. This endpoint stores the original decision snapshot so reviewers can reconstruct context later.
+
+**Authentication**: `X-API-Key` header
+
+**Request body**
+
+```json
+{
+  "decision_request_id": "client-request-id-123",
+  "original_action": "BLOCK",
+  "original_reason_codes": ["R_INCITE_CALL_TO_HARM"],
+  "original_model_version": "sentinel-multi-v2",
+  "original_lexicon_version": "hatelex-v2.1",
+  "original_policy_version": "policy-2026.11",
+  "original_pack_versions": {"en": "pack-en-0.1"},
+  "reason": "I am disputing this decision"
+}
+```
+
+**Response** `201 Created`
+
+```json
+{"appeal_id": 42, "status": "submitted", "request_id": "client-request-id-123"}
+```
+
+## Admin: Policy
+
+### `POST /admin/policy/phase`
+
+Update the effective electoral phase in-process.
+
+**OAuth scope**: `admin:policy:write`
+
+**Request body**
+
+```json
+{"phase": "voting_day"}
+```
+
+To clear the override and return to env/config resolution:
+
+```json
+{"phase": null}
+```
+
+**Response** `200 OK`
+
+```json
+{
+  "effective_phase": "voting_day",
+  "effective_policy_version": "policy-2026.11@voting_day",
+  "actor": "admin-dashboard",
+  "limitation": "in-process only; multi-worker and multi-replica deployments require a shared store"
+}
+```
 
 ## Admin: Appeals
 
@@ -263,6 +394,21 @@ Get full reconstruction for one appeal.
 ```
 
 ## Admin: Transparency
+
+### `GET /admin/audit/stream`
+
+Live audit stream of recent moderation outcomes, formatted as Server-Sent Events (SSE). Events include provenance and decision fields and intentionally omit user text.
+
+**OAuth scope**: `admin:transparency:read`
+
+**Query params**: `cursor` (integer, default `0`)
+
+**Response** `200 OK` (`text/event-stream`)
+
+```text
+data: {"timestamp":"2026-02-20T00:00:00+00:00","action":"ALLOW","labels":["BENIGN_POLITICAL_SPEECH"],"reason_codes":["R_ALLOW_NO_POLICY_MATCH"],"latency_ms":12,"deployment_stage":"supervised","lexicon_version":"hatelex-v2.1","policy_version":"policy-2026.11"}
+
+```
 
 ### `GET /admin/transparency/reports/appeals`
 
