@@ -5,7 +5,7 @@ description = "Project Sentinel moderation API vertical slice"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "fastapi",
+  "fastapi>=0.131.0",
   "limits",
   "prometheus-client",
   "pydantic",
